@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
 
-const User = require("../models/user");
+const LoginControllers = require("../controllers/loginControllers");
 
 /* GET users listing. */
 router.get("/", function (req, res, next) {
@@ -9,22 +9,13 @@ router.get("/", function (req, res, next) {
 });
 
 /* POST login. */
-// TODO: implement google oauth
 router.post("/login", async function (req, res, next) {
-  // connect to prisma db and check if user exists
-  const email = "line@gmail.com";
-  const username = "kk";
-
-  // generate random id string
-  const googleUserId = Math.random().toString(36).substring(7);
-
   try {
-    const userModel = new User();
-    const user = await userModel.createUser(username, email, googleUserId);
-    res.json(user);
+    const loginControllers = new LoginControllers();
+    const user = await loginControllers.login(req.body.googleToken);
+    res.send(user);
   } catch (error) {
-    console.error("Error creating user:", error);
-    res.status(500).send("Error creating user");
+    res.status(500).send(error);
   }
 });
 

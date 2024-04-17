@@ -15,5 +15,6 @@ npm run dev
 ```sh
 cd backend
 npm install
+npx prisma generate
 npm run dev
 ```
