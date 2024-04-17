@@ -12,7 +12,7 @@ router.get("/", function (req, res, next) {
 router.post("/login", async function (req, res, next) {
   try {
     const loginControllers = new LoginControllers();
-    const user = await loginControllers.login(req.body.googleToken);
+    const user = await loginControllers.login(req.body.code);
     res.send(user);
   } catch (error) {
     res.status(500).send(error);

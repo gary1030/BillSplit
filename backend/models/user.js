@@ -13,12 +13,16 @@ class User {
   }
 
   async getUserByGoogleId(googleUserId) {
-    const user = await prisma.user.findUnique({
-      where: {
-        googleUserId: googleUserId,
-      },
-    });
-    return user;
+    try {
+      const user = await prisma.user.findUnique({
+        where: {
+          googleUserId: googleUserId,
+        },
+      });
+      return user;
+    } catch (error) {
+      return null;
+    }
   }
 }
 
