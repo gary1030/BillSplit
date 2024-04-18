@@ -1,4 +1,10 @@
 import { Providers } from "./providers";
+import { Metadata } from 'next'
+ 
+export const metadata: Metadata = {
+  title: 'BillSplit',
+  description: 'Welcome to BillSplit. Split your bill wisely.',
+}
 
 export default function RootLayout({
   children,
