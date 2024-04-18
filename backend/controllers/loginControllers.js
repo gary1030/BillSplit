@@ -1,7 +1,7 @@
 const User = require("../models/user");
 const axios = require("axios");
 const { JWT_SECRET, JWT_EXPIRATION } = require("../config");
-var jwt = require('jsonwebtoken');
+var jwt = require("jsonwebtoken");
 
 class LoginControllers {
   constructor() {
@@ -26,11 +26,11 @@ class LoginControllers {
         googleUser.id
       );
 
-      newUser.token = this.generateJWTToken(user.id)
+      newUser.token = this.generateJWTToken(newUser.id);
       return newUser;
     }
 
-    user.token = this.generateJWTToken(user.id)
+    user.token = this.generateJWTToken(user.id);
     return user;
   }
 
@@ -75,7 +75,9 @@ class LoginControllers {
   }
 
   generateJWTToken(userId) {
-    return jwt.sign({ userId: userId }, JWT_SECRET, { expiresIn: JWT_EXPIRATION});
+    return jwt.sign({ userId: userId }, JWT_SECRET, {
+      expiresIn: JWT_EXPIRATION,
+    });
   }
 }
 
