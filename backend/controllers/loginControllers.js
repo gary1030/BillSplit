@@ -1,5 +1,7 @@
 const User = require("../models/user");
 const axios = require("axios");
+const { JWT_SECRET, JWT_EXPIRATION } = require("../config");
+var jwt = require('jsonwebtoken');
 
 class LoginControllers {
   constructor() {
@@ -23,9 +25,12 @@ class LoginControllers {
         googleUser.email,
         googleUser.id
       );
+
+      newUser.token = this.generateJWTToken(user.id)
       return newUser;
     }
 
+    user.token = this.generateJWTToken(user.id)
     return user;
   }
 
@@ -67,6 +72,10 @@ class LoginControllers {
       console.log("Error getting user details:", error);
       return null;
     }
+  }
+
+  generateJWTToken(userId) {
+    return jwt.sign({ userId: userId }, JWT_SECRET, { expiresIn: JWT_EXPIRATION});
   }
 }
 
