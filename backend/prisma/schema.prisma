@@ -14,9 +14,111 @@ datasource db {
 }
 
 model User {
-  id             String   @id @default(auto()) @map("_id") @db.ObjectId
-  username       String
-  email          String   @unique
-  googleUserId   String   @unique
-  createdAt      DateTime @default(now())
+  id                   String                     @id @default(auto()) @map("_id") @db.ObjectId
+  username             String
+  email                String                     @unique
+  googleUserId         String                     @unique
+  createdAt            DateTime                   @default(now())
+  groupIds             String[]                   @db.ObjectId
+  groups               Group[]                    @relation(fields: [groupIds], references: [id], name: "members")
+  ownGroups            Group[]                    @relation("owner")
+  personalTransactions PersonalTransaction[]
+  groupBack            GroupRepayment[]           @relation("receiver")
+  groupPay             GroupRepayment[]           @relation("payer")
+  concealedTransaction UserConcealedTransaction[]
+}
+
+model Group {
+  id             String             @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  createdAt      DateTime           @default(now())
+  members        User[]             @relation(fields: [memberIds], references: [id], name: "members")
+  memberIds      String[]           @db.ObjectId
+  owner          User               @relation(fields: [ownerId], references: [id], name: "owner")
+  ownerId        String             @db.ObjectId
+  transactions   GroupTransaction[]
+  GroupRepayment GroupRepayment[]
+}
+
+model Category {
+  id                   String                @id @default(auto()) @map("_id") @db.ObjectId
+  name                 String
+  PersonalTransactions PersonalTransaction[]
+  GroupTransactions    GroupTransaction[]
+}
+
+model Currency {
+  id                   String                @id @default(auto()) @map("_id") @db.ObjectId
+  name                 String
+  value                Float
+  PersonalTransactions PersonalTransaction[]
+  GroupTransactions    GroupTransaction[]
+  GroupRepayment       GroupRepayment[]
+}
+
+enum PersonalTransactionType {
+  EXPENSE
+  INCOME
+}
+
+model PersonalTransaction {
+  id         String                  @id @default(auto()) @map("_id") @db.ObjectId
+  user       User                    @relation(fields: [userId], references: [id])
+  userId     String                  @db.ObjectId
+  category   Category                @relation(fields: [categoryId], references: [id])
+  categoryId String                  @db.ObjectId
+  currency   Currency                @relation(fields: [currencyId], references: [id])
+  currencyId String                  @db.ObjectId
+  type       PersonalTransactionType @default(EXPENSE)
+  title      String
+  amount     Float
+  createdAt  DateTime                @default(now())
+  updatedAt  DateTime                @default(now())
+}
+
+model GroupTransaction {
+  id                       String                     @id @default(auto()) @map("_id") @db.ObjectId
+  group                    Group                      @relation(fields: [groupId], references: [id])
+  groupId                  String                     @db.ObjectId
+  category                 Category                   @relation(fields: [categoryId], references: [id])
+  categoryId               String                     @db.ObjectId
+  currency                 Currency                   @relation(fields: [currencyId], references: [id])
+  currencyId               String                     @db.ObjectId
+  title                    String
+  totalAmount              Float
+  payerDetails             PayerDetail[]
+  splitDetails             SplitDetail[]
+  createdAt                DateTime                   @default(now())
+  updatedAt                DateTime                   @default(now())
+  UserConcealedTransaction UserConcealedTransaction[]
+}
+
+type PayerDetail {
+  payerId String @db.ObjectId
+  amount  Float
+}
+
+type SplitDetail {
+  debtorId String @db.ObjectId
+  amount   Float
+}
+
+model GroupRepayment {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  group      Group    @relation(fields: [groupId], references: [id])
+  groupId    String   @db.ObjectId
+  currency   Currency @relation(fields: [currencyId], references: [id])
+  currencyId String   @db.ObjectId
+  payerId    String   @db.ObjectId
+  payer      User     @relation("payer", fields: [payerId], references: [id])
+  receiverId String   @db.ObjectId
+  receiver   User     @relation("receiver", fields: [receiverId], references: [id])
+}
+
+model UserConcealedTransaction {
+  id                 String           @id @default(auto()) @map("_id") @db.ObjectId
+  user               User             @relation(fields: [userId], references: [id])
+  userId             String           @db.ObjectId
+  groupTransaction   GroupTransaction @relation(fields: [groupTransactionId], references: [id])
+  groupTransactionId String           @db.ObjectId
 }

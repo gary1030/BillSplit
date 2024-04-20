@@ -24,6 +24,37 @@ class User {
       return null;
     }
   }
+
+  async getUserById(userId) {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+      },
+    });
+    return user;
+  }
+
+  async getUserGroups(userId) {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        groups: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+    return user.groups;
+  }
 }
 
 module.exports = User;
