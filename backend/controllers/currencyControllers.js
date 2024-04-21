@@ -8,7 +8,7 @@ class CurrencyControllers {
   async getAllCurrencies() {
     try {
       const currencies = await this.currencyModel.getAllCurrencies();
-      return { currencies: currencies };
+      return { data: currencies };
     } catch (error) {
       console.log(error);
       return null;

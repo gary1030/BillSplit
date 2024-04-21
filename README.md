@@ -29,6 +29,8 @@ JWT_SECRET=abc
 cd backend
 npm install
 npx prisma generate
+node ./scripts/createCategory.js
+node ./scripts/createCurrency.js
 npm run dev
 ```
 

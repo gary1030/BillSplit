@@ -7,7 +7,7 @@ class CategoryControllers {
   async getAllCategories() {
     try {
       const categories = await this.categoryModel.getAllCategories();
-      return { categories: categories };
+      return { data: categories };
     } catch (error) {
       console.log(error);
       return null;

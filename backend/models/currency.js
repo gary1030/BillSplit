@@ -24,6 +24,16 @@ class Currency {
     const currencies = await prisma.currency.findMany();
     return currencies;
   }
+
+  async getDefaultCurrencyId() {
+    const currencyName = "TWD";
+    const currency = await prisma.currency.findFirst({
+      where: {
+        name: currencyName,
+      },
+    });
+    return currency.id;
+  }
 }
 
 module.exports = Currency;

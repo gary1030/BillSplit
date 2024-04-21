@@ -19,7 +19,7 @@ class UserControllers {
     try {
       const groups = await this.userModel.getUserGroups(userId);
 
-      return { groups: groups };
+      return { data: groups };
     } catch (error) {
       console.log(error);
       return null;
