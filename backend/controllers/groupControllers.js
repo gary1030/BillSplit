@@ -31,6 +31,22 @@ class GroupControllers {
       throw new Error("Unauthorized!");
     }
   }
+
+  async isUserInGroup(groupId, userId) {
+    try {
+      const group = await this.groupModel.getGroupById(groupId);
+      if (!group) {
+        return false;
+      }
+
+      // check if user is a member of the group
+      const isMember = group.memberIds.some((memberId) => memberId === userId);
+      return isMember;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
 }
 
 module.exports = GroupControllers;

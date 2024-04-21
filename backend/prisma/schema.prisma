@@ -99,7 +99,7 @@ type PayerDetail {
 }
 
 type SplitDetail {
-  debtorId String @db.ObjectId
+  sharerId String @db.ObjectId
   amount   Float
 }
 
