@@ -5,6 +5,7 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var prisma = require("./prisma");
 const cors = require("cors");
+const oapi = require("./config/openapi");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
@@ -29,6 +30,7 @@ prisma
     process.exit(1);
   }); // Add closing parenthesis here
 
+app.use(oapi);
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -42,6 +44,7 @@ app.use("/auth", authRouter);
 app.use("/groups", groupRouter);
 app.use("/categories", categoryRouter);
 app.use("/currencies", currencyRouter);
+app.use("/swaggerui", oapi.swaggerui());
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
