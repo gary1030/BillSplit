@@ -25,4 +25,4 @@ class Category {
   }
 }
 
-module.exports = Category;
+module.exports = new Category();

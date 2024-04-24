@@ -1,20 +1,13 @@
 const PersonalTransaction = require("../models/personalTransaction");
 const GroupTransaction = require("../models/groupTransaction");
 const Currency = require("../models/currency");
-const e = require("express");
 
 class TransactionControllers {
-  constructor() {
-    this.personalTransactionModel = new PersonalTransaction();
-    this.groupTransactionModel = new GroupTransaction();
-    this.currencyModel = new Currency();
-  }
-
   async createPersonalTransaction(userId, categoryId, type, title, amount) {
     try {
-      const currencyId = await this.currencyModel.getDefaultCurrencyId();
+      const currencyId = await Currency.getDefaultCurrencyId();
       const personalTransaction =
-        await this.personalTransactionModel.createPersonalTransaction(
+        await PersonalTransaction.createPersonalTransaction(
           userId,
           categoryId,
           currencyId,
@@ -32,7 +25,7 @@ class TransactionControllers {
   async getPersonalTransactionByUserId(userId, startTime, endTime) {
     try {
       const personalTransaction =
-        await this.personalTransactionModel.getPersonalTransactionByUserId(
+        await PersonalTransaction.getPersonalTransactionByUserId(
           userId,
           startTime,
           endTime
@@ -54,23 +47,22 @@ class TransactionControllers {
     splitDetails
   ) {
     try {
-      const currencyId = await this.currencyModel.getDefaultCurrencyId();
+      const currencyId = await Currency.getDefaultCurrencyId();
       if (
         !this.checkTransactionAmount(payerDetails, splitDetails, totalAmount)
       ) {
         throw new Error("Transaction amount is not correct");
       }
-      const groupTransaction =
-        await this.groupTransactionModel.createGroupTransaction({
-          userId,
-          groupId,
-          categoryId,
-          currencyId,
-          title,
-          totalAmount,
-          payerDetails,
-          splitDetails,
-        });
+      const groupTransaction = await GroupTransaction.createGroupTransaction({
+        userId,
+        groupId,
+        categoryId,
+        currencyId,
+        title,
+        totalAmount,
+        payerDetails,
+        splitDetails,
+      });
       return groupTransaction;
     } catch (error) {
       console.log(error);
@@ -93,7 +85,7 @@ class TransactionControllers {
   async getGroupTransactions(groupId, startTime, endTime) {
     try {
       const groupTransactions =
-        await this.groupTransactionModel.getGroupTransactionsByGroupId(
+        await GroupTransaction.getGroupTransactionsByGroupId(
           groupId,
           startTime,
           endTime
@@ -107,4 +99,4 @@ class TransactionControllers {
   }
 }
 
-module.exports = TransactionControllers;
+module.exports = new TransactionControllers();

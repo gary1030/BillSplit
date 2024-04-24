@@ -10,12 +10,11 @@ router.use(authentication);
 /* POST create group */
 router.post("/", async function (req, res, next) {
   try {
-    const groupControllers = new GroupControllers();
     if (req.body.name === undefined) {
       res.status(400).json({ message: "Name is required!" });
       return;
     }
-    const group = await groupControllers.createGroup(req.body.name, req.userId);
+    const group = await GroupControllers.createGroup(req.body.name, req.userId);
     res.send(group);
   } catch (error) {
     console.log(error);
@@ -26,8 +25,7 @@ router.post("/", async function (req, res, next) {
 /* GET group by id */
 router.get("/:id", async function (req, res, next) {
   try {
-    const groupControllers = new GroupControllers();
-    const group = await groupControllers.getGroupById(
+    const group = await GroupControllers.getGroupById(
       req.params.id,
       req.userId
     );
@@ -42,8 +40,7 @@ router.get("/:id", async function (req, res, next) {
 router.post("/:id/transactions", async function (req, res, next) {
   try {
     // check user in group
-    const groupControllers = new GroupControllers();
-    const isUserInGroup = await groupControllers.isUserInGroup(
+    const isUserInGroup = await GroupControllers.isUserInGroup(
       req.params.id,
       req.userId
     );
@@ -64,9 +61,8 @@ router.post("/:id/transactions", async function (req, res, next) {
       return;
     }
 
-    const transactionControllers = new TransactionControllers();
     const groupTransaction =
-      await transactionControllers.createGroupTransaction(
+      await TransactionControllers.createGroupTransaction(
         req.userId,
         req.params.id,
         req.body.categoryId,
@@ -85,8 +81,7 @@ router.post("/:id/transactions", async function (req, res, next) {
 /* GET group transactions */
 router.get("/:id/transactions", async function (req, res, next) {
   try {
-    const groupControllers = new GroupControllers();
-    const isUserInGroup = await groupControllers.isUserInGroup(
+    const isUserInGroup = await GroupControllers.isUserInGroup(
       req.params.id,
       req.userId
     );
@@ -95,8 +90,7 @@ router.get("/:id/transactions", async function (req, res, next) {
       return;
     }
 
-    const transactionControllers = new TransactionControllers();
-    const groupTransactions = await transactionControllers.getGroupTransactions(
+    const groupTransactions = await TransactionControllers.getGroupTransactions(
       req.params.id
     );
     res.send(groupTransactions);

@@ -15,8 +15,7 @@ router.get("/", function (req, res, next) {
 /* GET user by id */
 router.get("/:id", async function (req, res, next) {
   try {
-    const userControllers = new UserControllers();
-    const user = await userControllers.getUserById(req.params.id);
+    const user = await UserControllers.getUserById(req.params.id);
     res.send(user);
   } catch (error) {
     console.log(error);
@@ -32,8 +31,7 @@ router.get("/:id/groups", async function (req, res, next) {
       return;
     }
 
-    const userControllers = new UserControllers();
-    const groups = await userControllers.getUserGroups(req.params.id);
+    const groups = await UserControllers.getUserGroups(req.params.id);
     res.send(groups);
   } catch (error) {
     console.log(error);
@@ -67,9 +65,8 @@ router.post("/:id/transactions", async function (req, res, next) {
       return;
     }
 
-    const transactionControllers = new TransactionControllers();
     const personalTransaction =
-      await transactionControllers.createPersonalTransaction(
+      await TransactionControllers.createPersonalTransaction(
         req.userId,
         req.body.categoryId,
         req.body.type,
@@ -102,9 +99,8 @@ router.get("/:id/transactions", async function (req, res, next) {
       return;
     }
 
-    const transactionControllers = new TransactionControllers();
     const personalTransactions =
-      await transactionControllers.getPersonalTransactionByUserId(
+      await TransactionControllers.getPersonalTransactionByUserId(
         req.userId,
         req.query.startTime,
         req.query.endTime

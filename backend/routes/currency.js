@@ -9,8 +9,7 @@ router.use(authentication);
 /* GET all currencies */
 router.get("/", async function (req, res, next) {
   try {
-    const currencyControllers = new CurrencyControllers();
-    const currencies = await currencyControllers.getAllCurrencies();
+    const currencies = await CurrencyControllers.getAllCurrencies();
     res.send(currencies);
   } catch (error) {
     console.log(error);

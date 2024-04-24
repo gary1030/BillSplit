@@ -84,4 +84,4 @@ class GroupTransaction {
   }
 }
 
-module.exports = GroupTransaction;
+module.exports = new GroupTransaction();

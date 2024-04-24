@@ -38,8 +38,7 @@ router.get(
   }),
   async function (req, res, next) {
     try {
-      const categoryControllers = new CategoryControllers();
-      const categories = await categoryControllers.getAllCategories();
+      const categories = await CategoryControllers.getAllCategories();
       res.send(categories);
     } catch (error) {
       console.log(error);

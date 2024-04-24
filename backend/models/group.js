@@ -45,4 +45,4 @@ class Group {
   }
 }
 
-module.exports = Group;
+module.exports = new Group();

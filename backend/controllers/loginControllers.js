@@ -16,11 +16,10 @@ class LoginControllers {
 
     const googleUser = await this.getProfileFromGoogle(googleToken);
 
-    const userModel = new User();
-    const user = await userModel.getUserByGoogleId(googleUser.id);
+    const user = await User.getUserByGoogleId(googleUser.id);
 
     if (!user) {
-      const newUser = await userModel.createUser(
+      const newUser = await User.createUser(
         googleUser.name,
         googleUser.email,
         googleUser.id
@@ -81,4 +80,4 @@ class LoginControllers {
   }
 }
 
-module.exports = LoginControllers;
+module.exports = new LoginControllers();

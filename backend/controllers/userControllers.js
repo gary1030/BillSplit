@@ -1,13 +1,9 @@
 const User = require("../models/user");
 
 class UserControllers {
-  constructor() {
-    this.userModel = new User();
-  }
-
   async getUserById(userId) {
     try {
-      const user = await this.userModel.getUserById(userId);
+      const user = await User.getUserById(userId);
       return user;
     } catch (error) {
       console.log(error);
@@ -17,7 +13,7 @@ class UserControllers {
 
   async getUserGroups(userId) {
     try {
-      const groups = await this.userModel.getUserGroups(userId);
+      const groups = await User.getUserGroups(userId);
 
       return { data: groups };
     } catch (error) {
@@ -27,4 +23,4 @@ class UserControllers {
   }
 }
 
-module.exports = UserControllers;
+module.exports = new UserControllers();

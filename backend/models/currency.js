@@ -36,4 +36,4 @@ class Currency {
   }
 }
 
-module.exports = Currency;
+module.exports = new Currency();

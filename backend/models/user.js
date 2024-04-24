@@ -53,8 +53,11 @@ class User {
         },
       },
     });
+    if (!user) {
+      return [];
+    }
     return user.groups;
   }
 }
 
-module.exports = User;
+module.exports = new User();

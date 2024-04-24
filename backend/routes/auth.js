@@ -6,12 +6,11 @@ const LoginControllers = require("../controllers/loginControllers");
 /* POST login. */
 router.post("/login", async function (req, res, next) {
   try {
-    const loginControllers = new LoginControllers();
-    const user = await loginControllers.login(req.body.code);
+    const user = await LoginControllers.login(req.body.code);
     res.send(user);
   } catch (error) {
-    console.log("Unauthorized client: ", error)
-    res.status(401).json({ message: 'Unauthorized!' });
+    console.log("Unauthorized client: ", error);
+    res.status(401).json({ message: "Unauthorized!" });
   }
 });
 

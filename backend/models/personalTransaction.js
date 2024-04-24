@@ -53,4 +53,4 @@ class PersonalTransaction {
   }
 }
 
-module.exports = PersonalTransaction;
+module.exports = new PersonalTransaction();

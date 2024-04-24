@@ -1,12 +1,9 @@
 const Group = require("../models/group");
 
 class GroupControllers {
-  constructor() {
-    this.groupModel = new Group();
-  }
   async createGroup(name, userId) {
     try {
-      const group = await this.groupModel.createGroup(name, userId);
+      const group = await Group.createGroup(name, userId);
       return group;
     } catch (error) {
       console.log(error);
@@ -16,7 +13,7 @@ class GroupControllers {
 
   async getGroupById(groupId, userId) {
     try {
-      const group = await this.groupModel.getGroupById(groupId);
+      const group = await Group.getGroupById(groupId);
       if (!group) {
         return null;
       }
@@ -34,7 +31,7 @@ class GroupControllers {
 
   async isUserInGroup(groupId, userId) {
     try {
-      const group = await this.groupModel.getGroupById(groupId);
+      const group = await Group.getGroupById(groupId);
       if (!group) {
         return false;
       }
@@ -49,4 +46,4 @@ class GroupControllers {
   }
 }
 
-module.exports = GroupControllers;
+module.exports = new GroupControllers();
