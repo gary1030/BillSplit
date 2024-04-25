@@ -54,15 +54,6 @@ class GroupControllers {
       throw error;
     }
   }
-
-  async deleteGroupMember(groupId, userId) {
-    try {
-      const updatedGroup = await Group.deleteGroupMember(groupId, userId);
-      return updatedGroup;
-    } catch (error) {
-      throw error;
-    }
-  }
 }
 
 module.exports = new GroupControllers();
