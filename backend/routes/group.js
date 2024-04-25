@@ -36,6 +36,17 @@ router.get("/:id", async function (req, res, next) {
   }
 });
 
+/* POST join group */
+router.post("/:groupId/members", async function (req, res, next) {
+  try {
+    const updatedGroup = await GroupControllers.addGroupMember(req.params.groupId, req.userId);
+    res.send(updatedGroup);
+  } catch (error) {
+    console.log(error);
+    res.status(401).json({ message: "Unauthorized!" });
+  }
+})
+
 /* POST create group transaction */
 router.post("/:id/transactions", async function (req, res, next) {
   try {

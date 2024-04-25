@@ -1,3 +1,4 @@
+const group = require("../models/group");
 const Group = require("../models/group");
 
 class GroupControllers {
@@ -7,7 +8,7 @@ class GroupControllers {
       return group;
     } catch (error) {
       console.log(error);
-      return null;
+      throw error;
     }
   }
 
@@ -21,11 +22,11 @@ class GroupControllers {
       // check if user is a member of the group
       const isMember = group.memberIds.some((memberId) => memberId === userId);
       if (!isMember) {
-        return null;
+        throw new Error("Unauthorized!");
       }
       return group;
     } catch (error) {
-      throw new Error("Unauthorized!");
+      throw error;
     }
   }
 
@@ -42,6 +43,24 @@ class GroupControllers {
     } catch (error) {
       console.log(error);
       return false;
+    }
+  }
+
+  async addGroupMember(groupId, userId) {
+    try {
+      const updatedGroup = await Group.addGroupMember(groupId, userId);
+      return updatedGroup;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deleteGroupMember(groupId, userId) {
+    try {
+      const updatedGroup = await Group.deleteGroupMember(groupId, userId);
+      return updatedGroup;
+    } catch (error) {
+      throw error;
     }
   }
 }
