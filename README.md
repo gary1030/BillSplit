@@ -13,8 +13,6 @@ BillSplit is an innovative financial management application that facilitates eff
 5. **Repayment Tracking** - Keep track of individual repayments, ensuring that all debts are settled according to previous agreements.
 6. **Personal Ledger** - Allow users to integrate and review all shared expenses across different groups in one place. This feature is ideal for users who need a holistic view of their financial contributions and liabilities, making personal budgeting and financial planning much easier.
 
-
-
 ### Tech Stack
 
 - Frontend: React, Next.js, Chakra UI
@@ -29,7 +27,6 @@ BillSplit is an innovative financial management application that facilitates eff
 cd backend
 docker-compose up -d
 ```
-
 
 ### Backend
 
@@ -49,6 +46,7 @@ JWT_SECRET=abc
 ```sh
 cd backend
 npm install
+npx prisma format
 npx prisma generate
 node ./scripts/createCategory.js
 node ./scripts/createCurrency.js

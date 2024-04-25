@@ -113,6 +113,7 @@ model GroupRepayment {
   payer      User     @relation("payer", fields: [payerId], references: [id])
   receiverId String   @db.ObjectId
   receiver   User     @relation("receiver", fields: [receiverId], references: [id])
+  amount     Float
 }
 
 model UserConcealedTransaction {

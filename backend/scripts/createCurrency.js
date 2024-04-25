@@ -21,10 +21,9 @@ async function main() {
       },
     ];
 
-    const currencyModel = new Currency();
     for (const currency of currencyList) {
       try {
-        await currencyModel.createCurrency(currency.name, currency.value);
+        await Currency.createCurrency(currency.name, currency.value);
         console.log(`Currency ${currency.name} created`);
       } catch (error) {
         console.error(`Error creating currency ${currency.name}:`, error);

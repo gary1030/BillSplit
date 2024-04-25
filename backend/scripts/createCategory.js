@@ -36,10 +36,9 @@ async function main() {
       },
     ];
 
-    const categoryModel = new Category();
     for (const category of categoryList) {
       try {
-        await categoryModel.createCategory(category.name);
+        await Category.createCategory(category.name);
         console.log(`Category ${category.name} created`);
       } catch (error) {
         console.error(`Error creating category ${category.name}:`, error);
