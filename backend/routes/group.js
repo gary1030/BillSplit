@@ -14,7 +14,17 @@ router.post("/", async function (req, res, next) {
       res.status(400).json({ message: "Name is required!" });
       return;
     }
-    const group = await GroupControllers.createGroup(req.body.name, req.userId);
+
+    if (req.body.theme === undefined) {
+      res.status(400).json({ message: "Theme is required!" });
+      return;
+    }
+
+    const group = await GroupControllers.createGroup(
+      req.body.name,
+      req.userId,
+      req.body.theme
+    );
     res.send(group);
   } catch (error) {
     console.log(error);

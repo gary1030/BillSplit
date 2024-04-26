@@ -4,6 +4,7 @@ const { prisma } = require("../prisma");
 model Group {
   id             String             @id @default(auto()) @map("_id") @db.ObjectId
   name           String
+  theme          String
   createdAt      DateTime           @default(now())
   members        User[]             @relation(fields: [memberIds], references: [id], name: "members")
   memberIds      String[]           @db.ObjectId
@@ -13,10 +14,11 @@ model Group {
 */
 
 class Group {
-  async createGroup(name, userId) {
+  async createGroup(name, userId, theme) {
     const group = await prisma.group.create({
       data: {
         name,
+        theme,
         owner: {
           connect: {
             id: userId,

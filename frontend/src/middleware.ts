@@ -7,7 +7,7 @@ export function middleware(req: NextRequest) {
   const accessToken = req.cookies.get("token")?.value;
   if (accessToken) {
     if (req.nextUrl.pathname === "/") {
-      return NextResponse.redirect(new URL("/user", req.url));
+      return NextResponse.redirect(new URL("/group", req.url));
     }
     return NextResponse.next();
   }

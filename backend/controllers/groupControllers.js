@@ -2,9 +2,9 @@ const group = require("../models/group");
 const Group = require("../models/group");
 
 class GroupControllers {
-  async createGroup(name, userId) {
+  async createGroup(name, userId, theme) {
     try {
-      const group = await Group.createGroup(name, userId);
+      const group = await Group.createGroup(name, userId, theme);
       return group;
     } catch (error) {
       console.log(error);
