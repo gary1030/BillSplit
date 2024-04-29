@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import {
   Box,
@@ -13,15 +13,15 @@ import {
   Spinner,
   Text,
   useToast,
-} from '@chakra-ui/react';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { FaImage } from 'react-icons/fa';
-import { RxLetterCaseCapitalize } from 'react-icons/rx';
-import ImageCard from './imageCard';
-import FormHeader from './formHeader';
+} from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { FaImage } from "react-icons/fa";
+import { RxLetterCaseCapitalize } from "react-icons/rx";
+import FormHeader from "./formHeader";
+import ImageCard from "./imageCard";
 
-import createGroup from '@/actions/createGroup';
+import createGroup from "@/actions/createGroup";
 
 interface AddGroupFormProps {
   onClose: () => void;
@@ -29,24 +29,24 @@ interface AddGroupFormProps {
 }
 
 const imagePaths = [
-  'images/food.jpg',
-  'images/mountain.jpg',
-  'images/party.jpg',
-  'images/tokyo.jpg',
+  "images/food.jpg",
+  "images/mountain.jpg",
+  "images/party.jpg",
+  "images/tokyo.jpg",
 ];
 
 export default function AddGroupForm({ onClose, isOpen }: AddGroupFormProps) {
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
   const [selectedTheme, setSelectedTheme] = useState(imagePaths[0]);
   const [isLoading, setIsLoading] = useState(false);
   const toast = useToast();
   const router = useRouter();
 
   const handleSave = async () => {
-    if (!name || name.trim() === '') {
+    if (!name || name.trim() === "") {
       toast({
-        title: 'Name is required',
-        status: 'error',
+        title: "Name is required",
+        status: "error",
         duration: 2000,
         isClosable: true,
       });
@@ -55,16 +55,16 @@ export default function AddGroupForm({ onClose, isOpen }: AddGroupFormProps) {
 
     setIsLoading(true);
 
-    const group = await createGroup(name, selectedTheme);
+    const group = await createGroup(name.trim(), selectedTheme);
     if (!group) {
       toast({
-        title: 'An error occurred',
-        status: 'error',
+        title: "An error occurred",
+        status: "error",
         duration: 2000,
         isClosable: true,
       });
     } else {
-      setName('');
+      setName("");
       router.push(`/group/${group.id}/management`);
       onClose();
     }
