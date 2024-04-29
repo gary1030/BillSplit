@@ -112,4 +112,56 @@ router.get("/:id/transactions", async function (req, res, next) {
   }
 });
 
+/* POST create user concealed transaction */
+router.post("/:id/concealedTransactions", async function (req, res, next) {
+  try {
+    if (req.userId !== req.params.id) {
+      res.status(401).json({ message: "Unauthorized!" });
+      return;
+    }
+
+    const userConcealedTransaction =
+      await TransactionControllers.createUserConcealedTransaction(
+        req.userId,
+        req.body.groupTransactionId
+      );
+    res.send(userConcealedTransaction);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Bad Request" });
+  }
+});
+
+/* GET user concealed transactions */
+router.get("/:id/concealedTransactions", async function (req, res, next) {
+  try {
+    if (req.userId !== req.params.id) {
+      res.status(401).json({ message: "Unauthorized!" });
+      return;
+    }
+
+    // check start time and end time and format
+    if (
+      req.query.startTime === undefined ||
+      req.query.endTime === undefined ||
+      isNaN(Date.parse(req.query.startTime)) ||
+      isNaN(Date.parse(req.query.endTime))
+    ) {
+      res.status(400).json({ message: "Bad Request" });
+      return;
+    }
+
+    const userConcealedTransactions =
+      await TransactionControllers.getUserConcealedTransactionByUserId(
+        req.userId,
+        req.query.startTime,
+        req.query.endTime
+      );
+    res.send(userConcealedTransactions);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Bad Request" });
+  }
+});
+
 module.exports = router;

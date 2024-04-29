@@ -1,6 +1,7 @@
 const PersonalTransaction = require("../models/personalTransaction");
 const GroupTransaction = require("../models/groupTransaction");
 const GroupRepayment = require("../models/groupRepayment");
+const UserConcealedTransaction = require("../models/userConcealedTransaction");
 const Currency = require("../models/currency");
 
 class TransactionControllers {
@@ -152,6 +153,35 @@ class TransactionControllers {
     } catch (error) {
       console.log(error);
       throw error;
+    }
+  }
+  
+  async createUserConcealedTransaction(userId, groupTransactionId) {
+    try {
+      const userConcealedTransaction =
+        await UserConcealedTransaction.createUserConcealedTransaction(
+          userId,
+          groupTransactionId
+        );
+      return userConcealedTransaction;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
+  async getUserConcealedTransactionByUserId(userId, startTime, endTime) {
+    try {
+      const userConcealedTransaction =
+        await UserConcealedTransaction.getUserConcealedTransactionByUserId(
+          userId,
+          startTime,
+          endTime
+        );
+      return { data: userConcealedTransaction };
+    } catch (error) {
+      console.log(error);
+      return null;
     }
   }
 }
