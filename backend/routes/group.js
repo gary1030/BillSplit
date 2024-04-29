@@ -191,4 +191,52 @@ router.get("/:id/repayments", async function (req, res, next) {
   }
 });
 
+/* PUT update group repayments */
+router.put("/:id/repayments/:repaymentId", async function (req, res, next) {
+  try {
+    // check user in group
+    const isUserInGroup = await GroupControllers.isUserInGroup(
+      req.params.id,
+      req.userId
+    );
+    if (!isUserInGroup) {
+      res.status(401).json({ message: "Unauthorized!" });
+      return;
+    }
+
+    // check amount
+    if (req.body.amount <= 0) {
+      res.status(400).json({ message: "Bad Request" });
+      return;
+    }
+
+    // check payerId
+    if (req.body.payerId === "") {
+      res.status(400).json({ message: "Bad Request" });
+      return;
+    }
+
+    // check receiverId
+    if (req.body.receiverId === "") {
+      res.status(400).json({ message: "Bad Request" });
+      return;
+    }
+
+    const updatedGroupRepayment =
+      await TransactionControllers.updateGroupRepayment(
+        req.params.repaymentId,
+        {
+          payerId: req.body.payerId,
+          receiverId: req.body.receiverId,
+          amount: req.body.amount,
+        }
+      );
+
+    res.send(updatedGroupRepayment);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Bad Request" });
+  }
+});
+
 module.exports = router;

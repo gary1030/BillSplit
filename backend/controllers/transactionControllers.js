@@ -131,6 +131,18 @@ class TransactionControllers {
       return null;
     }
   }
+
+  async updateGroupRepayment(repaymentId, data) {
+    try {
+      const updatedGroupRepayment =
+        await GroupRepayment.updateGroupRepaymentById(repaymentId, data);
+
+      return updatedGroupRepayment;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
 }
 
 module.exports = new TransactionControllers();
