@@ -239,4 +239,27 @@ router.put("/:id/repayments/:repaymentId", async function (req, res, next) {
   }
 });
 
+/* DELETE delete group repayments */
+router.delete("/:id/repayments/:repaymentId", async function (req, res, next) {
+  try {
+    // check user in group
+    const isUserInGroup = await GroupControllers.isUserInGroup(
+      req.params.id,
+      req.userId
+    );
+    if (!isUserInGroup) {
+      res.status(401).json({ message: "Unauthorized!" });
+      return;
+    }
+
+    const deleteGroupRepayment =
+      await TransactionControllers.deleteGroupRepayment(req.params.repaymentId);
+
+    res.send(deleteGroupRepayment);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Cannot delete!" });
+  }
+});
+
 module.exports = router;

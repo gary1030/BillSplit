@@ -143,6 +143,17 @@ class TransactionControllers {
       throw error;
     }
   }
+
+  async deleteGroupRepayment(repaymentId) {
+    try {
+      const deleteGroupRepayment =
+        await GroupRepayment.deleteGroupRepaymentById(repaymentId);
+      return deleteGroupRepayment;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
 }
 
 module.exports = new TransactionControllers();
