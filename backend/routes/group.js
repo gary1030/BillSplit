@@ -124,4 +124,26 @@ router.get("/:id/transactions", async function (req, res, next) {
   }
 });
 
+/* GET group repayment */
+router.get("/:id/repayments", async function (req, res, next) {
+  try {
+    const isUserInGroup = await GroupControllers.isUserInGroup(
+      req.params.id,
+      req.userId
+    );
+    if (!isUserInGroup) {
+      res.status(401).json({ message: "Unauthorized!" });
+      return;
+    }
+
+    const groupRepayments = await TransactionControllers.getGroupRepayments(
+      req.params.id
+    );
+    res.send(groupRepayments);
+  } catch (error) {
+    console.log(error);
+    res.status(401).json({ message: "Unauthorized!" });
+  }
+});
+
 module.exports = router;

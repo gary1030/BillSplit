@@ -1,5 +1,6 @@
 const PersonalTransaction = require("../models/personalTransaction");
 const GroupTransaction = require("../models/groupTransaction");
+const GroupRepayment = require("../models/groupRepayment");
 const Currency = require("../models/currency");
 
 class TransactionControllers {
@@ -92,6 +93,21 @@ class TransactionControllers {
         );
 
       return { data: groupTransactions };
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
+  async getGroupRepayments(groupId, startTime, endTime) {
+    try {
+      const groupRepayments = await GroupRepayment.getGroupRepaymentsByGroupId(
+        groupId,
+        startTime,
+        endTime
+      );
+
+      return { data: groupRepayments };
     } catch (error) {
       console.log(error);
       return null;
