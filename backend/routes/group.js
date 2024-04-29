@@ -42,7 +42,7 @@ router.get("/:id", async function (req, res, next) {
     res.send(group);
   } catch (error) {
     console.log(error);
-    res.status(401).json({ message: "Unauthorized!" });
+    res.status(400).json({ message: "Bad Request" });
   }
 });
 
@@ -56,7 +56,7 @@ router.post("/:groupId/join", async function (req, res, next) {
     res.send(updatedGroup);
   } catch (error) {
     console.log(error);
-    res.status(400).json({ message: "Bad Requests" });
+    res.status(400).json({ message: "Bad Request" });
   }
 });
 

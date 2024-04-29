@@ -1,10 +1,18 @@
 "use client";
 
+import fetchGroup from "@/actions/fetchGroup";
 import joinGroup from "@/actions/joinGroup";
-import { Box, Button, Center, Heading, useToast } from "@chakra-ui/react";
+import ImageCard from "@/components/imageCard";
+import { Box, Button, Center, Heading, Text, useToast } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+interface Group {
+  id: string;
+  name: string;
+  theme: string;
+}
 
 export default function InvitePage({
   params,
@@ -14,6 +22,7 @@ export default function InvitePage({
   const router = useRouter();
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [group, setGroup] = useState<Group | null>(null);
 
   const handleJoin = async () => {
     setIsLoading(true);
@@ -40,6 +49,27 @@ export default function InvitePage({
     setIsLoading(false);
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await fetchGroup(params.groupId);
+        setGroup(data);
+      } catch (error: any) {
+        toast({
+          title: error?.message || "An error occurred",
+          status: "error",
+          duration: 2000,
+          isClosable: true,
+        });
+        setTimeout(() => {
+          router.push("/group");
+        }, 500);
+      }
+    };
+
+    fetchData();
+  }, [params.groupId, router, toast]);
+
   return (
     <Center h="100vh">
       <Box
@@ -53,6 +83,22 @@ export default function InvitePage({
         <Heading size="md" mb={4}>
           You&apos;ve been invited to join a group
         </Heading>
+        {group && (
+          <>
+            <Center>
+              <ImageCard
+                path={`../${group?.theme}` || ""}
+                isSelected={false}
+                onClick={() => {}}
+              />
+            </Center>
+            <Box mb={4}>
+              <Text fontSize="lg" as="b">
+                {group?.name}
+              </Text>
+            </Box>
+          </>
+        )}
         <Button isLoading={isLoading} onClick={handleJoin}>
           Join Group
         </Button>
