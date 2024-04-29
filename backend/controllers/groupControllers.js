@@ -22,7 +22,7 @@ class GroupControllers {
       // check if user is a member of the group
       const isMember = group.memberIds.some((memberId) => memberId === userId);
       if (!isMember) {
-        throw new Error("Unauthorized!");
+        return { id: group.id, name: group.name, theme: group.theme };
       }
       return group;
     } catch (error) {
