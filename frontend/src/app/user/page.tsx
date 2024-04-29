@@ -1,3 +1,10 @@
+import Header from "@/components/header";
+
 export default function UserPage() {
-  return <h1>User Page</h1>;
+  return (
+    <>
+      <Header loggedIn={true} isgroup={false} />
+      <h1>User Page</h1>
+    </>
+  );
 }
