@@ -99,6 +99,24 @@ class TransactionControllers {
     }
   }
 
+  async createGroupRepayment(userId, groupId, payerId, receiverId, amount) {
+    try {
+      const currencyId = await Currency.getDefaultCurrencyId();
+      const groupRepayment = await GroupRepayment.createGroupRepayment({
+        userId,
+        groupId,
+        currencyId,
+        payerId,
+        receiverId,
+        amount,
+      });
+      return groupRepayment;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
   async getGroupRepayments(groupId, startTime, endTime) {
     try {
       const groupRepayments = await GroupRepayment.getGroupRepaymentsByGroupId(
