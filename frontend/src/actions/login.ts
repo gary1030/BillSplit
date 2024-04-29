@@ -19,5 +19,5 @@ export default async function login(code: string) {
   } catch (error) {
     console.error("Failed to login:", error);
   }
-  redirect("/user");
+  redirect("/group");
 }

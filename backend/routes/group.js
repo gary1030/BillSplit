@@ -47,7 +47,7 @@ router.get("/:id", async function (req, res, next) {
 });
 
 /* POST join group */
-router.post("/:groupId/members", async function (req, res, next) {
+router.post("/:groupId/join", async function (req, res, next) {
   try {
     const updatedGroup = await GroupControllers.addGroupMember(
       req.params.groupId,
@@ -56,7 +56,7 @@ router.post("/:groupId/members", async function (req, res, next) {
     res.send(updatedGroup);
   } catch (error) {
     console.log(error);
-    res.status(401).json({ message: "Unauthorized!" });
+    res.status(400).json({ message: "Bad Requests" });
   }
 });
 

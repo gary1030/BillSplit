@@ -19,5 +19,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/user", "/group", "/"],
+  matcher: ["/user/:path*", "/group/:path*", "/invite/:path*", "/"],
 };
