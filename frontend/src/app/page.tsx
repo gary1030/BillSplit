@@ -6,7 +6,7 @@ export default function Home() {
     <div>
       <h1>Home</h1>
       <Landing />
-      <GoogleSignInButton>Continue with Google</GoogleSignInButton>
+      <GoogleSignInButton></GoogleSignInButton>
     </div>
   );
 }
