@@ -36,6 +36,7 @@ class GroupTransaction {
         totalAmount: data.totalAmount,
         payerDetails: data.payerDetails,
         splitDetails: data.splitDetails,
+        note: data?.note || "",
       },
     });
 

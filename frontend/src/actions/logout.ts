@@ -6,5 +6,6 @@ export default async function logout() {
   cookies().delete("token");
   cookies().delete("username");
   cookies().delete("email");
+  cookies().delete("userId");
   redirect("/");
 }

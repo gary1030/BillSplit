@@ -19,6 +19,9 @@ export default function AddGroupCard() {
           transform: "scale(1.03)",
           transition: "all 0.1s",
         }}
+        borderColor="black"
+        borderWidth="2px"
+        borderRadius="lg"
       >
         <CardBody display="flex" flexDirection="column" justifyContent="center">
           <Center>

@@ -262,4 +262,28 @@ router.delete("/:id/repayments/:repaymentId", async function (req, res, next) {
   }
 });
 
+/* Get personal statistics */
+router.get("/:id/personal-stat", async function (req, res, next) {
+  try {
+    const isUserInGroup = await GroupControllers.isUserInGroup(
+      req.params.id,
+      req.userId
+    );
+    if (!isUserInGroup) {
+      res.status(401).json({ message: "Unauthorized!" });
+      return;
+    }
+
+    const personalStatistics =
+      await TransactionControllers.getPersonalStatisticsByGroup(
+        req.userId,
+        req.params.id
+      );
+    res.send(personalStatistics);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Bad Request" });
+  }
+});
+
 module.exports = router;

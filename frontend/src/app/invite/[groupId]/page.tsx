@@ -1,7 +1,7 @@
 "use client";
 
-import fetchGroup from "@/actions/fetchGroup";
-import joinGroup from "@/actions/joinGroup";
+import fetchGroup from "@/actions/group/fetchGroup";
+import joinGroup from "@/actions/group/joinGroup";
 import ImageCard from "@/components/imageCard";
 import { Box, Button, Center, Heading, Text, useToast } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";

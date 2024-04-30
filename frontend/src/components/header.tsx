@@ -1,18 +1,18 @@
 "use client";
 
-import { useState } from "react";
 import serverLogout from "@/actions/logout";
 import {
-  Box,
-  Flex,
-  Text,
-  Image,
-  Button,
   Avatar,
-  Tabs,
-  TabList,
+  Box,
+  Button,
+  Flex,
+  Image,
   Tab,
+  TabList,
+  Tabs,
+  Text,
 } from "@chakra-ui/react";
+import { useState } from "react";
 
 interface HeaderProps {
   loggedIn: boolean;
@@ -41,6 +41,9 @@ export default function Header({ loggedIn, isgroup }: HeaderProps) {
       display="flex"
       alignItems="center"
       borderBottom="2px"
+      pos="sticky"
+      top="0"
+      zIndex="10"
     >
       <a href={loggedIn ? "/group" : "/"}>
         <Flex alignItems="center" cursor="pointer">

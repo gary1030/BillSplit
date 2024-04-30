@@ -1,6 +1,6 @@
-import Header from "@/components/header";
 import GoogleSignInButton from "@/components/auth/googleSignInButton";
-import { Box, Flex, Center, Text, Image } from "@chakra-ui/react";
+import Header from "@/components/header";
+import { Box, Center, Flex, Image, Text } from "@chakra-ui/react";
 
 export default function Home() {
   return (
@@ -8,14 +8,14 @@ export default function Home() {
       <Header loggedIn={false} isgroup={false} />
       <Flex
         direction={{ base: "column", md: "row" }}
-        w="full"
+        w="93%"
         align="center"
         justify="center"
-        mt="100"
+        mt="40px"
       >
-        <Box flex="3" textAlign="left" marginLeft="3em">
+        <Box flex="3" textAlign="left" marginLeft="5%" mb="20px">
           <Text
-            fontSize="5xl"
+            fontSize={{ base: "4xl", md: "5xl" }}
             as="b"
             textShadow="2px 2px 4px rgba(0, 0, 0, 0.3)"
           >
@@ -23,14 +23,19 @@ export default function Home() {
             <br /> Simplifying shared expense
           </Text>
         </Box>
-        <Image
-          src="images/landingPageImage.png"
-          boxSize="30em"
-          marginRight="3em"
-        />
+        <Box w="400px">
+          <Center>
+            <Image
+              src="images/landingPageImage.png"
+              boxSize="350px"
+              alt="Landing Page Image"
+              borderRadius={10}
+            />
+          </Center>
+        </Box>
       </Flex>
       <Center>
-        <Box mt="55" w="full">
+        <Box mt="40px" w="full">
           <GoogleSignInButton />
         </Box>
       </Center>

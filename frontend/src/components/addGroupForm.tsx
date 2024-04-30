@@ -21,7 +21,7 @@ import { RxLetterCaseCapitalize } from "react-icons/rx";
 import FormHeader from "./formHeader";
 import ImageCard from "./imageCard";
 
-import createGroup from "@/actions/createGroup";
+import createGroup from "@/actions/group/createGroup";
 
 interface AddGroupFormProps {
   onClose: () => void;

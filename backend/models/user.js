@@ -49,6 +49,7 @@ class User {
           select: {
             id: true,
             name: true,
+            theme: true,
           },
         },
       },

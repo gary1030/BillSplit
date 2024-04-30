@@ -16,6 +16,7 @@ export default async function login(code: string) {
     cookies().set("token", data.token);
     cookies().set("username", data.username);
     cookies().set("email", data.email);
+    cookies().set("userId", data.id);
   } catch (error) {
     console.error("Failed to login:", error);
   }

@@ -155,7 +155,7 @@ class TransactionControllers {
       throw error;
     }
   }
-  
+
   async createUserConcealedTransaction(userId, groupTransactionId) {
     try {
       const userConcealedTransaction =
@@ -182,6 +182,34 @@ class TransactionControllers {
     } catch (error) {
       console.log(error);
       return null;
+    }
+  }
+
+  async getPersonalStatisticsByGroup(userId, groupId) {
+    try {
+      const groupTransactions =
+        await GroupTransaction.getGroupTransactionsByGroupId(groupId);
+      let share = 0;
+      let balance = 0;
+
+      groupTransactions.forEach((transaction) => {
+        transaction.payerDetails.forEach((payerDetail) => {
+          if (payerDetail.payerId === userId) {
+            balance -= payerDetail.amount;
+          }
+        });
+
+        transaction.splitDetails.forEach((splitDetail) => {
+          if (splitDetail.sharerId === userId) {
+            balance += splitDetail.amount;
+            share += splitDetail.amount;
+          }
+        });
+      });
+
+      return { group_id: groupId, share, balance };
+    } catch (error) {
+      throw error;
     }
   }
 }
