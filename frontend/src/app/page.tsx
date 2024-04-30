@@ -13,7 +13,7 @@ export default function Home() {
         justify="center"
         mt="100"
       >
-        <Box flex="3" textAlign="left" marginLeft="5em">
+        <Box flex="3" textAlign="left" marginLeft="3em">
           <Text
             fontSize="5xl"
             as="b"
@@ -26,7 +26,7 @@ export default function Home() {
         <Image
           src="images/landingPageImage.png"
           boxSize="30em"
-          marginRight="5em"
+          marginRight="3em"
         />
       </Flex>
       <Center>
