@@ -1,5 +1,5 @@
-import Header from "@/components/header";
 import AddGroupCard from "@/components/addGroupCard";
+import Header from "@/components/header";
 import { Box, Center, Container, SimpleGrid } from "@chakra-ui/react";
 
 export default function GroupPage() {
