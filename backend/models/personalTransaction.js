@@ -1,4 +1,5 @@
 const { prisma } = require("../prisma");
+const { getEndOfDate } = require("../utils/getEndOfDate");
 
 /*
 model PersonalTransaction {
@@ -45,7 +46,7 @@ class PersonalTransaction {
         userId: userId,
         createdAt: {
           gte: new Date(startTime),
-          lte: new Date(endTime),
+          lte: getEndOfDate(endTime),
         },
       },
     });
