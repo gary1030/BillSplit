@@ -1,4 +1,5 @@
 const { prisma } = require("../prisma");
+const { getEndOfDate } = require("../utils/getEndOfDate");
 
 /*
 model UserConcealedTransaction {
@@ -30,7 +31,7 @@ class UserConcealedTransaction {
           groupTransaction: {
             createdAt: {
               gte: new Date(startTime),
-              lte: new Date(endTime),
+              lte: getEndOfDate(endTime),
             },
           },
         },
