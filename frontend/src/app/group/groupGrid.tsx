@@ -3,7 +3,8 @@ import fetchUserGroups from "@/actions/fetchUserGroups";
 import fetchGroupPersonalStat from "@/actions/group/fetchGroupPersonalStat";
 import AddGroupCard from "@/components/addGroupCard";
 import GroupCard from "@/components/groupCard";
-import { Box, Center, SimpleGrid, Spinner } from "@chakra-ui/react";
+import Loading from "@/components/loading";
+import { Box, Center, SimpleGrid } from "@chakra-ui/react";
 import { useQueries, useQuery } from "@tanstack/react-query";
 
 interface GroupPersonalStat {
@@ -46,7 +47,7 @@ export default function GroupGrid() {
   }, {});
 
   if (isLoading) {
-    return <Spinner />;
+    return <Loading />;
   }
 
   return (
