@@ -46,6 +46,41 @@ router.get("/:id", async function (req, res, next) {
   }
 });
 
+/* PUT edit group */
+router.put("/:id", async function (req, res, next) {
+  try {
+    if (req.body.name === undefined) {
+      res.status(400).json({ message: "Name is required!" });
+      return;
+    }
+
+    if (req.body.theme === undefined) {
+      res.status(400).json({ message: "Theme is required!" });
+      return;
+    }
+
+    // check user in group
+    const isUserInGroup = await GroupControllers.isUserInGroup(
+      req.params.id,
+      req.userId
+    );
+    if (!isUserInGroup) {
+      res.status(401).json({ message: "Unauthorized!" });
+      return;
+    }
+
+    const updatedGroup = await GroupControllers.editGroup(
+      req.params.id,
+      req.body.name,
+      req.body.theme
+    );
+    res.send(updatedGroup);
+  } catch (error) {
+    console.log(error);
+    res.status(500);
+  }
+});
+
 /* POST join group */
 router.post("/:groupId/join", async function (req, res, next) {
   try {

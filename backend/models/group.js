@@ -83,6 +83,18 @@ class Group {
     });
     return updatedGroup;
   }
+  async editGroup(groupId, name, theme) {
+    const updatedGroup = await prisma.group.update({
+      where: {
+        id: groupId,
+      },
+      data: {
+        name,
+        theme,
+      },
+    });
+    return updatedGroup;
+  }
 }
 
 module.exports = new Group();

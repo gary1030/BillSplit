@@ -12,6 +12,15 @@ class GroupControllers {
     }
   }
 
+  async editGroup(groupId, name, theme) {
+    try {
+      const updatedGroup = await Group.editGroup(groupId, name, theme);
+      return updatedGroup;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getGroupById(groupId, userId) {
     try {
       const group = await Group.getGroupById(groupId);
