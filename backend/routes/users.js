@@ -12,6 +12,26 @@ router.get("/", function (req, res, next) {
   res.send("respond with a resource user");
 });
 
+/* GET user in batch */
+router.get("/batch", async function (req, res, next) {
+  try {
+    // check ids is not empty
+    if (req.query.ids === undefined) {
+      res.status(400).json({ message: "Bad Request" });
+      return;
+    }
+
+    // transform ids to array
+    const ids = req.query.ids.split(",");
+
+    const users = await UserControllers.getUsersInBatch(ids);
+    res.send(users);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Bad Request" });
+  }
+});
+
 /* GET user by id */
 router.get("/:id", async function (req, res, next) {
   try {

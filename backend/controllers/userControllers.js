@@ -6,8 +6,16 @@ class UserControllers {
       const user = await User.getUserById(userId);
       return user;
     } catch (error) {
-      console.log(error);
-      return null;
+      throw error;
+    }
+  }
+
+  async getUsersInBatch(ids) {
+    try {
+      const users = await User.getUsersInBatch(ids);
+      return { users };
+    } catch (error) {
+      throw error;
     }
   }
 

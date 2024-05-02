@@ -39,6 +39,22 @@ class User {
     return user;
   }
 
+  async getUsersInBatch(ids) {
+    const users = await prisma.user.findMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+      select: {
+        id: true,
+        username: true,
+        email: true,
+      },
+    });
+    return users;
+  }
+
   async getUserGroups(userId) {
     const user = await prisma.user.findUnique({
       where: {

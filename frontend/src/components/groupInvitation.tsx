@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
 import {
+  Box,
   Heading,
-  Text,
-  InputGroup,
+  IconButton,
   Input,
+  InputGroup,
   InputRightElement,
   Stack,
-  Box,
-  IconButton,
-} from '@chakra-ui/react';
+  Text,
+} from "@chakra-ui/react";
 
-import { MdContentCopy } from 'react-icons/md';
+import { MdContentCopy } from "react-icons/md";
 
 interface GroupInvitationProps {
   groupId: string;
@@ -29,11 +29,11 @@ export default function GroupInvitation({ groupId }: GroupInvitationProps) {
       <Heading size="lg" mb="10px">
         Invitation
       </Heading>
-      <Stack direction={['column', 'row']} spacing="15px">
+      <Stack direction={["column", "row"]} spacing="15px">
         <Box minW="240px" maxW="240px" lineHeight="40px">
           <Text as="b">Invite friends through this link:</Text>
         </Box>
-        <Box>
+        <Box flex="1">
           <InputGroup size="md">
             <Input pr="3rem" isReadOnly={true} value={inviteLink} />
             <InputRightElement width="3.5rem">
