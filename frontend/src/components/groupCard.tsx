@@ -10,6 +10,7 @@ import {
   Image,
   Text,
 } from "@chakra-ui/react";
+import { useRouter } from 'next/navigation'
 
 interface GroupCardProps {
   groupId: string;
@@ -26,6 +27,7 @@ export default function GroupCard({
   share,
   balance,
 }: GroupCardProps) {
+  const router = useRouter();
   let status = "Payable";
   let bgColor = "red.300";
   if (balance === 0) {
@@ -42,7 +44,7 @@ export default function GroupCard({
         align="center"
         w="220px"
         h="270px"
-        onClick={() => {}}
+        onClick={() => router.push(`/group/${groupId}/management`)}
         _hover={{
           cursor: "pointer",
           transform: "scale(1.03)",

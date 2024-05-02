@@ -48,12 +48,13 @@ export default function Header({ loggedIn, isgroup }: HeaderProps) {
       <a href={loggedIn ? "/group" : "/"}>
         <Flex alignItems="center" cursor="pointer">
           <Image
-            src="images/icon.svg"
+            src="/images/icon.svg"
             boxSize="50px"
             ml={3}
             border="2px"
             borderRadius={15}
             borderColor="black"
+            alt="Icon"
           />
           <Text fontSize="3xl" fontWeight="bold" ml={5}>
             BillSplit

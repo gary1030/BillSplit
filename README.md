@@ -24,7 +24,6 @@ BillSplit is an innovative financial management application that facilitates eff
 ### Start Local Database
 
 ```sh
-cd backend
 docker-compose up -d
 ```
 
