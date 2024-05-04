@@ -3,7 +3,7 @@
 import { Card, CardBody, Center, Text, useDisclosure } from "@chakra-ui/react";
 import { MdAddCircleOutline } from "react-icons/md";
 
-import AddGroupForm from "./addGroupForm";
+import GroupForm from "./groupForm";
 
 export default function AddGroupCard() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -32,7 +32,7 @@ export default function AddGroupCard() {
           </Text>
         </CardBody>
       </Card>
-      <AddGroupForm isOpen={isOpen} onClose={onClose} />
+      <GroupForm isOpen={isOpen} onClose={onClose} mode="create" />
     </>
   );
 }
