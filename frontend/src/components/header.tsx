@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import serverLogout from "@/actions/logout";
 import {
   Avatar,
@@ -12,7 +13,6 @@ import {
   Tabs,
   Text,
 } from "@chakra-ui/react";
-import { useState } from "react";
 
 interface HeaderProps {
   loggedIn: boolean;
@@ -20,8 +20,17 @@ interface HeaderProps {
 }
 
 export default function Header({ loggedIn, isgroup }: HeaderProps) {
-  const name = "user";
-  const avatarUrl = `https://api.dicebear.com/8.x/open-peeps/svg?seed=${name}`;
+  const [userName, setUserName] = useState("");
+  useEffect(() => {
+    const getUserNameFromCookie = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("username="))
+      ?.split("=")[1];
+    if (getUserNameFromCookie) {
+      setUserName(getUserNameFromCookie);
+    }
+  });
+  const avatarUrl = `https://api.dicebear.com/8.x/open-peeps/svg?seed=${userName}`;
 
   const [showLogoutButton, setShowLogoutButton] = useState(false);
   const handleAvatarClick = () => {
@@ -81,7 +90,7 @@ export default function Header({ loggedIn, isgroup }: HeaderProps) {
           </Box>
           <Box ml="auto" mr={3} position="relative">
             <Avatar
-              name={name}
+              name={userName}
               src={avatarUrl}
               onClick={handleAvatarClick}
               style={{ cursor: "pointer" }}
