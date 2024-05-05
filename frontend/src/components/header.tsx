@@ -2,7 +2,16 @@
 
 import { useState, useEffect } from "react";
 import serverLogout from "@/actions/logout";
-import { Avatar, Box, Button, Flex, Image, Text, Link } from "@chakra-ui/react";
+import {
+  Avatar,
+  Box,
+  Button,
+  Flex,
+  Image,
+  Text,
+  Link,
+  Hide,
+} from "@chakra-ui/react";
 
 interface HeaderProps {
   loggedIn: boolean;
@@ -50,19 +59,22 @@ export default function Header({ loggedIn, isgroup }: HeaderProps) {
             src="/images/icon.svg"
             boxSize="50px"
             ml={3}
+            mr={3}
             border="2px"
             borderRadius={15}
             borderColor="black"
             alt="Icon"
           />
-          <Text fontSize="3xl" fontWeight="bold" ml={5}>
-            BillSplit
-          </Text>
+          <Hide below="sm">
+            <Text fontSize="3xl" fontWeight="bold" ml={5} mr={5}>
+              BillSplit
+            </Text>
+          </Hide>
         </Flex>
       </Link>
       {loggedIn && (
         <>
-          <Box ml={5}>
+          <Box>
             <Link href="/user">
               <Button
                 variant="ghost"
@@ -71,7 +83,8 @@ export default function Header({ loggedIn, isgroup }: HeaderProps) {
                 color={isgroup ? "gray.500" : "black"}
                 _hover={{ bg: "gray.300" }}
                 _focus={{ outline: "none", boxShadow: "none" }}
-                mr={5}
+                px={2}
+                mr={1}
               >
                 Personal
               </Button>
@@ -84,12 +97,13 @@ export default function Header({ loggedIn, isgroup }: HeaderProps) {
                 color={isgroup ? "black" : "gray.500"}
                 _hover={{ bg: "gray.300" }}
                 _focus={{ outline: "none", boxShadow: "none" }}
+                px={2}
               >
                 Groups
               </Button>
             </Link>
           </Box>
-          <Box ml="auto" mr={3} position="relative">
+          <Box ml="auto" mr={2} position="relative">
             <Avatar
               name={userName}
               src={avatarUrl}
