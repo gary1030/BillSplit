@@ -14,5 +14,14 @@ services:
     volumes:
       - 'mongo-db:/bitnami/mongodb'
 
+  # backend:
+  #   build: ./backend
+  #   ports:
+  #     - '8000:8000'
+  #   env_file:
+  #     - ./backend/.env
+  #   depends_on:
+  #     - database
+
 volumes:
   mongo-db:

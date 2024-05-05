@@ -35,7 +35,7 @@ docker-compose up -d
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 
-DATABASE_URL=mongodb://root:prisma@localhost:27017/BillSplit?authSource=admin
+DATABASE_URL=mongodb://root:prisma@localhost:27017/BillSplit?authSource=admin&directconnection=true
 
 JWT_SECRET=abc
 ```
@@ -52,13 +52,20 @@ node ./scripts/createCurrency.js
 npm run dev
 ```
 
+3. (Alternative) Start app using docker
+
+```sh
+docker build -t billsplit-be .
+docker run --network billsplit_default -p 8000:8000 --name billsplit-be --env-file .env billsplit-be
+```
+
 ### Frontend
 
 1. Prepare `.env` under `frontend`
 
 ```txt
 NEXT_PUBLIC_GOOGLE_CLIENT_ID=
-NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
+BACKEND_URL=http://localhost:8000
 ```
 
 2. Step
@@ -67,4 +74,11 @@ NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
 cd frontend
 npm install
 npm run dev
+```
+
+3. (Alternative) Start app using docker
+
+```sh
+docker build -t billsplit-fe .
+docker run --network billsplit_default -p 3000:3000 --name billsplit-fe --env-file .env billsplit-fe
 ```

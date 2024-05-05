@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 async function httpAgent(url: string, options: RequestInit) {
-  const fullUrl = `${process.env.NEXT_PUBLIC_BACKEND_URL}${url}`;
+  const fullUrl = `${process.env.BACKEND_URL}${url}`;
   const response = await fetch(fullUrl, options);
 
   // if unauthorized, clear cookies and redirect to login page
