@@ -2,17 +2,7 @@
 
 import { useState, useEffect } from "react";
 import serverLogout from "@/actions/logout";
-import {
-  Avatar,
-  Box,
-  Button,
-  Flex,
-  Image,
-  Tab,
-  TabList,
-  Tabs,
-  Text,
-} from "@chakra-ui/react";
+import { Avatar, Box, Button, Flex, Image, Text, Link } from "@chakra-ui/react";
 
 interface HeaderProps {
   loggedIn: boolean;
@@ -54,7 +44,7 @@ export default function Header({ loggedIn, isgroup }: HeaderProps) {
       top="0"
       zIndex="10"
     >
-      <a href={loggedIn ? "/group" : "/"}>
+      <Link href={loggedIn ? "/group" : "/"} style={{ textDecoration: "none" }}>
         <Flex alignItems="center" cursor="pointer">
           <Image
             src="/images/icon.svg"
@@ -69,24 +59,35 @@ export default function Header({ loggedIn, isgroup }: HeaderProps) {
             BillSplit
           </Text>
         </Flex>
-      </a>
+      </Link>
       {loggedIn && (
         <>
           <Box ml={5}>
-            <Tabs variant="unstyled" defaultIndex={isgroup ? 1 : 0}>
-              <TabList>
-                <a href="/user">
-                  <Tab _selected={{ color: "blue.600" }} fontWeight="bold">
-                    Personal
-                  </Tab>
-                </a>
-                <a href="/group">
-                  <Tab _selected={{ color: "blue.600" }} fontWeight="bold">
-                    Groups
-                  </Tab>
-                </a>
-              </TabList>
-            </Tabs>
+            <Link href="/user">
+              <Button
+                variant="ghost"
+                colorScheme="teal"
+                fontWeight="bold"
+                color={isgroup ? "gray.500" : "black"}
+                _hover={{ bg: "gray.300" }}
+                _focus={{ outline: "none", boxShadow: "none" }}
+                mr={5}
+              >
+                Personal
+              </Button>
+            </Link>
+            <Link href="/group">
+              <Button
+                variant="ghost"
+                colorScheme="teal"
+                fontWeight="bold"
+                color={isgroup ? "black" : "gray.500"}
+                _hover={{ bg: "gray.300" }}
+                _focus={{ outline: "none", boxShadow: "none" }}
+              >
+                Groups
+              </Button>
+            </Link>
           </Box>
           <Box ml="auto" mr={3} position="relative">
             <Avatar
