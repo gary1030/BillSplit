@@ -1,4 +1,5 @@
 import Header from "@/components/header";
+import Footer from "@/components/footer";
 import { Container } from "@chakra-ui/react";
 import GroupManagement from "./groupManagement";
 
@@ -18,6 +19,7 @@ export default function GroupManagementPage({
       >
         <GroupManagement groupId={params.groupId} />
       </Container>
+      <Footer />
     </>
   );
 }
