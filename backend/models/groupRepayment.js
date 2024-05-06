@@ -1,5 +1,4 @@
 const { prisma } = require("../prisma");
-const { getEndOfDate } = require("../utils/getEndOfDate");
 
 /*
 model GroupRepayment {
