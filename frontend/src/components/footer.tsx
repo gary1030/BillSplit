@@ -32,6 +32,7 @@ export default function Footer() {
       pos={isContentLong ? "static" : "fixed"}
       bottom={isContentLong ? "auto" : "0"}
       mt="50px"
+      h={45}
     >
       <Hide below="sm">
         <Text fontSize="sm" ml={5} mr={5}>

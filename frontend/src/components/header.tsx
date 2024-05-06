@@ -43,6 +43,7 @@ export default function Header({ loggedIn, isgroup }: HeaderProps) {
   return (
     <Flex
       w="full"
+      h={65}
       bg="gray.200"
       color="black"
       p={2}
@@ -79,10 +80,9 @@ export default function Header({ loggedIn, isgroup }: HeaderProps) {
             <Link href="/user">
               <Button
                 variant="ghost"
-                colorScheme="teal"
+                colorScheme="gray"
                 fontWeight="bold"
                 color={isgroup ? "gray.500" : "black"}
-                _hover={{ bg: "gray.300" }}
                 _focus={{ outline: "none", boxShadow: "none" }}
                 px={2}
                 mr={1}
@@ -93,10 +93,9 @@ export default function Header({ loggedIn, isgroup }: HeaderProps) {
             <Link href="/group">
               <Button
                 variant="ghost"
-                colorScheme="teal"
+                colorScheme="gray"
                 fontWeight="bold"
                 color={isgroup ? "black" : "gray.500"}
-                _hover={{ bg: "gray.300" }}
                 _focus={{ outline: "none", boxShadow: "none" }}
                 px={2}
               >

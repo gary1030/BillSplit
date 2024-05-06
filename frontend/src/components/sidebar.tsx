@@ -1,0 +1,103 @@
+"use client";
+
+import { Container, Button, Flex, Link, Text, Hide } from "@chakra-ui/react";
+import { IoSettingsOutline } from "react-icons/io5";
+import { GoNote } from "react-icons/go";
+import { MdPieChart, MdOutlineMonetizationOn } from "react-icons/md";
+import { useState, useEffect } from "react";
+
+interface SidebarProps {
+  groupId: string;
+}
+
+export default function Sidebar({ groupId }: SidebarProps) {
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+  if (!isClient) {
+    return null;
+  }
+  const managementLink = `${window.location.origin}/group/${groupId}/management`;
+  const recordLink = `${window.location.origin}/group/${groupId}/record`;
+  const analysisLink = `${window.location.origin}/group/${groupId}/analysis`;
+  const balanceLink = `${window.location.origin}/group/${groupId}/balance`;
+
+  return (
+    <Flex
+      w="fit-content"
+      h="full"
+      borderRight="2px"
+      pos="fixed"
+      top={65}
+      p={1}
+      bg="gray.200"
+      color="black"
+      display="flex"
+      flexDirection={"column"}
+      zIndex="-1"
+    >
+      <Link href={managementLink}>
+        <Button
+          variant="ghost"
+          colorScheme="gray"
+          size="lg"
+          px={2}
+          w="full"
+          justifyContent={"flex-start"}
+          mt={5}
+        >
+          <IoSettingsOutline size={30}></IoSettingsOutline>
+          <Hide below="1200px">
+            <Text ml={2}>Management</Text>
+          </Hide>
+        </Button>
+      </Link>
+      <Link href={recordLink}>
+        <Button
+          variant="ghost"
+          colorScheme="gray"
+          size="lg"
+          px={2}
+          w="full"
+          justifyContent={"flex-start"}
+        >
+          <GoNote size={30}></GoNote>
+          <Hide below="1200px">
+            <Text ml={2}>Record</Text>
+          </Hide>
+        </Button>
+      </Link>
+      <Link href={analysisLink}>
+        <Button
+          variant="ghost"
+          colorScheme="gray"
+          size="lg"
+          px={2}
+          w="full"
+          justifyContent={"flex-start"}
+        >
+          <MdPieChart size={30}></MdPieChart>
+          <Hide below="1200px">
+            <Text ml={2}>Analysis</Text>
+          </Hide>
+        </Button>
+      </Link>
+      <Link href={balanceLink}>
+        <Button
+          variant="ghost"
+          colorScheme="gray"
+          size="lg"
+          px={2}
+          w="full"
+          justifyContent={"flex-start"}
+        >
+          <MdOutlineMonetizationOn size={30}></MdOutlineMonetizationOn>
+          <Hide below="1200px">
+            <Text ml={2}>Balance</Text>
+          </Hide>
+        </Button>
+      </Link>
+    </Flex>
+  );
+}
