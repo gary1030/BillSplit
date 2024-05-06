@@ -110,13 +110,13 @@ router.post("/:id/transactions", async function (req, res, next) {
 
     // check amount
     if (req.body.amount <= 0) {
-      res.status(400).json({ message: "Bad Request" });
+      res.status(400).json({ message: "Amount should be a positive number!" });
       return;
     }
 
     // check title
     if (req.body.title === "") {
-      res.status(400).json({ message: "Bad Request" });
+      res.status(400).json({ message: "Title is required!" });
       return;
     }
 
@@ -133,7 +133,7 @@ router.post("/:id/transactions", async function (req, res, next) {
     res.send(groupTransaction);
   } catch (error) {
     console.log(error);
-    res.status(400).json({ message: "Bad Request" });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -198,11 +198,6 @@ router.post("/:id/repayments", async function (req, res, next) {
       res.status(400).json({ message: "Amount must be a positive number!" });
       return;
     }
-    // amount must be non-empty
-    if (req.body.amount === undefined) {
-      res.status(400).json({ message: "Amount is required!" });
-      return;
-    }
 
     // check payerId: payerId must not be empty
     if (req.body.payerId === undefined) {
@@ -217,7 +212,7 @@ router.post("/:id/repayments", async function (req, res, next) {
     }
 
     const groupRepayment = await TransactionControllers.createGroupRepayment(
-      req.groupId,
+      req.params.id,
       req.body.payerId,
       req.body.receiverId,
       req.body.amount
@@ -225,7 +220,7 @@ router.post("/:id/repayments", async function (req, res, next) {
     res.send(groupRepayment);
   } catch (error) {
     console.log(error);
-    res.status(400).json({ message: "Bad Request" });
+    res.status(400).json({ message: error.message });
   }
 });
 
@@ -270,11 +265,6 @@ router.put("/:id/repayments/:repaymentId", async function (req, res, next) {
       res.status(400).json({ message: "Amount must be a positive number!" });
       return;
     }
-    // amount must be non-empty
-    if (req.body.amount === undefined) {
-      res.status(400).json({ message: "Amount is required!" });
-      return;
-    }
 
     // check payerId: payerId must not be empty
     if (req.body.payerId === undefined) {
@@ -290,18 +280,17 @@ router.put("/:id/repayments/:repaymentId", async function (req, res, next) {
 
     const updatedGroupRepayment =
       await TransactionControllers.updateGroupRepayment(
-        repaymentId,
-        groupId,
-        currencyId,
-        payerId,
-        receiverId,
-        amount
+        req.params.repaymentId,
+        req.params.id,
+        req.body.payerId,
+        req.body.receiverId,
+        req.body.amount
       );
 
     res.send(updatedGroupRepayment);
   } catch (error) {
     console.log(error);
-    res.status(400).json({ message: "Bad Request" });
+    res.status(400).json({ message: error.message });
   }
 });
 

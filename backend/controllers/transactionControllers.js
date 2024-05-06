@@ -103,17 +103,17 @@ class TransactionControllers {
   async createGroupRepayment(groupId, payerId, receiverId, amount) {
     try {
       const currencyId = await Currency.getDefaultCurrencyId();
-      const groupRepayment = await GroupRepayment.createGroupRepayment({
+      const groupRepayment = await GroupRepayment.createGroupRepayment(
         groupId,
         currencyId,
         payerId,
         receiverId,
-        amount,
-      });
+        amount
+      );
       return groupRepayment;
     } catch (error) {
       console.log(error);
-      return null;
+      throw error;
     }
   }
 
