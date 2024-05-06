@@ -172,6 +172,26 @@ router.post("/:id/repayments", async function (req, res, next) {
       return;
     }
 
+    // check payer in group
+    const isPayerInGroup = await GroupControllers.isUserInGroup(
+      req.params.id,
+      req.body.payerId
+    );
+    if (!isPayerInGroup) {
+      res.status(400).json({ message: "Payer is not in group!" });
+      return;
+    }
+
+    // check receiver in group
+    const isReceiverInGroup = await GroupControllers.isUserInGroup(
+      req.params.id,
+      req.body.receiverId
+    );
+    if (!isReceiverInGroup) {
+      res.status(400).json({ message: "Receiver is not in group!" });
+      return;
+    }
+
     // check amount
     // amount must be positive
     if (req.body.amount <= 0) {
