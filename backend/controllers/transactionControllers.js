@@ -100,11 +100,10 @@ class TransactionControllers {
     }
   }
 
-  async createGroupRepayment(userId, groupId, payerId, receiverId, amount) {
+  async createGroupRepayment(groupId, payerId, receiverId, amount) {
     try {
       const currencyId = await Currency.getDefaultCurrencyId();
       const groupRepayment = await GroupRepayment.createGroupRepayment({
-        userId,
         groupId,
         currencyId,
         payerId,
@@ -114,16 +113,14 @@ class TransactionControllers {
       return groupRepayment;
     } catch (error) {
       console.log(error);
-      throw error;
+      return null;
     }
   }
 
-  async getGroupRepayments(groupId, startTime, endTime) {
+  async getGroupRepayments(groupId) {
     try {
       const groupRepayments = await GroupRepayment.getGroupRepaymentsByGroupId(
-        groupId,
-        startTime,
-        endTime
+        groupId
       );
 
       return { data: groupRepayments };
@@ -133,10 +130,24 @@ class TransactionControllers {
     }
   }
 
-  async updateGroupRepayment(repaymentId, data) {
+  async updateGroupRepayment(
+    repaymentId,
+    groupId,
+    currencyId,
+    payerId,
+    receiverId,
+    amount
+  ) {
     try {
       const updatedGroupRepayment =
-        await GroupRepayment.updateGroupRepaymentById(repaymentId, data);
+        await GroupRepayment.updateGroupRepaymentById(
+          repaymentId,
+          groupId,
+          currencyId,
+          payerId,
+          receiverId,
+          amount
+        );
 
       return updatedGroupRepayment;
     } catch (error) {

@@ -16,14 +16,14 @@ model GroupRepayment {
 */
 
 class GroupRepayment {
-  async createGroupRepayment(data) {
+  async createGroupRepayment(groupId, currencyId, payerId, receiverId, amount) {
     const groupRepayment = await prisma.groupRepayment.create({
       data: {
-        group: { connect: { id: data.groupId } },
-        currency: { connect: { id: data.currencyId } },
-        payer: { connect: { id: data.payerId } },
-        receiver: { connect: { id: data.receiverId } },
-        amount: data.amount,
+        group: { connect: { id: groupId } },
+        currency: { connect: { id: currencyId } },
+        payer: { connect: { id: payerId } },
+        receiver: { connect: { id: receiverId } },
+        amount: amount,
       },
     });
 
@@ -38,17 +38,24 @@ class GroupRepayment {
     return groupRepayment;
   }
 
-  async updateGroupRepaymentById(id, data) {
+  async updateGroupRepaymentById(
+    id,
+    groupId,
+    currencyId,
+    payerId,
+    receiverId,
+    amount
+  ) {
     const groupRepayment = await prisma.groupRepayment.update({
       where: {
         id: id,
       },
       data: {
-        group: { connect: { id: data.groupId } },
-        currency: { connect: { id: data.currencyId } },
-        payer: { connect: { id: data.payerId } },
-        receiver: { connect: { id: data.receiverId } },
-        amount: data.amount,
+        group: { connect: { id: groupId } },
+        currency: { connect: { id: currencyId } },
+        payer: { connect: { id: payerId } },
+        receiver: { connect: { id: receiverId } },
+        amount: amount,
       },
     });
 
