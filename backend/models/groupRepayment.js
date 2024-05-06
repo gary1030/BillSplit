@@ -1,41 +1,30 @@
 const { prisma } = require("../prisma");
+const { getEndOfDate } = require("../utils/getEndOfDate");
 
 /*
 model GroupRepayment {
-    id         String
-    groupId    String
-    currencyId String
-    payerId    String
-    receiverId String
-    amount     Float
-  }
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  group      Group    @relation(fields: [groupId], references: [id])
+  groupId    String   @db.ObjectId
+  currency   Currency @relation(fields: [currencyId], references: [id])
+  currencyId String   @db.ObjectId
+  payerId    String   @db.ObjectId
+  payer      User     @relation("payer", fields: [payerId], references: [id])
+  receiverId String   @db.ObjectId
+  receiver   User     @relation("receiver", fields: [receiverId], references: [id])
+  amount     Float
+}
 */
 
 class GroupRepayment {
-  async createGroupRepayment(data) {
+  async createGroupRepayment(groupId, currencyId, payerId, receiverId, amount) {
     const groupRepayment = await prisma.groupRepayment.create({
       data: {
-        amount: data.amount,
-        group: {
-          connect: {
-            id: data.groupId,
-          },
-        },
-        currency: {
-          connect: {
-            id: data.currencyId,
-          },
-        },
-        payer: {
-          connect: {
-            id: data.payerId,
-          },
-        },
-        receiver: {
-          connect: {
-            id: data.receiverId,
-          },
-        },
+        group: { connect: { id: groupId } },
+        currency: { connect: { id: currencyId } },
+        payer: { connect: { id: payerId } },
+        receiver: { connect: { id: receiverId } },
+        amount: amount,
       },
     });
 
@@ -44,20 +33,31 @@ class GroupRepayment {
 
   async getGroupRepaymentById(id) {
     const groupRepayment = await prisma.groupRepayment.findUnique({
-      where: {
-        id,
-      },
+      where: { id: id },
     });
 
     return groupRepayment;
   }
 
-  async updateGroupRepaymentById(id, data) {
+  async updateGroupRepaymentById(
+    id,
+    groupId,
+    currencyId,
+    payerId,
+    receiverId,
+    amount
+  ) {
     const groupRepayment = await prisma.groupRepayment.update({
       where: {
-        id,
+        id: id,
       },
-      data,
+      data: {
+        group: { connect: { id: groupId } },
+        currency: { connect: { id: currencyId } },
+        payer: { connect: { id: payerId } },
+        receiver: { connect: { id: receiverId } },
+        amount: amount,
+      },
     });
 
     return groupRepayment;
@@ -65,9 +65,7 @@ class GroupRepayment {
 
   async deleteGroupRepaymentById(id) {
     const groupRepayment = await prisma.groupRepayment.delete({
-      where: {
-        id,
-      },
+      where: { id },
     });
 
     return groupRepayment;
@@ -75,9 +73,7 @@ class GroupRepayment {
 
   async getGroupRepaymentsByGroupId(groupId) {
     const groupRepayments = await prisma.groupRepayment.findMany({
-      where: {
-        groupId,
-      },
+      where: { groupId: groupId },
     });
 
     return groupRepayments;
