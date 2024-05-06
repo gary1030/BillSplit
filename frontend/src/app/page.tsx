@@ -1,5 +1,6 @@
 import GoogleSignInButton from "@/components/auth/googleSignInButton";
 import Header from "@/components/header";
+import Footer from "@/components/footer";
 import { Box, Center, Flex, Image, Text } from "@chakra-ui/react";
 
 export default function Home() {
@@ -11,7 +12,6 @@ export default function Home() {
         w="93%"
         align="center"
         justify="center"
-        mt="40px"
       >
         <Box flex="3" textAlign="left" marginLeft="5%" mb="20px">
           <Text
@@ -39,6 +39,7 @@ export default function Home() {
           <GoogleSignInButton />
         </Box>
       </Center>
+      <Footer />
     </Flex>
   );
 }
