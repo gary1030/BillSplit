@@ -52,8 +52,8 @@ export default function Header({ loggedIn, isgroup }: HeaderProps) {
       borderBottom="2px"
       pos="sticky"
       top="0"
-      zIndex="10"
       mb="50px"
+      zIndex={1}
     >
       <Link href={loggedIn ? "/group" : "/"} style={{ textDecoration: "none" }}>
         <Flex alignItems="center" cursor="pointer">

@@ -1,26 +1,8 @@
 "use client";
 
 import { Flex, Text, Hide } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
 
 export default function Footer() {
-  const [isContentLong, setIsContentLong] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsContentLong(
-        document.documentElement.scrollHeight >
-          document.documentElement.clientHeight
-      );
-    };
-
-    window.addEventListener("scroll", handleScroll);
-
-    handleScroll();
-
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   return (
     <Flex
       w="full"
@@ -29,8 +11,8 @@ export default function Footer() {
       p={2}
       display="flex"
       alignItems="center"
-      pos={isContentLong ? "static" : "fixed"}
-      bottom={isContentLong ? "auto" : "0"}
+      pos="fixed"
+      bottom="0"
       mt="50px"
       h={45}
     >

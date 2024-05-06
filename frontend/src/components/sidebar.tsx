@@ -1,6 +1,6 @@
 "use client";
 
-import { Container, Button, Flex, Link, Text, Hide } from "@chakra-ui/react";
+import { Button, Flex, Link, Text, Hide } from "@chakra-ui/react";
 import { IoSettingsOutline } from "react-icons/io5";
 import { GoNote } from "react-icons/go";
 import { MdPieChart, MdOutlineMonetizationOn } from "react-icons/md";
@@ -29,13 +29,12 @@ export default function Sidebar({ groupId }: SidebarProps) {
       h="full"
       borderRight="2px"
       pos="fixed"
-      top={65}
+      top={0}
       p={1}
       bg="gray.200"
       color="black"
       display="flex"
       flexDirection={"column"}
-      zIndex="-1"
     >
       <Link href={managementLink}>
         <Button
@@ -45,7 +44,7 @@ export default function Sidebar({ groupId }: SidebarProps) {
           px={2}
           w="full"
           justifyContent={"flex-start"}
-          mt={5}
+          mt={115}
         >
           <IoSettingsOutline size={30}></IoSettingsOutline>
           <Hide below="1200px">
