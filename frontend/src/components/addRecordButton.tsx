@@ -16,8 +16,8 @@ export default function AddRecordButton() {
         border: "none",
         background: "none",
         cursor: "pointer",
-        width: "100px",
-        height: "100px",
+        width: "120px",
+        height: "150px",
       }}
     >
       <MdOutlineAddBox size={40} />
