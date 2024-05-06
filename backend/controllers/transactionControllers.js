@@ -133,12 +133,12 @@ class TransactionControllers {
   async updateGroupRepayment(
     repaymentId,
     groupId,
-    currencyId,
     payerId,
     receiverId,
     amount
   ) {
     try {
+      const currencyId = await Currency.getDefaultCurrencyId();
       const updatedGroupRepayment =
         await GroupRepayment.updateGroupRepaymentById(
           repaymentId,
