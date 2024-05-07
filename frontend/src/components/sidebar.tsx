@@ -48,7 +48,9 @@ export default function Sidebar({ groupId }: SidebarProps) {
         >
           <IoSettingsOutline size={30}></IoSettingsOutline>
           <Hide below="1200px">
-            <Text ml={2}>Management</Text>
+            <Text ml={2} fontSize="md">
+              Management
+            </Text>
           </Hide>
         </Button>
       </Link>
@@ -63,7 +65,9 @@ export default function Sidebar({ groupId }: SidebarProps) {
         >
           <GoNote size={30}></GoNote>
           <Hide below="1200px">
-            <Text ml={2}>Record</Text>
+            <Text ml={2} fontSize="md">
+              Record
+            </Text>
           </Hide>
         </Button>
       </Link>
@@ -78,7 +82,9 @@ export default function Sidebar({ groupId }: SidebarProps) {
         >
           <MdPieChart size={30}></MdPieChart>
           <Hide below="1200px">
-            <Text ml={2}>Analysis</Text>
+            <Text ml={2} fontSize="md">
+              Analysis
+            </Text>
           </Hide>
         </Button>
       </Link>
@@ -93,7 +99,9 @@ export default function Sidebar({ groupId }: SidebarProps) {
         >
           <MdOutlineMonetizationOn size={30}></MdOutlineMonetizationOn>
           <Hide below="1200px">
-            <Text ml={2}>Balance</Text>
+            <Text ml={2} fontSize="md">
+              Balance
+            </Text>
           </Hide>
         </Button>
       </Link>
