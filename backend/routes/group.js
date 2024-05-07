@@ -4,6 +4,7 @@ var authentication = require("../middlewares/auth");
 
 const GroupControllers = require("../controllers/groupControllers");
 const TransactionControllers = require("../controllers/transactionControllers");
+const groupTransaction = require("../models/groupTransaction");
 
 router.use(authentication);
 
@@ -122,14 +123,15 @@ router.post("/:id/transactions", async function (req, res, next) {
 
     const groupTransaction =
       await TransactionControllers.createGroupTransaction(
-        req.userId,
         req.params.id,
         req.body.categoryId,
         req.body.title,
         req.body.amount,
         req.body.payerDetails,
-        req.body.splitDetails
+        req.body.splitDetails,
+        req.body.note
       );
+
     res.send(groupTransaction);
   } catch (error) {
     console.log(error);
@@ -155,9 +157,104 @@ router.get("/:id/transactions", async function (req, res, next) {
     res.send(groupTransactions);
   } catch (error) {
     console.log(error);
-    res.status(401).json({ message: "Unauthorized!" });
+    res.status(400).json({ message: "Bad Request" });
   }
 });
+
+/* GET group transaction by id */
+router.get("/:id/transactions/:transactionId", async function (req, res, next) {
+  try {
+    const isUserInGroup = await GroupControllers.isUserInGroup(
+      req.params.id,
+      req.userId
+    );
+    if (!isUserInGroup) {
+      res.status(401).json({ message: "Unauthorized!" });
+      return;
+    }
+
+    const groupTransaction =
+      await TransactionControllers.getGroupTransactionById(
+        req.params.transactionId
+      );
+    res.send(groupTransaction);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Bad Request" });
+  }
+});
+
+/* PUT update group transaction */
+router.put("/:id/transactions/:transactionId", async function (req, res, next) {
+  try {
+    // check user in group
+    const isUserInGroup = await GroupControllers.isUserInGroup(
+      req.params.id,
+      req.userId
+    );
+    if (!isUserInGroup) {
+      res.status(401).json({ message: "Unauthorized!" });
+      return;
+    }
+
+    // check amount
+    if (req.body.amount <= 0) {
+      res.status(400).json({ message: "Amount should be a positive number!" });
+      return;
+    }
+
+    // check title
+    if (req.body.title === "") {
+      res.status(400).json({ message: "Title is required!" });
+      return;
+    }
+
+    const updatedGroupTransaction =
+      await TransactionControllers.updateGroupTransaction(
+        req.params.transactionId,
+        req.params.id,
+        req.body.categoryId,
+        req.body.title,
+        req.body.amount,
+        req.body.payerDetails,
+        req.body.splitDetails,
+        req.body.note
+      );
+
+    res.send(updatedGroupTransaction);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: error.message });
+  }
+});
+
+/* DELETE delete group transactions */
+router.delete(
+  "/:id/transactions/:transactionId",
+  async function (req, res, next) {
+    try {
+      // check user in group
+      const isUserInGroup = await GroupControllers.isUserInGroup(
+        req.params.id,
+        req.userId
+      );
+      if (!isUserInGroup) {
+        res.status(401).json({ message: "Unauthorized!" });
+        return;
+      }
+
+      const deleteGroupTransaction =
+        await TransactionControllers.deleteGroupTransaction(
+          req.params.transactionId
+        );
+
+      res.send(deleteGroupTransaction);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Cannot delete!" });
+    }
+  }
+);
 
 /* POST create group repayments */
 router.post("/:id/repayments", async function (req, res, next) {
@@ -199,13 +296,13 @@ router.post("/:id/repayments", async function (req, res, next) {
       return;
     }
 
-    // check payerId: payerId must not be empty
+    // check payerId
     if (req.body.payerId === undefined) {
       res.status(400).json({ message: "PayerId is required!" });
       return;
     }
 
-    // check receiverId: receiverId must not be empty
+    // check receiverId
     if (req.body.receiverId === "") {
       res.status(400).json({ message: "ReceiverId is required!" });
       return;
@@ -220,7 +317,7 @@ router.post("/:id/repayments", async function (req, res, next) {
     res.send(groupRepayment);
   } catch (error) {
     console.log(error);
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ message: "Bad Request" });
   }
 });
 
@@ -242,7 +339,29 @@ router.get("/:id/repayments", async function (req, res, next) {
     res.send(groupRepayments);
   } catch (error) {
     console.log(error);
-    res.status(401).json({ message: "Unauthorized!" });
+    res.status(400).json({ message: "Bad Request" });
+  }
+});
+
+/* GET group repayment by id */
+router.get("/:id/repayments/:repaymentId", async function (req, res, next) {
+  try {
+    const isUserInGroup = await GroupControllers.isUserInGroup(
+      req.params.id,
+      req.userId
+    );
+    if (!isUserInGroup) {
+      res.status(401).json({ message: "Unauthorized!" });
+      return;
+    }
+
+    const groupRepayment = await TransactionControllers.getGroupRepaymentById(
+      req.params.repaymentId
+    );
+    res.send(groupRepayment);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Bad Request" });
   }
 });
 
@@ -262,18 +381,18 @@ router.put("/:id/repayments/:repaymentId", async function (req, res, next) {
     // check amount
     // amount must be positive
     if (req.body.amount <= 0) {
-      res.status(400).json({ message: "Amount must be a positive number!" });
+      res.status(400).json({ message: "Amount should be a positive number!" });
       return;
     }
 
-    // check payerId: payerId must not be empty
+    // check payerId
     if (req.body.payerId === undefined) {
       res.status(400).json({ message: "PayerId is required!" });
       return;
     }
 
-    // check receiverId: receiverId must not be empty
-    if (req.body.receiverId === "") {
+    // check receiverId
+    if (req.body.receiverId === undefined) {
       res.status(400).json({ message: "ReceiverId is required!" });
       return;
     }
@@ -290,7 +409,7 @@ router.put("/:id/repayments/:repaymentId", async function (req, res, next) {
     res.send(updatedGroupRepayment);
   } catch (error) {
     console.log(error);
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ message: "Bad Request" });
   }
 });
 

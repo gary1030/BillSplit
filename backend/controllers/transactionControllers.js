@@ -40,13 +40,13 @@ class TransactionControllers {
   }
 
   async createGroupTransaction(
-    userId,
     groupId,
     categoryId,
     title,
     totalAmount,
     payerDetails,
-    splitDetails
+    splitDetails,
+    note
   ) {
     try {
       const currencyId = await Currency.getDefaultCurrencyId();
@@ -56,7 +56,6 @@ class TransactionControllers {
         throw new Error("Transaction amount is not correct");
       }
       const groupTransaction = await GroupTransaction.createGroupTransaction({
-        userId,
         groupId,
         categoryId,
         currencyId,
@@ -64,6 +63,7 @@ class TransactionControllers {
         totalAmount,
         payerDetails,
         splitDetails,
+        note,
       });
       return groupTransaction;
     } catch (error) {
@@ -100,6 +100,62 @@ class TransactionControllers {
     }
   }
 
+  async getGroupTransactionById(id) {
+    try {
+      const groupTransaction = await GroupTransaction.getGroupTransactionById(
+        id
+      );
+
+      return { data: groupTransaction };
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
+  async updateGroupTransaction(
+    transactionId,
+    groupId,
+    categoryId,
+    title,
+    totalAmount,
+    payerDetails,
+    splitDetails,
+    note
+  ) {
+    try {
+      const currencyId = await Currency.getDefaultCurrencyId();
+      const updatedGroupTransaction =
+        await GroupTransaction.updateGroupTransactionById(
+          transactionId,
+          groupId,
+          categoryId,
+          currencyId,
+          title,
+          totalAmount,
+          payerDetails,
+          splitDetails,
+          note
+        );
+
+      return updatedGroupTransaction;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  }
+
+  async deleteGroupTransaction(transactionId) {
+    try {
+      const deleteGroupTransaction =
+        await GroupTransaction.deleteGroupTransactionById(transactionId);
+      return deleteGroupTransaction;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
   async createGroupRepayment(groupId, payerId, receiverId, amount) {
     try {
       const currencyId = await Currency.getDefaultCurrencyId();
@@ -113,7 +169,7 @@ class TransactionControllers {
       return groupRepayment;
     } catch (error) {
       console.log(error);
-      throw error;
+      return null;
     }
   }
 
@@ -124,6 +180,17 @@ class TransactionControllers {
       );
 
       return { data: groupRepayments };
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
+  async getGroupRepaymentById(id) {
+    try {
+      const groupRepayment = await GroupRepayment.getGroupRepaymentById(id);
+
+      return { data: groupRepayment };
     } catch (error) {
       console.log(error);
       return null;
@@ -152,7 +219,7 @@ class TransactionControllers {
       return updatedGroupRepayment;
     } catch (error) {
       console.log(error);
-      throw error;
+      return null;
     }
   }
 
@@ -163,7 +230,7 @@ class TransactionControllers {
       return deleteGroupRepayment;
     } catch (error) {
       console.log(error);
-      throw error;
+      return null;
     }
   }
 

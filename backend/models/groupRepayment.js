@@ -34,7 +34,6 @@ class GroupRepayment {
     const groupRepayment = await prisma.groupRepayment.findUnique({
       where: { id: id },
     });
-
     return groupRepayment;
   }
 
