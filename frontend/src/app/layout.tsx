@@ -1,10 +1,10 @@
 import { Providers } from "./providers";
-import { Metadata } from 'next'
- 
+import { Metadata } from "next";
+
 export const metadata: Metadata = {
-  title: 'BillSplit',
-  description: 'Welcome to BillSplit. Split your bill wisely.',
-}
+  title: "BillSplit",
+  description: "Welcome to BillSplit. Split your bill wisely.",
+};
 
 export default function RootLayout({
   children,
@@ -13,7 +13,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
+      <body
+        style={{
+          // 95px for footer height
+          minHeight: "calc(100vh - 95px)",
+        }}
+      >
         <Providers>{children}</Providers>
       </body>
     </html>

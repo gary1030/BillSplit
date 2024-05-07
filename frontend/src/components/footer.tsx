@@ -11,10 +11,10 @@ export default function Footer() {
       p={2}
       display="flex"
       alignItems="center"
-      pos="fixed"
-      bottom="0"
-      mt="50px"
+      pos="absolute"
+      bottom="-95"
       h={45}
+      mt={50}
     >
       <Hide below="sm">
         <Text fontSize="sm" ml={5} mr={5}>
