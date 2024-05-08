@@ -4,7 +4,23 @@ import { MdOutlineAddBox } from "react-icons/md";
 import { Button } from "@chakra-ui/react";
 import GroupTransactionForm from "./groupTransactionForm";
 
-export default function AddRecordButton() {
+interface User {
+  id: string;
+  email: string;
+  username: string;
+}
+
+interface AddRecordButtonProps {
+  name: string;
+  members: Array<User>;
+}
+
+export default function AddRecordButton({
+  name,
+  members,
+}: AddRecordButtonProps) {
+  console.log("name", name);
+  console.log("members", members);
   const [isOpen, setIsOpen] = useState(false);
 
   const handleOpenModal = () => {
@@ -39,7 +55,8 @@ export default function AddRecordButton() {
       <GroupTransactionForm
         isOpen={isOpen}
         onClose={handleCloseModal}
-        mode="create"
+        name={name}
+        members={members}
       />
     </>
   );
