@@ -46,7 +46,8 @@ class TransactionControllers {
     totalAmount,
     payerDetails,
     splitDetails,
-    note
+    note,
+    consumptionDate
   ) {
     try {
       const currencyId = await Currency.getDefaultCurrencyId();
@@ -64,6 +65,7 @@ class TransactionControllers {
         payerDetails,
         splitDetails,
         note,
+        consumptionDate,
       });
       return groupTransaction;
     } catch (error) {
@@ -121,7 +123,8 @@ class TransactionControllers {
     totalAmount,
     payerDetails,
     splitDetails,
-    note
+    note,
+    consumptionDate
   ) {
     try {
       const currencyId = await Currency.getDefaultCurrencyId();
@@ -135,7 +138,8 @@ class TransactionControllers {
           totalAmount,
           payerDetails,
           splitDetails,
-          note
+          note,
+          consumptionDate
         );
 
       return updatedGroupTransaction;

@@ -43,6 +43,7 @@ class GroupTransaction {
         payerDetails: data.payerDetails,
         splitDetails: data.splitDetails,
         note: data?.note || "",
+        consumptionDate: data.consumptionDate,
       },
     });
 
@@ -66,7 +67,8 @@ class GroupTransaction {
     totalAmount,
     payerDetails,
     splitDetails,
-    note
+    note,
+    consumptionDate
   ) {
     const groupTransaction = await prisma.groupTransaction.update({
       where: {
@@ -81,6 +83,7 @@ class GroupTransaction {
         payerDetails: payerDetails,
         splitDetails: splitDetails,
         note: note,
+        consumptionDate: consumptionDate,
       },
     });
 
@@ -97,7 +100,7 @@ class GroupTransaction {
     return groupTransaction;
   }
 
-  async getGroupTransactionsByGroupId(groupId) {
+  async getGroupTransactionsByGroupId(groupId, startTime, endTime) {
     const groupTransactions = await prisma.groupTransaction.findMany({
       where: {
         groupId,

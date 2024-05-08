@@ -129,13 +129,14 @@ router.post("/:id/transactions", async function (req, res, next) {
         req.body.amount,
         req.body.payerDetails,
         req.body.splitDetails,
-        req.body.note
+        req.body.note,
+        req.body.consumptionDate
       );
 
     res.send(groupTransaction);
   } catch (error) {
     console.log(error);
-    res.status(400).json({ message: error.message });
+    res.status(400).json({ message: "Bad Request" });
   }
 });
 
@@ -218,7 +219,8 @@ router.put("/:id/transactions/:transactionId", async function (req, res, next) {
         req.body.amount,
         req.body.payerDetails,
         req.body.splitDetails,
-        req.body.note
+        req.body.note,
+        req.body.consumptionDate
       );
 
     res.send(updatedGroupTransaction);
