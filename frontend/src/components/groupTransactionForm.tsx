@@ -50,6 +50,11 @@ interface User {
   username: string;
 }
 
+interface Payer {
+  id: string;
+  amount: number;
+}
+
 interface CheckboxStates {
   [key: string]: boolean;
 }
@@ -114,43 +119,24 @@ export default function GroupTransactionForm({
   };
 
   // Payer
+  // Initialize payerSelects with only the first member as a payer
   useEffect(() => {
-    const initialPayerAmounts: { [id: string]: number } = {};
-    members.forEach((member) => {
-      initialPayerAmounts[member.id] = 0;
-    });
-    setPayerAmounts(initialPayerAmounts);
+    if (members.length > 0) {
+      setPayerSelects([{ id: members[0].id, amount: amount }]);
+    }
   }, [members]);
 
-  useEffect(() => {
-    if (payerSelects.length === 1) {
-      // If there is only one payer, assign the total amount to this payer.
-      const updatedPayers = [{ ...payerSelects[0], amount: amount }];
-      setPayerSelects(updatedPayers);
-    } else {
-      // If there are multiple payers, distribute the amount (you can adjust the logic as needed).
-      const equalShare = amount / payerSelects.length;
-      const updatedPayers = payerSelects.map((payer) => ({
-        ...payer,
-        amount: equalShare,
-      }));
-      setPayerSelects(updatedPayers);
-    }
-  }, [amount, payerSelects.length]);
+  function updateTotalPayerAmount(payers: Payer[]) {
+    const total = payers.reduce((sum, payer) => sum + payer.amount, 0);
+    setTotalPayerAmount(total);
+  }
 
   const handlePayerAmountChange = (
     index: number,
     valueAsString: string,
     valueAsNumber: number
   ) => {
-    // Check if the number is NaN and set it to 0
     const validAmount = isNaN(valueAsNumber) ? 0 : valueAsNumber;
-
-    // console.log(
-    //   `Payer amount changed for ID ${payerSelects[index].id}: ${validAmount}`
-    // );
-
-    // Update the payer amounts in the payerSelects array
     const newSelects = payerSelects.map((select, idx) => {
       if (idx === index) {
         return { ...select, amount: validAmount };
@@ -158,16 +144,8 @@ export default function GroupTransactionForm({
       return select;
     });
 
-    // Update payerSelects state
     setPayerSelects(newSelects);
-
-    // Recalculate and update total payer amount
-    const newTotalAmount = newSelects.reduce(
-      (sum, cur) => sum + (cur.amount || 0),
-      0
-    );
-    setTotalPayerAmount(newTotalAmount);
-    // console.log(`Total of all payer amounts: ${newTotalAmount}`);
+    updateTotalPayerAmount(newSelects);
   };
 
   const addPayerSelect = () => {
@@ -179,11 +157,10 @@ export default function GroupTransactionForm({
     setPayerSelects(filteredSelects);
 
     const newTotalAmount = filteredSelects.reduce(
-      (sum, cur) => sum + (cur.amount || 0),
+      (sum, cur) => sum + cur.amount,
       0
     );
     setTotalPayerAmount(newTotalAmount);
-    // console.log(`Total of all payer amounts: ${newTotalAmount}`);
   };
 
   // Sharer
@@ -628,7 +605,7 @@ export default function GroupTransactionForm({
               </Box>
             </Flex>
             <Flex>
-              <Box mt="15px" marginLeft={200}>
+              <Box mt="15px" marginLeft={163}>
                 <Text
                   fontSize="md"
                   as="b"
@@ -643,7 +620,7 @@ export default function GroupTransactionForm({
                 </Text>
               </Box>
             </Flex>
-            <Flex mt="20px" alignItems="center">
+            <Flex mt="30px" alignItems="center">
               <Box w="30px">
                 <GoNote size={24} />
               </Box>
