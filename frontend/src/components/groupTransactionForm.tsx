@@ -42,6 +42,8 @@ import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import FormHeader from "./formHeader";
 import Loading from "./loading";
 
+import createGroup from "@/actions/group/createGroup";
+import editGroup from "@/actions/group/editGroup";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { on } from "events";
 
@@ -656,7 +658,7 @@ export default function GroupTransactionForm({
                   pr="5px"
                   color="red"
                 >
-                  {totalSharerAmount == amount || !customizeSwitchOn
+                  {totalSharerAmount === amount
                     ? ""
                     : `Error message: The total amount should be $${amount}`}
                 </Text>
