@@ -9,6 +9,7 @@ import ImageCard from "@/components/imageCard";
 import Loading from "@/components/loading";
 import { Container } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
+import AddRecordButton from "@/components/addRecordButton";
 
 interface GroupManagementProps {
   groupId: string;
@@ -37,6 +38,7 @@ export default function GroupManagement({ groupId }: GroupManagementProps) {
         <GroupMember groupId={groupId} members={membersData?.users || []} />
         <GroupInvitation groupId={groupId} />
       </Container>
+      <AddRecordButton />
     </>
   );
 }
