@@ -43,6 +43,7 @@ import FormHeader from "./formHeader";
 import Loading from "./loading";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { on } from "events";
 
 interface User {
   id: string;
@@ -302,34 +303,75 @@ export default function GroupTransactionForm({
   // });
 
   const onModelClose = () => {
-    // setName(defaultName || "");
-    // setSelectedTheme(defaultTheme || imagePaths[0]);
     onClose();
   };
 
   const handleAdd = () => {
-    // if (!name || name.trim() === "") {
-    //   toast({
-    //     title: "Name is required",
-    //     status: "error",
-    //     duration: 2000,
-    //     isClosable: true,
-    //   });
-    onClose();
-    return;
+    let hasErrors = false;
+
+    if (!title || title.trim() === "") {
+      hasErrors = true;
+      toast({
+        title: "Title is required",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+    }
+    if (amount <= 0) {
+      hasErrors = true;
+      toast({
+        title: "Amount should be greater than 0",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+    }
+    if (totalPayerAmount != amount) {
+      hasErrors = true;
+      toast({
+        title: `The total payer amount should be equal to Amount`,
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+    }
+    if (totalSharerAmount != amount) {
+      hasErrors = true;
+      toast({
+        title: `The total sharer amount should be equal to Amount`,
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+    }
+    if (payerSelects.length == 0) {
+      hasErrors = true;
+      toast({
+        title: `Payer should be selected`,
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+    }
+    if (Object.values(checkboxStates).every((isChecked) => !isChecked)) {
+      hasErrors = true;
+      toast({
+        title: "Sharer should be selected",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+    }
+    if (!hasErrors) {
+      onClose();
+      return;
+    }
+    // createGroupMutation();
   };
-
-  //   createGroupMutation();
-  // };
-
-  // useEffect(() => {
-  //   setName(defaultName || "");
-  //   setSelectedTheme(defaultTheme || imagePaths[0]);
-  // }, [defaultName, defaultTheme]);
 
   return (
     <>
-      {/* <Modal isOpen={isOpen} onClose={onModelClose}> */}
       <Modal isOpen={isOpen} onClose={onModelClose}>
         <ModalOverlay />
         <ModalContent w="90%" maxW="800px">
