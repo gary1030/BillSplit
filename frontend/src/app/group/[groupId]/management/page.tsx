@@ -18,6 +18,8 @@ export default function GroupManagementPage({
         maxW="800px"
         mt="40px"
         mb="30px"
+        // 58px, 164px for sidebar width when hidden and shown respectively, 1rem for paddingf
+        pl={{ base: "calc(58px + 1rem)", md: "calc(164px + 1rem)" }}
       >
         <GroupManagement groupId={params.groupId} />
       </Container>

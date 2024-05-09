@@ -55,20 +55,24 @@ export default function Header({ loggedIn, isgroup }: HeaderProps) {
       mb="50px"
       zIndex={1}
     >
-      <Link href={loggedIn ? "/group" : "/"} style={{ textDecoration: "none" }}>
+      <Link
+        href={loggedIn ? "/group" : "/"}
+        style={{ textDecoration: "none" }}
+        ml={3}
+        mr={3}
+      >
         <Flex alignItems="center" cursor="pointer">
           <Image
             src="/images/icon.svg"
             boxSize="50px"
-            ml={3}
-            mr={3}
+            mr={2}
             border="2px"
             borderRadius={15}
             borderColor="black"
             alt="Icon"
           />
           <Hide below="sm">
-            <Text fontSize="3xl" fontWeight="bold" ml={5} mr={5}>
+            <Text fontSize="3xl" fontWeight="bold" ml={2}>
               BillSplit
             </Text>
           </Hide>
