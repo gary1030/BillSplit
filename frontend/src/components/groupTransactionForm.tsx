@@ -43,8 +43,9 @@ import FormHeader from "./formHeader";
 import Loading from "./loading";
 
 import fetchCategories from "@/actions/fetchCategories";
-import createGroup from "@/actions/group/createGroup";
-import editGroup from "@/actions/group/editGroup";
+// import createGroup from "@/actions/group/createGroup";
+// import editGroup from "@/actions/group/editGroup";
+import createGroupTransaction from "@/actions/group/createGroupTransaction";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { on } from "events";
 
@@ -96,7 +97,6 @@ export default function GroupTransactionForm({
     queryFn: () => fetchCategories(),
   });
 
-  console.log("categoryData", categoryData);
   const uniqueCategoryMap = new Map<string, Category>();
 
   categoryData.data.forEach((item: Category) => {
@@ -106,7 +106,6 @@ export default function GroupTransactionForm({
   });
 
   const uniqueCategories = Array.from(uniqueCategoryMap.values());
-  console.log("Unique categories by name:", uniqueCategories);
 
   const options = uniqueCategories.map((category: Category) => ({
     value: category.id,
@@ -139,7 +138,7 @@ export default function GroupTransactionForm({
 
   // Amount
   const handleAmountChange = (valueAsString: string, valueAsNumber: number) => {
-    console.log("Amount changed to:", valueAsNumber);
+    // console.log("Amount changed to:", valueAsNumber);
     if (isNaN(valueAsNumber)) {
       setAmount(0);
     } else {
@@ -247,7 +246,7 @@ export default function GroupTransactionForm({
     if (customizeSwitchOn) {
       setSharerAmounts((prev) => {
         const newAmounts = { ...prev, [id]: valueAsNumber };
-        console.log(`Sharer amount changed for ID ${id}: ${valueAsNumber}`);
+        // console.log(`Sharer amount changed for ID ${id}: ${valueAsNumber}`);
 
         // Calculate the new total amount after the change
         const newTotalAmount = Object.values(newAmounts).reduce(
@@ -255,7 +254,7 @@ export default function GroupTransactionForm({
           0
         );
         setTotalSharerAmount(newTotalAmount); // Update the state with the new total
-        console.log(`New Total Sharer Amount: ${newTotalAmount}`);
+        // console.log(`New Total Sharer Amount: ${newTotalAmount}`);
 
         return newAmounts;
       });
