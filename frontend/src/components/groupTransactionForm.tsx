@@ -107,7 +107,7 @@ export default function GroupTransactionForm({
   );
   const [totalPayerAmount, setTotalPayerAmount] = useState(0);
 
-  const [sharerCustomizeSwitchOn, setSharerCustomizeSwitchOn] = useState(true);
+  const [sharerCustomizeSwitchOn, setSharerCustomizeSwitchOn] = useState(false);
   const [sharerCheckBoxStates, setSharerCheckBoxStates] =
     useState<SharerCheckBoxStates>({});
   const [sharerNumber, setSharerNumber] = useState(0);
@@ -457,7 +457,7 @@ export default function GroupTransactionForm({
     setCategory("");
     setAmountString("0");
     setAmount(0);
-    setPayerCustomizeSwitchOn(true);
+    setPayerCustomizeSwitchOn(false);
     const initialPayerStates: PayerCheckBoxStates = {};
     members.forEach((member) => {
       initialPayerStates[member.id] = false;
