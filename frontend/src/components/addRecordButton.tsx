@@ -22,8 +22,6 @@ export default function AddRecordButton({
   members,
   groupId,
 }: AddRecordButtonProps) {
-  console.log("name", name);
-  console.log("members", members);
   const [isOpen, setIsOpen] = useState(false);
 
   const handleOpenModal = () => {

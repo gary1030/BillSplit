@@ -191,7 +191,6 @@ export default function GroupTransactionForm({
       initialState[member.id] = false;
     });
     initialState[(cookies as any).userId] = true;
-    console.log("initialState", initialState);
     setPayerCheckBoxStates(initialState);
   }, [members]);
 
@@ -412,44 +411,61 @@ export default function GroupTransactionForm({
     }
   }, [amount, sharerCheckBoxStates, sharerCustomizeSwitchOn, members]);
 
-  // const { mutate: createGroupTransactionMutation, isPending } = useMutation({
-  //   mutationFn: () =>
-  //     createGroupTransaction(
-  //       groupId,
-  //       title,
-  //       name,
-  //       date,
-  //       category,
-  //       amount,
-  //       Object.entries(sharerAmounts).map(([id, amount]) => ({
-  //         id: id,
-  //         amount,
-  //       })),
-  //       note
-  //     ),
-  //   onSuccess: (newGroupTransaction) => {
-  //     setTitle("");
-  //     setAmount(0);
-  //     setNote("");
-  //     setSharerCheckBoxStates({});
-  //     setSharerAmounts({});
-  //     setTotalSharerAmount(0);
-  //     setTotalPayerAmount(0);
-  //     setPayerAmounts({});
-  //     setPayerSelects([{ id: "", amount: 0 }]);
-  //     setDate(new Date());
-  //     setCategory("");
-  //     onClose();
-  //   },
-  //   onError: () => {
-  //     toast({
-  //       title: "An error occurred",
-  //       status: "error",
-  //       duration: 2000,
-  //       isClosable: true,
-  //     });
-  //   },
-  // });
+  const { mutate: createGroupTransactionMutation, isPending } = useMutation({
+    mutationFn: () =>
+      createGroupTransaction(
+        title,
+        groupId,
+        date,
+        category,
+        amount,
+        Object.entries(payerAmounts).map(([payerId, amount]) => ({
+          payerId,
+          amount,
+        })),
+        Object.entries(sharerAmounts).map(([sharerId, amount]) => ({
+          sharerId,
+          amount,
+        })),
+        note
+      ),
+    onSuccess: (newGroupTransaction) => {
+      setTitle("");
+      setDate(new Date());
+      setCategory("");
+      setAmountString("0");
+      setAmount(0);
+      setPayerCustomizeSwitchOn(false);
+      const initialPayerStates: PayerCheckBoxStates = {};
+      members.forEach((member) => {
+        initialPayerStates[member.id] = false;
+      });
+      initialPayerStates[(cookies as any).userId] = true;
+      setPayerCheckBoxStates(initialPayerStates);
+      setPayerAmountStrings({});
+      setPayerAmounts({});
+      setTotalPayerAmount(0);
+      setSharerCustomizeSwitchOn(false);
+      const initialSharerStates: SharerCheckBoxStates = {};
+      members.forEach((member) => {
+        initialSharerStates[member.id] = true;
+      });
+      setSharerCheckBoxStates(initialSharerStates);
+      setSharerAmountStrings({});
+      setSharerAmounts({});
+      setTotalSharerAmount(0);
+      setNote("");
+      onClose();
+    },
+    onError: () => {
+      toast({
+        title: "An error occurred",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+    },
+  });
 
   const onModelClose = () => {
     setTitle("");
@@ -547,20 +563,13 @@ export default function GroupTransactionForm({
       });
     }
     if (!hasErrors) {
+      console.log("totalAmount", amount);
+      createGroupTransactionMutation();
       onClose();
       return;
     }
-    // createGroupTransactionMutation();
   };
-  // console.log("title", title);
-  // console.log("date", date);
-  // console.log("category", category);
-  // console.log("amount", amount);
-  console.log("shareAmounts", sharerAmounts);
-  console.log("payerAmounts", payerAmounts);
-  // console.log("totalSharerAmount", totalSharerAmount);
-  // console.log("sharerCheckBoxStates", sharerCheckBoxStates);
-  // console.log("note", note);
+
   return (
     <>
       <Modal isOpen={isOpen} onClose={onModelClose}>
@@ -655,7 +664,7 @@ export default function GroupTransactionForm({
                   onChange={handleAmountInputChange}
                   onBlur={handleAmountInputBlur}
                   value={amountString}
-                  width={150}
+                  width={180}
                 >
                   <NumberInputField />
                   <NumberInputStepper>
@@ -676,7 +685,7 @@ export default function GroupTransactionForm({
                     Paid by
                   </Text>
                 </Box>
-                <Box display="flex" alignItems="center" marginLeft={240}>
+                <Box display="flex" alignItems="center" marginLeft={260}>
                   <Switch
                     colorScheme="blue"
                     size="md"
@@ -725,7 +734,7 @@ export default function GroupTransactionForm({
                     </Text>
                     <Box marginLeft={160}>
                       <NumberInput
-                        maxW="100px"
+                        maxW="150px"
                         defaultValue={0}
                         min={0}
                         precision={2}
@@ -785,7 +794,7 @@ export default function GroupTransactionForm({
                     For whom
                   </Text>
                 </Box>
-                <Box display="flex" alignItems="center" marginLeft={240}>
+                <Box display="flex" alignItems="center" marginLeft={260}>
                   <Switch
                     colorScheme="blue"
                     size="md"
@@ -834,7 +843,7 @@ export default function GroupTransactionForm({
                     </Text>
                     <Box marginLeft={160}>
                       <NumberInput
-                        maxW="100px"
+                        maxW="150px"
                         defaultValue={0}
                         min={0}
                         precision={2}
@@ -912,7 +921,7 @@ export default function GroupTransactionForm({
           </ModalFooter>
         </ModalContent>
       </Modal>
-      {/* {isPending || isEditPending ? <Loading /> : null} */}
+      {isPending ? <Loading /> : null}
     </>
   );
 }

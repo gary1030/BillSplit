@@ -126,7 +126,7 @@ router.post("/:id/transactions", async function (req, res, next) {
         req.params.id,
         req.body.categoryId,
         req.body.title,
-        req.body.amount,
+        req.body.totalAmount,
         req.body.payerDetails,
         req.body.splitDetails,
         req.body.note,
@@ -152,23 +152,15 @@ router.get("/:id/transactions", async function (req, res, next) {
       return;
     }
 
-    var startTime = req.query.startTime
-    var endTime = req.query.endTime
+    var startTime = req.query.startTime;
+    var endTime = req.query.endTime;
 
     // check start time and end time and format
-    if (
-      startTime === undefined ||
-      endTime === undefined
-    ) {
+    if (startTime === undefined || endTime === undefined) {
       startTime = new Date(0); // January 1, 1970
       endTime = new Date();
-    } else if (
-      isNaN(Date.parse(startTime)) ||
-      isNaN(Date.parse(endTime))
-    ) {
-      res
-        .status(400)
-        .json({ message: "Start time and end time are illegal!" });
+    } else if (isNaN(Date.parse(startTime)) || isNaN(Date.parse(endTime))) {
+      res.status(400).json({ message: "Start time and end time are illegal!" });
       return;
     }
 
@@ -517,13 +509,15 @@ router.get("/:id/analysis/personal", async function (req, res, next) {
       return;
     }
 
-    const data = await TransactionControllers.getGroupPersonalAnalysis(req.params.id, req.userId);
+    const data = await TransactionControllers.getGroupPersonalAnalysis(
+      req.params.id,
+      req.userId
+    );
     res.send(data);
   } catch (error) {
     console.log(error);
     res.status(400).json({ message: "Bad Request" });
   }
 });
-
 
 module.exports = router;

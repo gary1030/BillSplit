@@ -1,8 +1,8 @@
-const PersonalTransaction = require('../models/personalTransaction');
-const GroupTransaction = require('../models/groupTransaction');
-const GroupRepayment = require('../models/groupRepayment');
-const UserConcealedTransaction = require('../models/userConcealedTransaction');
-const Currency = require('../models/currency');
+const PersonalTransaction = require("../models/personalTransaction");
+const GroupTransaction = require("../models/groupTransaction");
+const GroupRepayment = require("../models/groupRepayment");
+const UserConcealedTransaction = require("../models/userConcealedTransaction");
+const Currency = require("../models/currency");
 
 class TransactionControllers {
   async createPersonalTransaction(userId, categoryId, type, title, amount) {
@@ -54,7 +54,7 @@ class TransactionControllers {
       if (
         !this.checkTransactionAmount(payerDetails, splitDetails, totalAmount)
       ) {
-        throw new Error('Transaction amount is not correct');
+        throw new Error("Transaction amount is not correct");
       }
       const groupTransaction = await GroupTransaction.createGroupTransaction({
         groupId,
@@ -83,7 +83,10 @@ class TransactionControllers {
     for (let i = 0; i < splitDetails.length; i++) {
       splitAmount += splitDetails[i].amount;
     }
-    return payerAmount === totalAmount && splitAmount === totalAmount;
+    return (
+      Math.abs(payerAmount - splitAmount) < 0.001 &&
+      Math.abs(payerAmount - totalAmount) < 0.001
+    );
   }
 
   async getGroupTransactions(groupId, startTime, endTime) {

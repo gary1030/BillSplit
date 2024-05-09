@@ -3,14 +3,13 @@ import httpAgent from "@/agent/httpAgent";
 import { cookies } from "next/headers";
 
 export default async function createGroupTransaction(
-  groupId: string,
   title: string,
-  groupName: string,
-  date: Date,
-  category: string,
+  groupId: string,
+  consumptionDate: Date,
+  categoryId: string,
   amount: number,
-  payerDetails: { id: string; amount: number }[],
-  sharerDetails: { id: string; amount: number }[],
+  payerDetails: { payerId: string; amount: number }[],
+  sharerDetails: { sharerId: string; amount: number }[],
   note: string
 ) {
   const cookieStore = cookies();
@@ -24,13 +23,13 @@ export default async function createGroupTransaction(
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
+        groupId: groupId,
         title: title,
-        groupName: groupName,
-        date: date,
-        category: category,
-        amount: amount,
+        consumptionDate: consumptionDate,
+        categoryId: categoryId,
+        totalAmount: amount,
         payerDetails: payerDetails,
-        sharerDetails: sharerDetails,
+        splitDetails: sharerDetails,
         note: note,
       }),
     });
