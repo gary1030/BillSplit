@@ -48,6 +48,7 @@ import fetchCategories from "@/actions/fetchCategories";
 import createGroupTransaction from "@/actions/group/createGroupTransaction";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { on } from "events";
+import { group } from "console";
 
 interface User {
   id: string;
@@ -78,6 +79,7 @@ interface GroupTransactionFormProps {
   isOpen: boolean;
   name: string;
   members: Array<User>;
+  groupId: string;
 }
 
 const BOX_WIDTH = 200;
@@ -87,6 +89,7 @@ export default function GroupTransactionForm({
   isOpen,
   name,
   members,
+  groupId,
 }: GroupTransactionFormProps) {
   const {
     data: categoryData,
@@ -97,6 +100,8 @@ export default function GroupTransactionForm({
     queryFn: () => fetchCategories(),
   });
 
+  console.log("Category Data: ", categoryData);
+
   const uniqueCategoryMap = new Map<string, Category>();
 
   categoryData.data.forEach((item: Category) => {
@@ -106,11 +111,22 @@ export default function GroupTransactionForm({
   });
 
   const uniqueCategories = Array.from(uniqueCategoryMap.values());
+  console.log("Unique Categories: ", uniqueCategories);
 
   const options = uniqueCategories.map((category: Category) => ({
     value: category.id,
     label: category.name,
   }));
+
+  // const options = [
+  //   { value: "food", label: "Food" },
+  //   { value: "grocery", label: "Grocery" },
+  //   { value: "transport", label: "Transport" },
+  //   { value: "utilities", label: "Utilities" },
+  //   { value: "rent", label: "Rent" },
+  //   { value: "entertainment", label: "Entertainment" },
+  //   { value: "others", label: "Others" },
+  // ];
 
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(new Date());
@@ -286,48 +302,45 @@ export default function GroupTransactionForm({
     });
   };
 
-  // const { mutate: editGroupMutation, isPending: isEditPending } = useMutation({
-  // mutationFn: () => {
-  //   if (!groupId) {
-  //     throw new Error("Group ID is required for editing");
-  //   }
-  //   return editGroup(groupId, name, selectedTheme);
-  // },
-  // mutationKey: ["group", groupId],
-  // onSuccess: () => {
-  //   if (groupId) {
-  //     queryClient.invalidateQueries({
-  //       queryKey: ["group", groupId],
-  //     });
-  //   }
-  //   onClose();
-  // },
-  //   onError: () => {
-  //     toast({
-  //       title: "An error occurred",
-  //       status: "error",
-  //       duration: 2000,
-  //       isClosable: true,
-  //     });
-  //   },
-  // });
-
-  // const { mutate: createGroupMutation, isPending } = useMutation({
-  //   mutationFn: () => createGroup(name, selectedTheme),
-  //   onSuccess: (newGroup) => {
-  //     setGroupName("");
-  //     router.push(`/group/${newGroup.id}/management`);
-  //     onClose();
-  //   },
-  //   onError: () => {
-  //     toast({
-  //       title: "An error occurred",
-  //       status: "error",
-  //       duration: 2000,
-  //       isClosable: true,
-  //     });
-  //   },
-  // });
+  const { mutate: createGroupTransactionMutation, isPending } = useMutation({
+    mutationFn: () =>
+      createGroupTransaction(
+        groupId,
+        title,
+        name,
+        date,
+        category,
+        amount,
+        payerSelects,
+        Object.entries(sharerAmounts).map(([id, amount]) => ({
+          id: id,
+          amount,
+        })),
+        note
+      ),
+    onSuccess: (newGroupTransaction) => {
+      setTitle("");
+      setAmount(0);
+      setNote("");
+      setCheckboxStates({});
+      setSharerAmounts({});
+      setTotalSharerAmount(0);
+      setTotalPayerAmount(0);
+      setPayerAmounts({});
+      setPayerSelects([{ id: "", amount: 0 }]);
+      setDate(new Date());
+      setCategory(options[0].value);
+      onClose();
+    },
+    onError: () => {
+      toast({
+        title: "An error occurred",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+    },
+  });
 
   const onModelClose = () => {
     onClose();
@@ -394,7 +407,7 @@ export default function GroupTransactionForm({
       onClose();
       return;
     }
-    // createGroupMutation();
+    createGroupTransactionMutation();
   };
 
   return (

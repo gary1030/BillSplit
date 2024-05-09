@@ -3,6 +3,7 @@ import { useState } from "react";
 import { MdOutlineAddBox } from "react-icons/md";
 import { Button } from "@chakra-ui/react";
 import GroupTransactionForm from "./groupTransactionForm";
+import { group } from "console";
 
 interface User {
   id: string;
@@ -13,11 +14,13 @@ interface User {
 interface AddRecordButtonProps {
   name: string;
   members: Array<User>;
+  groupId: string;
 }
 
 export default function AddRecordButton({
   name,
   members,
+  groupId,
 }: AddRecordButtonProps) {
   console.log("name", name);
   console.log("members", members);
@@ -57,6 +60,7 @@ export default function AddRecordButton({
         onClose={handleCloseModal}
         name={name}
         members={members}
+        groupId={groupId}
       />
     </>
   );

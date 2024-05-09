@@ -9,8 +9,8 @@ export default async function createGroupTransaction(
   date: Date,
   category: string,
   amount: number,
-  payerDetails: { payerId: string; amount: number }[],
-  sharerDetails: { sharerId: string; amount: number }[],
+  payerDetails: { id: string; amount: number }[],
+  sharerDetails: { id: string; amount: number }[],
   note: string
 ) {
   const cookieStore = cookies();
