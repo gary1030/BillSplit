@@ -9,7 +9,6 @@ import {
   Select,
   Switch,
   Checkbox,
-  IconButton,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
@@ -31,10 +30,8 @@ import { MdDateRange } from "react-icons/md";
 import { HiUserGroup } from "react-icons/hi";
 import { MdCategory } from "react-icons/md";
 import { MdAttachMoney } from "react-icons/md";
-import { HiPlusCircle } from "react-icons/hi";
 import { IoPerson } from "react-icons/io5";
 import { GoNote } from "react-icons/go";
-import { BsFillTrashFill } from "react-icons/bs";
 
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 
@@ -52,16 +49,19 @@ interface User {
   username: string;
 }
 
-interface Payer {
-  id: string;
-  amount: number;
-}
-
-interface CheckboxStates {
+interface SharerCheckBoxStates {
   [key: string]: boolean;
 }
 
-interface AmountStates {
+interface SharerAmounts {
+  [key: string]: number;
+}
+
+interface PayerCheckBoxStates {
+  [key: string]: boolean;
+}
+
+interface PayerAmounts {
   [key: string]: number;
 }
 
@@ -78,8 +78,6 @@ interface GroupTransactionFormProps {
   groupId: string;
 }
 
-const BOX_WIDTH = 150;
-
 export default function GroupTransactionForm({
   onClose,
   isOpen,
@@ -94,14 +92,25 @@ export default function GroupTransactionForm({
   const [amountString, setAmountString] = useState("0");
   const [amount, setAmount] = useState(0);
 
-  const [payerSelects, setPayerSelects] = useState([{ id: "", amount: 0 }]);
+  const [payerCustomizeSwitchOn, setPayerCustomizeSwitchOn] = useState(false);
+  const [payerCheckBoxStates, setPayerCheckBoxStates] =
+    useState<PayerCheckBoxStates>({});
+  const [payerNumber, setPayerNumber] = useState(0);
+  const [payerAmountStrings, setPayerAmountStrings] = useState<{
+    [id: string]: string;
+  }>({});
   const [payerAmounts, setPayerAmounts] = useState<{ [id: string]: number }>(
     {}
   );
   const [totalPayerAmount, setTotalPayerAmount] = useState(0);
 
-  const [customizeSwitchOn, setCustomizeSwitchOn] = useState(false);
-  const [checkboxStates, setCheckboxStates] = useState<CheckboxStates>({});
+  const [sharerCustomizeSwitchOn, setSharerCustomizeSwitchOn] = useState(true);
+  const [sharerCheckBoxStates, setSharerCheckBoxStates] =
+    useState<SharerCheckBoxStates>({});
+  const [sharerNumber, setSharerNumber] = useState(0);
+  const [sharerAmountStrings, setSharerAmountStrings] = useState<{
+    [id: string]: string;
+  }>({});
   const [sharerAmounts, setSharerAmounts] = useState<{ [id: string]: number }>(
     {}
   );
@@ -142,11 +151,20 @@ export default function GroupTransactionForm({
   /* Amount */
   // Handle amount input change
   const handleAmountInputChange = (valueAsString: string) => {
-    if (valueAsString === undefined || valueAsString.trim() === "") {
+    // If the input is empty, set the amount to 0
+    if (valueAsString.trim() === "") {
       setAmountString("0");
+      setAmount(0);
     }
+    // If the input is a valid number, update the amount
     if (/^\d*\.?\d*$/.test(valueAsString)) {
+      // Only allow digits and a single decimal point
       setAmountString(valueAsString);
+      let numericValue = parseFloat(valueAsString);
+      if (!isNaN(numericValue)) {
+        numericValue = parseFloat(numericValue.toFixed(2));
+        setAmount(numericValue);
+      }
     }
   };
 
@@ -158,127 +176,168 @@ export default function GroupTransactionForm({
     setAmount(numericValue);
   };
 
-  // Payer
-  // Initialize payerSelects with only the first member as a payer
+  /* Payer */
+  // initialize payerCheckBoxStates with all members unchecked
   useEffect(() => {
-    if (members.length > 0) {
-      setPayerSelects([{ id: members[0].id, amount: amount }]);
-    }
+    const initialState: PayerCheckBoxStates = {};
+    members.forEach((member) => {
+      initialState[member.id] = false;
+    });
+    setPayerCheckBoxStates(initialState);
   }, [members]);
 
-  function updateTotalPayerAmount(payers: Payer[]) {
-    const total = payers.reduce((sum, payer) => sum + payer.amount, 0);
-    setTotalPayerAmount(total);
-  }
+  // Handle amount changes
+  const handlePayerAmountInputChange = (id: string, valueAsString: string) => {
+    // If the input is empty, set the amount to 0
+    if (valueAsString.trim() === "") {
+      setPayerAmountStrings((prev) => ({ ...prev, [id]: "0" }));
+      setPayerAmounts((prev) => ({ ...prev, [id]: 0 }));
+      updateTotalPayerAmount({ ...payerAmounts, [id]: 0 });
+      return;
+    }
 
-  const handlePayerAmountChange = (
-    index: number,
-    valueAsString: string,
-    valueAsNumber: number
-  ) => {
-    const validAmount = isNaN(valueAsNumber) ? 0 : valueAsNumber;
-    const newSelects = payerSelects.map((select, idx) => {
-      if (idx === index) {
-        return { ...select, amount: validAmount };
+    // If the input is a valid number, update the amount
+    if (/^\d*\.?\d*$/.test(valueAsString)) {
+      // Only allow digits and a single decimal point
+      setPayerAmountStrings((prev) => ({ ...prev, [id]: valueAsString }));
+      let numericValue = parseFloat(valueAsString);
+      if (!isNaN(numericValue)) {
+        numericValue = parseFloat(numericValue.toFixed(2));
+        setPayerAmounts((prev) => ({ ...prev, [id]: numericValue }));
+        updateTotalPayerAmount({ ...payerAmounts, [id]: numericValue });
       }
-      return select;
-    });
-
-    setPayerSelects(newSelects);
-    updateTotalPayerAmount(newSelects);
+    }
   };
 
-  const addPayerSelect = () => {
-    setPayerSelects([...payerSelects, { id: "", amount: 0 }]);
-  };
-
-  const removePayerSelect = (index: number) => {
-    const filteredSelects = payerSelects.filter((_, idx) => idx !== index);
-    setPayerSelects(filteredSelects);
-
-    const newTotalAmount = filteredSelects.reduce(
-      (sum, cur) => sum + cur.amount,
+  const updateTotalPayerAmount = (newPayerAmounts: PayerAmounts) => {
+    const newTotalAmount = Object.values(newPayerAmounts).reduce(
+      (sum, amount) => sum + amount,
       0
     );
     setTotalPayerAmount(newTotalAmount);
   };
 
-  // Sharer
-  useEffect(() => {
-    const initialSharerAmounts: { [id: string]: number } = {};
-    members.forEach((member) => {
-      initialSharerAmounts[member.id] = 0;
+  // Handle checkbox change
+  const handlePayerCheckboxChange = (id: string, isChecked: boolean) => {
+    // Update the checkbox states
+    setPayerCheckBoxStates((prev) => {
+      const newStates = { ...prev, [id]: isChecked };
+      return newStates;
     });
-    setSharerAmounts(initialSharerAmounts);
-  }, [members]);
 
+    // Adjust the payer amounts based on whether the checkbox is checked or not
+    setPayerAmounts((prev) => {
+      const updatedAmounts = {
+        ...prev,
+        [id]: isChecked ? prev[id] || 0 : 0, // Set to 0 if unchecked
+      };
+
+      // Calculate the new total payer amount
+      const newTotalPayerAmount = Object.values(updatedAmounts).reduce(
+        (sum, amount) => sum + amount,
+        0
+      );
+      setTotalPayerAmount(newTotalPayerAmount);
+
+      return updatedAmounts;
+    });
+  };
+
+  // Update the payer number when the checkbox states change
   useEffect(() => {
-    // Only auto-distribute if customization is off
-    if (!customizeSwitchOn) {
+    const newPayerNumber = Object.values(payerCheckBoxStates).filter(
+      (isChecked) => isChecked
+    ).length;
+    setPayerNumber(newPayerNumber);
+  }, [payerCheckBoxStates]);
+
+  // Auto-distribute the amount among the checked payers if customization is off
+  useEffect(() => {
+    if (!payerCustomizeSwitchOn) {
+      // Filter out the checked members
       const checkedMembers: User[] = members.filter(
-        (member) => checkboxStates[member.id]
+        (member) => payerCheckBoxStates[member.id]
       );
+      // Calculate the average amount per checked member
       const averageAmount: number =
-        checkedMembers.length > 0 ? amount / checkedMembers.length : 0;
+        checkedMembers.length > 0
+          ? parseFloat((amount / checkedMembers.length).toFixed(2))
+          : 0;
+      const formattedAverageAmount: string = averageAmount.toFixed(2);
 
-      const newSharerAmounts: AmountStates = members.reduce<AmountStates>(
-        (acc, member) => {
-          acc[member.id] = checkboxStates[member.id] ? averageAmount : 0;
-          return acc;
-        },
-        {}
+      // Update the sharer amounts
+      const newPayerAmounts: PayerAmounts = {};
+      const newPayerAmountStrings: { [key: string]: string } = {};
+
+      members.forEach((member) => {
+        const amountForMember = payerCheckBoxStates[member.id]
+          ? averageAmount
+          : 0;
+        newPayerAmounts[member.id] = amountForMember;
+        newPayerAmountStrings[member.id] = payerCheckBoxStates[member.id]
+          ? formattedAverageAmount
+          : "0";
+      });
+
+      setPayerAmounts(newPayerAmounts);
+      setPayerAmountStrings(newPayerAmountStrings);
+
+      const newTotalPayerAmount: number = Object.values(newPayerAmounts).reduce(
+        (sum, amount) => sum + amount,
+        0
       );
-
-      setSharerAmounts(newSharerAmounts);
-      const newTotalSharerAmount: number = Object.values(
-        newSharerAmounts
-      ).reduce((sum, amount) => sum + amount, 0);
-
-      setTotalSharerAmount(newTotalSharerAmount);
-      // console.log(
-      //   `Updated sharer amounts based on new total amount: ${amount}`
-      // );
+      setTotalPayerAmount(newTotalPayerAmount);
     }
-  }, [amount, checkboxStates, customizeSwitchOn, members]);
+  }, [amount, payerCheckBoxStates, payerCustomizeSwitchOn, members]);
 
+  /* Sharer */
+  // initialize sharerCheckBoxStates with all members checked
   useEffect(() => {
-    const initialState: CheckboxStates = {};
+    const initialState: SharerCheckBoxStates = {};
     members.forEach((member) => {
       initialState[member.id] = true;
     });
-    setCheckboxStates(initialState);
+    setSharerCheckBoxStates(initialState);
   }, [members]);
 
-  const handleSharerAmountChange = (
-    id: string,
-    valueAsString: string,
-    valueAsNumber: number
-  ) => {
-    // Only allow changes if customizeSwitchOn is OFF to maintain manual edits
-    if (customizeSwitchOn) {
-      setSharerAmounts((prev) => {
-        const newAmounts = { ...prev, [id]: valueAsNumber };
-        // console.log(`Sharer amount changed for ID ${id}: ${valueAsNumber}`);
+  // Handle amount changes when the customize switch is on
+  const handleSharerAmountInputChange = (id: string, valueAsString: string) => {
+    // If the input is empty, set the amount to 0
+    if (valueAsString.trim() === "") {
+      setSharerAmountStrings((prev) => ({ ...prev, [id]: "0" }));
+      setSharerAmounts((prev) => ({ ...prev, [id]: 0 }));
+      updateTotalSharerAmount({ ...sharerAmounts, [id]: 0 });
+      return;
+    }
 
-        // Calculate the new total amount after the change
-        const newTotalAmount = Object.values(newAmounts).reduce(
-          (sum, amount) => sum + amount,
-          0
-        );
-        setTotalSharerAmount(newTotalAmount); // Update the state with the new total
-        // console.log(`New Total Sharer Amount: ${newTotalAmount}`);
-
-        return newAmounts;
-      });
+    // If the input is a valid number, update the amount
+    if (/^\d*\.?\d*$/.test(valueAsString)) {
+      // Only allow digits and a single decimal point
+      setSharerAmountStrings((prev) => ({ ...prev, [id]: valueAsString }));
+      let numericValue = parseFloat(valueAsString);
+      if (!isNaN(numericValue)) {
+        numericValue = parseFloat(numericValue.toFixed(2));
+        setSharerAmounts((prev) => ({ ...prev, [id]: numericValue }));
+        updateTotalSharerAmount({ ...sharerAmounts, [id]: numericValue });
+      }
     }
   };
 
-  const handleCheckboxChange = (id: string, isChecked: boolean) => {
+  const updateTotalSharerAmount = (newSharerAmounts: SharerAmounts) => {
+    const newTotalAmount = Object.values(newSharerAmounts).reduce(
+      (sum, amount) => sum + amount,
+      0
+    );
+    setTotalSharerAmount(newTotalAmount);
+  };
+
+  // Handle checkbox change
+  const handleSharerCheckboxChange = (id: string, isChecked: boolean) => {
     // Update the checkbox states
-    setCheckboxStates((prev) => ({
-      ...prev,
-      [id]: isChecked,
-    }));
+    setSharerCheckBoxStates((prev) => {
+      const newStates = { ...prev, [id]: isChecked };
+      return newStates;
+    });
 
     // Adjust the sharer amounts based on whether the checkbox is checked or not
     setSharerAmounts((prev) => {
@@ -292,65 +351,122 @@ export default function GroupTransactionForm({
         (sum, amount) => sum + amount,
         0
       );
-      setTotalSharerAmount(newTotalSharerAmount); // Update the total amount state
+      setTotalSharerAmount(newTotalSharerAmount);
 
       return updatedAmounts;
     });
   };
 
-  const { mutate: createGroupTransactionMutation, isPending } = useMutation({
-    mutationFn: () =>
-      createGroupTransaction(
-        groupId,
-        title,
-        name,
-        date,
-        category,
-        amount,
-        payerSelects,
-        Object.entries(sharerAmounts).map(([id, amount]) => ({
-          id: id,
-          amount,
-        })),
-        note
-      ),
-    onSuccess: (newGroupTransaction) => {
-      setTitle("");
-      setAmount(0);
-      setNote("");
-      setCheckboxStates({});
-      setSharerAmounts({});
-      setTotalSharerAmount(0);
-      setTotalPayerAmount(0);
-      setPayerAmounts({});
-      setPayerSelects([{ id: "", amount: 0 }]);
-      setDate(new Date());
-      setCategory("");
-      onClose();
-    },
-    onError: () => {
-      toast({
-        title: "An error occurred",
-        status: "error",
-        duration: 2000,
-        isClosable: true,
+  // Update the sharer number when the checkbox states change
+  useEffect(() => {
+    const newSharerNumber = Object.values(sharerCheckBoxStates).filter(
+      (isChecked) => isChecked
+    ).length;
+    setSharerNumber(newSharerNumber);
+  }, [sharerCheckBoxStates]);
+
+  // Auto-distribute the amount among the checked sharers if customization is off
+  useEffect(() => {
+    if (!sharerCustomizeSwitchOn) {
+      // Filter out the checked members
+      const checkedMembers: User[] = members.filter(
+        (member) => sharerCheckBoxStates[member.id]
+      );
+      // Calculate the average amount per checked member
+      const averageAmount: number =
+        checkedMembers.length > 0
+          ? parseFloat((amount / checkedMembers.length).toFixed(2))
+          : 0;
+      const formattedAverageAmount: string = averageAmount.toFixed(2);
+
+      // Update the sharer amounts
+      const newSharerAmounts: SharerAmounts = {};
+      const newSharerAmountStrings: { [key: string]: string } = {};
+
+      members.forEach((member) => {
+        const amountForMember = sharerCheckBoxStates[member.id]
+          ? averageAmount
+          : 0;
+        newSharerAmounts[member.id] = amountForMember;
+        newSharerAmountStrings[member.id] = sharerCheckBoxStates[member.id]
+          ? formattedAverageAmount
+          : "0";
       });
-    },
-  });
+
+      setSharerAmounts(newSharerAmounts);
+      setSharerAmountStrings(newSharerAmountStrings);
+
+      const newTotalSharerAmount: number = Object.values(
+        newSharerAmounts
+      ).reduce((sum, amount) => sum + amount, 0);
+      setTotalSharerAmount(newTotalSharerAmount);
+    }
+  }, [amount, sharerCheckBoxStates, sharerCustomizeSwitchOn, members]);
+
+  // const { mutate: createGroupTransactionMutation, isPending } = useMutation({
+  //   mutationFn: () =>
+  //     createGroupTransaction(
+  //       groupId,
+  //       title,
+  //       name,
+  //       date,
+  //       category,
+  //       amount,
+  //       Object.entries(sharerAmounts).map(([id, amount]) => ({
+  //         id: id,
+  //         amount,
+  //       })),
+  //       note
+  //     ),
+  //   onSuccess: (newGroupTransaction) => {
+  //     setTitle("");
+  //     setAmount(0);
+  //     setNote("");
+  //     setSharerCheckBoxStates({});
+  //     setSharerAmounts({});
+  //     setTotalSharerAmount(0);
+  //     setTotalPayerAmount(0);
+  //     setPayerAmounts({});
+  //     setPayerSelects([{ id: "", amount: 0 }]);
+  //     setDate(new Date());
+  //     setCategory("");
+  //     onClose();
+  //   },
+  //   onError: () => {
+  //     toast({
+  //       title: "An error occurred",
+  //       status: "error",
+  //       duration: 2000,
+  //       isClosable: true,
+  //     });
+  //   },
+  // });
 
   const onModelClose = () => {
+    setTitle("");
+    setDate(new Date());
+    setCategory("");
+    setAmountString("0");
+    setAmount(0);
+    setPayerCustomizeSwitchOn(true);
+    setPayerCheckBoxStates({});
+    setPayerAmountStrings({});
+    setPayerAmounts({});
+    setTotalPayerAmount(0);
+    setSharerCustomizeSwitchOn(false);
+    const initialSharerStates: SharerCheckBoxStates = {};
+    members.forEach((member) => {
+      initialSharerStates[member.id] = true;
+    });
+    setSharerCheckBoxStates(initialSharerStates);
+    setSharerAmountStrings({});
+    setSharerAmounts({});
+    setTotalSharerAmount(0);
+    setNote("");
     onClose();
   };
 
   const handleAdd = () => {
-    // debug;
-    // console.log("title", title);
-    // console.log("date", date);
-    // console.log("category", category);
-    // console.log("amount", amount);
-    // console.log("payerSelects", payerSelects);
-    // console.log("shareAmounts", sharerAmounts);
-    // console.log("note", note);
     let hasErrors = false;
 
     if (!title || title.trim() === "") {
@@ -389,16 +505,16 @@ export default function GroupTransactionForm({
         isClosable: true,
       });
     }
-    if (payerSelects.length == 0) {
+    if (Object.values(payerCheckBoxStates).every((isChecked) => !isChecked)) {
       hasErrors = true;
       toast({
-        title: `Payer should be selected`,
+        title: "Payer should be selected",
         status: "error",
         duration: 2000,
         isClosable: true,
       });
     }
-    if (Object.values(checkboxStates).every((isChecked) => !isChecked)) {
+    if (Object.values(sharerCheckBoxStates).every((isChecked) => !isChecked)) {
       hasErrors = true;
       toast({
         title: "Sharer should be selected",
@@ -411,9 +527,17 @@ export default function GroupTransactionForm({
       onClose();
       return;
     }
-    createGroupTransactionMutation();
+    // createGroupTransactionMutation();
   };
-
+  // console.log("title", title);
+  // console.log("date", date);
+  // console.log("category", category);
+  // console.log("amount", amount);
+  console.log("shareAmounts", sharerAmounts);
+  console.log("payerAmounts", payerAmounts);
+  // console.log("totalSharerAmount", totalSharerAmount);
+  // console.log("sharerCheckBoxStates", sharerCheckBoxStates);
+  // console.log("note", note);
   return (
     <>
       <Modal isOpen={isOpen} onClose={onModelClose}>
@@ -519,56 +643,77 @@ export default function GroupTransactionForm({
               </Box>
             </Flex>
             <Box w="140px"></Box>
-            <Flex mt="20px">
-              <Box w="30px">
-                <IoPerson size={24} />
-              </Box>
-              <Box w="140px">
-                <Text fontSize="md" as="b" noOfLines={1} pl="10px" pr="5px">
-                  Paid by
-                </Text>
+            <Flex mt="40px" alignItems="center" justifyContent="space-between">
+              <Box display="flex" alignItems="center">
+                <Box w="30px">
+                  <IoPerson size={24} />
+                </Box>
+                <Box w="140px">
+                  <Text fontSize="md" as="b" noOfLines={1} pl="10px" pr="5px">
+                    Paid by
+                  </Text>
+                </Box>
+                <Box display="flex" alignItems="center" marginLeft={240}>
+                  <Switch
+                    colorScheme="blue"
+                    size="md"
+                    isChecked={payerCustomizeSwitchOn}
+                    onChange={(e) =>
+                      setPayerCustomizeSwitchOn(e.target.checked)
+                    }
+                  />
+                  <Text
+                    fontSize="sm"
+                    as="b"
+                    noOfLines={1}
+                    pl="10px"
+                    pr="5px"
+                    color={payerCustomizeSwitchOn ? "black" : "lightgray"}
+                  >
+                    Customize
+                  </Text>
+                </Box>
               </Box>
             </Flex>
-
-            <Flex alignItems="center">
-              <Box marginLeft={171}>
-                {payerSelects.map((select, index) => (
-                  <Flex
-                    key={index}
-                    alignItems="center"
-                    mt="2"
-                    justifyContent="flex-start"
-                  >
-                    <Select
-                      placeholder="Select payer"
-                      value={select.id}
-                      onChange={(e) => {
-                        const newSelects = [...payerSelects];
-                        newSelects[index].id = e.target.value;
-                        setPayerSelects(newSelects);
-                      }}
-                      width={BOX_WIDTH + 30}
+            <Flex>
+              <Box mt="15px" marginLeft={178}>
+                {members.map((member) => (
+                  <Flex key={member.id} alignItems="center" w="full" mt="2">
+                    <Checkbox
+                      size="md"
+                      colorScheme="blue"
+                      isChecked={payerCheckBoxStates[member.id]}
+                      onChange={(e) =>
+                        handlePayerCheckboxChange(member.id, e.target.checked)
+                      }
+                    />
+                    <Text
+                      fontSize="md"
+                      as="b"
+                      noOfLines={1}
+                      pl="10px"
+                      pr="5px"
+                      flexGrow={1}
+                      color={
+                        payerCheckBoxStates[member.id] ? "black" : "lightgray"
+                      }
                     >
-                      {members.map((member) => (
-                        <option key={member.id} value={member.id}>
-                          {member.username}
-                        </option>
-                      ))}
-                    </Select>
-                    <Box marginLeft={10}>
+                      {member.username}
+                    </Text>
+                    <Box marginLeft={160}>
                       <NumberInput
                         maxW="100px"
-                        value={select.amount}
+                        defaultValue={0}
                         min={0}
                         precision={2}
-                        onChange={(valueAsString, valueAsNumber) =>
-                          handlePayerAmountChange(
-                            index,
-                            valueAsString,
-                            valueAsNumber
-                          )
+                        value={payerAmountStrings[member.id] || "0"}
+                        onChange={(valueAsString) =>
+                          handlePayerAmountInputChange(member.id, valueAsString)
                         }
-                        ml="20px"
+                        isDisabled={
+                          !payerCheckBoxStates[member.id] ||
+                          !payerCustomizeSwitchOn
+                        }
                       >
                         <NumberInputField />
                         <NumberInputStepper>
@@ -577,40 +722,23 @@ export default function GroupTransactionForm({
                         </NumberInputStepper>
                       </NumberInput>
                     </Box>
-                    <Box marginLeft={10}>
-                      <IconButton
-                        aria-label="Remove payer"
-                        icon={<BsFillTrashFill />}
-                        onClick={() => removePayerSelect(index)}
-                        ml="10px"
-                      />
-                    </Box>
                   </Flex>
                 ))}
               </Box>
             </Flex>
-            <Flex mt="20px" justifyContent="center" alignItems="center">
-              <IconButton
-                aria-label="Add payer"
-                icon={<HiPlusCircle />}
-                onClick={addPayerSelect}
-                ml="10px"
-                color="gray"
-              />
-            </Flex>
             <Flex>
               <Box mt="15px" marginLeft={163}>
                 <Text
-                  fontSize="md"
+                  fontSize="sm"
                   as="b"
                   noOfLines={1}
                   pl="10px"
                   pr="5px"
                   color="red"
                 >
-                  {totalPayerAmount == amount
+                  {totalPayerAmount === amount
                     ? ""
-                    : `Error message: The total amount should be $${amount}`}
+                    : `Total payer amount ($${totalPayerAmount}) is not equal to $${amount}`}
                 </Text>
               </Box>
             </Flex>
@@ -628,8 +756,10 @@ export default function GroupTransactionForm({
                   <Switch
                     colorScheme="blue"
                     size="md"
-                    isChecked={customizeSwitchOn}
-                    onChange={(e) => setCustomizeSwitchOn(e.target.checked)}
+                    isChecked={sharerCustomizeSwitchOn}
+                    onChange={(e) =>
+                      setSharerCustomizeSwitchOn(e.target.checked)
+                    }
                   />
                   <Text
                     fontSize="sm"
@@ -637,7 +767,7 @@ export default function GroupTransactionForm({
                     noOfLines={1}
                     pl="10px"
                     pr="5px"
-                    color={customizeSwitchOn ? "black" : "lightgray"}
+                    color={sharerCustomizeSwitchOn ? "black" : "lightgray"}
                   >
                     Customize
                   </Text>
@@ -651,9 +781,9 @@ export default function GroupTransactionForm({
                     <Checkbox
                       size="md"
                       colorScheme="blue"
-                      isChecked={checkboxStates[member.id]}
+                      isChecked={sharerCheckBoxStates[member.id]}
                       onChange={(e) =>
-                        handleCheckboxChange(member.id, e.target.checked)
+                        handleSharerCheckboxChange(member.id, e.target.checked)
                       }
                     />
                     <Text
@@ -663,7 +793,9 @@ export default function GroupTransactionForm({
                       pl="10px"
                       pr="5px"
                       flexGrow={1}
-                      color={checkboxStates[member.id] ? "black" : "lightgray"}
+                      color={
+                        sharerCheckBoxStates[member.id] ? "black" : "lightgray"
+                      }
                     >
                       {member.username}
                     </Text>
@@ -673,16 +805,16 @@ export default function GroupTransactionForm({
                         defaultValue={0}
                         min={0}
                         precision={2}
-                        value={sharerAmounts[member.id] || 0}
-                        onChange={(valueAsString, valueAsNumber) =>
-                          handleSharerAmountChange(
+                        value={sharerAmountStrings[member.id] || "0"}
+                        onChange={(valueAsString) =>
+                          handleSharerAmountInputChange(
                             member.id,
-                            valueAsString,
-                            valueAsNumber
+                            valueAsString
                           )
                         }
                         isDisabled={
-                          !checkboxStates[member.id] || !customizeSwitchOn
+                          !sharerCheckBoxStates[member.id] ||
+                          !sharerCustomizeSwitchOn
                         }
                       >
                         <NumberInputField />
@@ -699,16 +831,17 @@ export default function GroupTransactionForm({
             <Flex>
               <Box mt="15px" marginLeft={163}>
                 <Text
-                  fontSize="md"
+                  fontSize="sm"
                   as="b"
                   noOfLines={1}
                   pl="10px"
                   pr="5px"
                   color="red"
                 >
-                  {totalSharerAmount === amount
+                  {(!sharerCustomizeSwitchOn && sharerNumber) ||
+                  totalSharerAmount === amount
                     ? ""
-                    : `Error message: The total amount should be $${amount}`}
+                    : `Total sharer amount ($${totalSharerAmount}) is not equal to $${amount}`}
                 </Text>
               </Box>
             </Flex>
@@ -725,7 +858,7 @@ export default function GroupTransactionForm({
                 <Textarea
                   placeholder="Note"
                   height={50}
-                  width={450}
+                  width={440}
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                 />
