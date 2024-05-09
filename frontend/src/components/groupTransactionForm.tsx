@@ -25,6 +25,7 @@ import {
 // import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useCookies } from "react-cookie";
 
 import { MdDateRange } from "react-icons/md";
 import { HiUserGroup } from "react-icons/hi";
@@ -85,6 +86,8 @@ export default function GroupTransactionForm({
   members,
   groupId,
 }: GroupTransactionFormProps) {
+  const [cookies, setCookie] = useCookies(["name"]);
+
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(new Date());
   const [category, setCategory] = useState("");
@@ -120,6 +123,10 @@ export default function GroupTransactionForm({
   const toast = useToast();
   // const router = useRouter();
   // const queryClient = useQueryClient();
+
+  // function onChange(newName: string) {
+  //   setCookie("name", newName);
+  // }
 
   /* Categories */
   // fetch categories
@@ -183,6 +190,8 @@ export default function GroupTransactionForm({
     members.forEach((member) => {
       initialState[member.id] = false;
     });
+    initialState[(cookies as any).userId] = true;
+    console.log("initialState", initialState);
     setPayerCheckBoxStates(initialState);
   }, [members]);
 
@@ -449,7 +458,12 @@ export default function GroupTransactionForm({
     setAmountString("0");
     setAmount(0);
     setPayerCustomizeSwitchOn(true);
-    setPayerCheckBoxStates({});
+    const initialPayerStates: PayerCheckBoxStates = {};
+    members.forEach((member) => {
+      initialPayerStates[member.id] = false;
+    });
+    initialPayerStates[(cookies as any).userId] = true;
+    setPayerCheckBoxStates(initialPayerStates);
     setPayerAmountStrings({});
     setPayerAmounts({});
     setTotalPayerAmount(0);
@@ -745,7 +759,8 @@ export default function GroupTransactionForm({
                   pr="5px"
                   color="red"
                 >
-                  {totalPayerAmount === amount
+                  {(!payerCustomizeSwitchOn && payerNumber) ||
+                  totalPayerAmount === amount
                     ? ""
                     : `Total payer amount ($${totalPayerAmount}) is not equal to $${amount}`}
                 </Text>
