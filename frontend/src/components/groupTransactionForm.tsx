@@ -4,27 +4,26 @@ import {
   Box,
   Flex,
   Input,
-  Textarea,
-  Modal,
-  ModalBody,
-  ModalContent,
-  ModalFooter,
-  ModalOverlay,
-  SimpleGrid,
   Text,
-  useToast,
+  Textarea,
+  Select,
+  Switch,
+  Checkbox,
+  IconButton,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
   NumberIncrementStepper,
   NumberDecrementStepper,
-  Select,
-  Switch,
-  Checkbox,
-  CheckboxGroup,
-  IconButton,
+  Modal,
+  ModalBody,
+  ModalContent,
+  ModalFooter,
+  ModalOverlay,
+  useToast,
 } from "@chakra-ui/react";
-import { useRouter } from "next/navigation";
+
+// import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 
@@ -43,12 +42,9 @@ import FormHeader from "./formHeader";
 import Loading from "./loading";
 
 import fetchCategories from "@/actions/fetchCategories";
-// import createGroup from "@/actions/group/createGroup";
-// import editGroup from "@/actions/group/editGroup";
 import createGroupTransaction from "@/actions/group/createGroupTransaction";
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { on } from "events";
-import { group } from "console";
 
 interface User {
   id: string;
@@ -82,7 +78,7 @@ interface GroupTransactionFormProps {
   groupId: string;
 }
 
-const BOX_WIDTH = 200;
+const BOX_WIDTH = 150;
 
 export default function GroupTransactionForm({
   onClose,
@@ -91,38 +87,11 @@ export default function GroupTransactionForm({
   members,
   groupId,
 }: GroupTransactionFormProps) {
-  const {
-    data: categoryData,
-    error,
-    isLoading,
-  } = useQuery({
-    queryKey: ["categories"],
-    queryFn: () => fetchCategories(),
-    staleTime: Infinity,
-  });
-
-  console.log("Category Data: ", categoryData);
-
-  const uniqueCategoryMap = new Map<string, Category>();
-
-  categoryData?.data.forEach((item: Category) => {
-    if (!uniqueCategoryMap.has(item.name)) {
-      uniqueCategoryMap.set(item.name, item);
-    }
-  });
-
-  const uniqueCategories = Array.from(uniqueCategoryMap?.values());
-  console.log("Unique Categories: ", uniqueCategories);
-
-  const options = uniqueCategories?.map((category: Category) => ({
-    value: category.id,
-    label: category.name,
-  }));
-
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(new Date());
   const [category, setCategory] = useState("");
 
+  const [amountString, setAmountString] = useState("0");
   const [amount, setAmount] = useState(0);
 
   const [payerSelects, setPayerSelects] = useState([{ id: "", amount: 0 }]);
@@ -140,17 +109,53 @@ export default function GroupTransactionForm({
   const [note, setNote] = useState("");
 
   const toast = useToast();
-  const router = useRouter();
-  const queryClient = useQueryClient();
+  // const router = useRouter();
+  // const queryClient = useQueryClient();
 
-  // Amount
-  const handleAmountChange = (valueAsString: string, valueAsNumber: number) => {
-    // console.log("Amount changed to:", valueAsNumber);
-    if (isNaN(valueAsNumber)) {
-      setAmount(0);
-    } else {
-      setAmount(valueAsNumber);
+  /* Categories */
+  // fetch categories
+  const {
+    data: categoryData,
+    error,
+    isLoading,
+  } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => fetchCategories(),
+    staleTime: Infinity,
+  });
+
+  // extract unique categories
+  const uniqueCategoryMap = new Map<string, Category>();
+  categoryData?.data.forEach((item: Category) => {
+    if (!uniqueCategoryMap.has(item.name)) {
+      uniqueCategoryMap.set(item.name, item);
     }
+  });
+  const uniqueCategories = Array.from(uniqueCategoryMap?.values());
+
+  // create options for select
+  const options = uniqueCategories?.map((category: Category) => ({
+    value: category.id,
+    label: category.name,
+  }));
+
+  /* Amount */
+  // Handle amount input change
+  const handleAmountInputChange = (valueAsString: string) => {
+    if (valueAsString === undefined || valueAsString.trim() === "") {
+      setAmountString("0");
+    }
+    if (/^\d*\.?\d*$/.test(valueAsString)) {
+      setAmountString(valueAsString);
+    }
+  };
+
+  // Set the precision of the amount value to two decimal places.
+  const handleAmountInputBlur = () => {
+    let numericValue = parseFloat(amountString) || 0;
+    numericValue = parseFloat(numericValue.toFixed(2));
+    setAmountString(numericValue.toString());
+    setAmount(numericValue);
   };
 
   // Payer
@@ -338,6 +343,14 @@ export default function GroupTransactionForm({
   };
 
   const handleAdd = () => {
+    // debug;
+    // console.log("title", title);
+    // console.log("date", date);
+    // console.log("category", category);
+    // console.log("amount", amount);
+    // console.log("payerSelects", payerSelects);
+    // console.log("shareAmounts", sharerAmounts);
+    // console.log("note", note);
     let hasErrors = false;
 
     if (!title || title.trim() === "") {
@@ -465,9 +478,10 @@ export default function GroupTransactionForm({
               </Box>
               <Box>
                 <Select
+                  placeholder="Select category"
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  width={BOX_WIDTH}
+                  width={180}
                 >
                   {options.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -491,9 +505,10 @@ export default function GroupTransactionForm({
                   defaultValue={0}
                   min={0}
                   precision={2}
-                  onChange={handleAmountChange}
-                  value={amount}
-                  width={BOX_WIDTH}
+                  onChange={handleAmountInputChange}
+                  onBlur={handleAmountInputBlur}
+                  value={amountString}
+                  width={150}
                 >
                   <NumberInputField />
                   <NumberInputStepper>
@@ -525,13 +540,14 @@ export default function GroupTransactionForm({
                     justifyContent="flex-start"
                   >
                     <Select
+                      placeholder="Select payer"
                       value={select.id}
                       onChange={(e) => {
                         const newSelects = [...payerSelects];
                         newSelects[index].id = e.target.value;
                         setPayerSelects(newSelects);
                       }}
-                      width={BOX_WIDTH - 50}
+                      width={BOX_WIDTH + 30}
                     >
                       {members.map((member) => (
                         <option key={member.id} value={member.id}>
@@ -608,7 +624,7 @@ export default function GroupTransactionForm({
                     For whom
                   </Text>
                 </Box>
-                <Box display="flex" alignItems="center" marginLeft={210}>
+                <Box display="flex" alignItems="center" marginLeft={240}>
                   <Switch
                     colorScheme="blue"
                     size="md"
@@ -651,7 +667,7 @@ export default function GroupTransactionForm({
                     >
                       {member.username}
                     </Text>
-                    <Box marginLeft={130}>
+                    <Box marginLeft={160}>
                       <NumberInput
                         maxW="100px"
                         defaultValue={0}
