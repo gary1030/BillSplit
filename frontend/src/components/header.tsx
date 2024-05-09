@@ -1,24 +1,24 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import serverLogout from "@/actions/logout";
 import {
   Avatar,
   Box,
   Button,
   Flex,
-  Image,
-  Text,
-  Link,
   Hide,
+  Image,
+  Link,
+  Text,
 } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 
 interface HeaderProps {
   loggedIn: boolean;
-  isgroup: boolean;
+  isGroup: boolean;
 }
 
-export default function Header({ loggedIn, isgroup }: HeaderProps) {
+export default function Header({ loggedIn, isGroup }: HeaderProps) {
   const [userName, setUserName] = useState("");
   useEffect(() => {
     const getUserNameFromCookie = document.cookie
@@ -28,7 +28,7 @@ export default function Header({ loggedIn, isgroup }: HeaderProps) {
     if (getUserNameFromCookie) {
       setUserName(getUserNameFromCookie);
     }
-  });
+  }, []);
   const avatarUrl = `https://api.dicebear.com/8.x/open-peeps/svg?seed=${userName}`;
 
   const [showLogoutButton, setShowLogoutButton] = useState(false);
@@ -86,7 +86,7 @@ export default function Header({ loggedIn, isgroup }: HeaderProps) {
                 variant="ghost"
                 colorScheme="gray"
                 fontWeight="bold"
-                color={isgroup ? "gray.500" : "black"}
+                color={isGroup ? "gray.500" : "black"}
                 _focus={{ outline: "none", boxShadow: "none" }}
                 px={2}
                 mr={1}
@@ -99,7 +99,7 @@ export default function Header({ loggedIn, isgroup }: HeaderProps) {
                 variant="ghost"
                 colorScheme="gray"
                 fontWeight="bold"
-                color={isgroup ? "black" : "gray.500"}
+                color={isGroup ? "black" : "gray.500"}
                 _focus={{ outline: "none", boxShadow: "none" }}
                 px={2}
               >
