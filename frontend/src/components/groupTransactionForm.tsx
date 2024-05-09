@@ -42,6 +42,7 @@ import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import FormHeader from "./formHeader";
 import Loading from "./loading";
 
+import fetchCategories from "@/actions/fetchCategories";
 import createGroup from "@/actions/group/createGroup";
 import editGroup from "@/actions/group/editGroup";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -66,6 +67,11 @@ interface AmountStates {
   [key: string]: number;
 }
 
+interface Category {
+  id: string;
+  name: string;
+}
+
 interface GroupTransactionFormProps {
   onClose: () => void;
   isOpen: boolean;
@@ -75,18 +81,38 @@ interface GroupTransactionFormProps {
 
 const BOX_WIDTH = 200;
 
-const options = [
-  { value: "option1", label: "Option 1" },
-  { value: "option2", label: "Option 2" },
-  { value: "option3", label: "Option 3" },
-];
-
 export default function GroupTransactionForm({
   onClose,
   isOpen,
   name,
   members,
 }: GroupTransactionFormProps) {
+  const {
+    data: categoryData,
+    error,
+    isLoading,
+  } = useQuery({
+    queryKey: ["categories"],
+    queryFn: () => fetchCategories(),
+  });
+
+  console.log("categoryData", categoryData);
+  const uniqueCategoryMap = new Map<string, Category>();
+
+  categoryData.data.forEach((item: Category) => {
+    if (!uniqueCategoryMap.has(item.name)) {
+      uniqueCategoryMap.set(item.name, item);
+    }
+  });
+
+  const uniqueCategories = Array.from(uniqueCategoryMap.values());
+  console.log("Unique categories by name:", uniqueCategories);
+
+  const options = uniqueCategories.map((category: Category) => ({
+    value: category.id,
+    label: category.name,
+  }));
+
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(new Date());
   const [category, setCategory] = useState(options[0].value);
@@ -436,7 +462,6 @@ export default function GroupTransactionForm({
               </Box>
               <Box>
                 <Select
-                  placeholder="Select category"
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
                   width={BOX_WIDTH}
