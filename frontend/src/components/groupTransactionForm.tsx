@@ -98,39 +98,30 @@ export default function GroupTransactionForm({
   } = useQuery({
     queryKey: ["categories"],
     queryFn: () => fetchCategories(),
+    staleTime: Infinity,
   });
 
   console.log("Category Data: ", categoryData);
 
   const uniqueCategoryMap = new Map<string, Category>();
 
-  categoryData.data.forEach((item: Category) => {
+  categoryData?.data.forEach((item: Category) => {
     if (!uniqueCategoryMap.has(item.name)) {
       uniqueCategoryMap.set(item.name, item);
     }
   });
 
-  const uniqueCategories = Array.from(uniqueCategoryMap.values());
+  const uniqueCategories = Array.from(uniqueCategoryMap?.values());
   console.log("Unique Categories: ", uniqueCategories);
 
-  const options = uniqueCategories.map((category: Category) => ({
+  const options = uniqueCategories?.map((category: Category) => ({
     value: category.id,
     label: category.name,
   }));
 
-  // const options = [
-  //   { value: "food", label: "Food" },
-  //   { value: "grocery", label: "Grocery" },
-  //   { value: "transport", label: "Transport" },
-  //   { value: "utilities", label: "Utilities" },
-  //   { value: "rent", label: "Rent" },
-  //   { value: "entertainment", label: "Entertainment" },
-  //   { value: "others", label: "Others" },
-  // ];
-
   const [title, setTitle] = useState("");
   const [date, setDate] = useState(new Date());
-  const [category, setCategory] = useState(options[0].value);
+  const [category, setCategory] = useState("");
 
   const [amount, setAmount] = useState(0);
 
@@ -329,7 +320,7 @@ export default function GroupTransactionForm({
       setPayerAmounts({});
       setPayerSelects([{ id: "", amount: 0 }]);
       setDate(new Date());
-      setCategory(options[0].value);
+      setCategory("");
       onClose();
     },
     onError: () => {
@@ -583,9 +574,13 @@ export default function GroupTransactionForm({
               </Box>
             </Flex>
             <Flex mt="20px" justifyContent="center" alignItems="center">
-              <Box onClick={addPayerSelect} cursor="pointer">
-                <HiPlusCircle size={24} color="lightgray" />
-              </Box>
+              <IconButton
+                aria-label="Add payer"
+                icon={<HiPlusCircle />}
+                onClick={addPayerSelect}
+                ml="10px"
+                color="gray"
+              />
             </Flex>
             <Flex>
               <Box mt="15px" marginLeft={163}>
