@@ -478,6 +478,15 @@ export default function GroupTransactionForm({
         isClosable: true,
       });
     }
+    if (category === "") {
+      hasErrors = true;
+      toast({
+        title: "Category is required",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+    }
     if (amount <= 0) {
       hasErrors = true;
       toast({
@@ -542,7 +551,7 @@ export default function GroupTransactionForm({
     <>
       <Modal isOpen={isOpen} onClose={onModelClose}>
         <ModalOverlay />
-        <ModalContent w="90%" maxW="800px">
+        <ModalContent w="90%" maxW="700px">
           <FormHeader
             title="Add an expense"
             onClose={onModelClose}
