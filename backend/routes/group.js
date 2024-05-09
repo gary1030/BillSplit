@@ -152,9 +152,25 @@ router.get("/:id/transactions", async function (req, res, next) {
       return;
     }
 
+    // check start time and end time and format
+    if (
+      req.query.startTime === undefined ||
+      req.query.endTime === undefined ||
+      isNaN(Date.parse(req.query.startTime)) ||
+      isNaN(Date.parse(req.query.endTime))
+    ) {
+      res
+        .status(400)
+        .json({ message: "Start time and end time are required!" });
+      return;
+    }
+
     const groupTransactions = await TransactionControllers.getGroupTransactions(
-      req.params.id
+      req.params.id,
+      req.query.startTime,
+      req.query.endTime
     );
+
     res.send(groupTransactions);
   } catch (error) {
     console.log(error);

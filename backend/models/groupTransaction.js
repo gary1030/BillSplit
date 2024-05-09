@@ -1,4 +1,5 @@
 const { prisma } = require("../prisma");
+const { getEndOfDate } = require("../utils/getEndOfDate");
 
 /*
 model GroupTransaction {
@@ -103,7 +104,11 @@ class GroupTransaction {
   async getGroupTransactionsByGroupId(groupId, startTime, endTime) {
     const groupTransactions = await prisma.groupTransaction.findMany({
       where: {
-        groupId,
+        groupId: groupId,
+        consumptionDate: {
+          gte: new Date(startTime),
+          lte: getEndOfDate(endTime),
+        },
       },
     });
 
