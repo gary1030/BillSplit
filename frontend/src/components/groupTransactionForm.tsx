@@ -737,6 +737,15 @@ export default function GroupTransactionForm({
                           !payerCheckBoxStates[member.id] ||
                           !payerCustomizeSwitchOn
                         }
+                        sx={{
+                          "input:disabled": {
+                            opacity:
+                              !payerCustomizeSwitchOn &&
+                              payerCheckBoxStates[member.id]
+                                ? 1
+                                : undefined,
+                          },
+                        }}
                       >
                         <NumberInputField />
                         <NumberInputStepper>
@@ -840,6 +849,15 @@ export default function GroupTransactionForm({
                           !sharerCheckBoxStates[member.id] ||
                           !sharerCustomizeSwitchOn
                         }
+                        sx={{
+                          "input:disabled": {
+                            opacity:
+                              !sharerCustomizeSwitchOn &&
+                              sharerCheckBoxStates[member.id]
+                                ? 1
+                                : undefined,
+                          },
+                        }}
                       >
                         <NumberInputField />
                         <NumberInputStepper>
