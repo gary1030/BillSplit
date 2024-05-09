@@ -25,7 +25,7 @@ export default function Sidebar({ groupId }: SidebarProps) {
 
   return (
     <Flex
-      w="fit-content"
+      w={{ base: "58px", md: "164px" }}
       h="full"
       borderRight="2px"
       pos="fixed"
@@ -47,7 +47,7 @@ export default function Sidebar({ groupId }: SidebarProps) {
           mt={115}
         >
           <IoSettingsOutline size={30}></IoSettingsOutline>
-          <Hide below="1200px">
+          <Hide below="md">
             <Text ml={2} fontSize="md">
               Management
             </Text>
@@ -64,7 +64,7 @@ export default function Sidebar({ groupId }: SidebarProps) {
           justifyContent={"flex-start"}
         >
           <GoNote size={30}></GoNote>
-          <Hide below="1200px">
+          <Hide below="md">
             <Text ml={2} fontSize="md">
               Record
             </Text>
@@ -81,7 +81,7 @@ export default function Sidebar({ groupId }: SidebarProps) {
           justifyContent={"flex-start"}
         >
           <MdPieChart size={30}></MdPieChart>
-          <Hide below="1200px">
+          <Hide below="md">
             <Text ml={2} fontSize="md">
               Analysis
             </Text>
@@ -98,7 +98,7 @@ export default function Sidebar({ groupId }: SidebarProps) {
           justifyContent={"flex-start"}
         >
           <MdOutlineMonetizationOn size={30}></MdOutlineMonetizationOn>
-          <Hide below="1200px">
+          <Hide below="md">
             <Text ml={2} fontSize="md">
               Balance
             </Text>
