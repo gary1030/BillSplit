@@ -1,10 +1,10 @@
 "use client";
 
-import { Button, Flex, Link, Text, Hide } from "@chakra-ui/react";
-import { IoSettingsOutline } from "react-icons/io5";
+import { Button, Flex, Hide, Link, Text } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
 import { GoNote } from "react-icons/go";
-import { MdPieChart, MdOutlineMonetizationOn } from "react-icons/md";
-import { useState, useEffect } from "react";
+import { IoSettingsOutline } from "react-icons/io5";
+import { MdOutlineMonetizationOn, MdPieChart } from "react-icons/md";
 
 interface SidebarProps {
   groupId: string;
@@ -18,10 +18,10 @@ export default function Sidebar({ groupId }: SidebarProps) {
   if (!isClient) {
     return null;
   }
-  const managementLink = `${window.location.origin}/group/${groupId}/management`;
-  const recordLink = `${window.location.origin}/group/${groupId}/record`;
-  const analysisLink = `${window.location.origin}/group/${groupId}/analysis`;
-  const balanceLink = `${window.location.origin}/group/${groupId}/balance`;
+  const managementLink = `/group/${groupId}/management`;
+  const recordLink = `/group/${groupId}`;
+  const analysisLink = `/group/${groupId}/analysis`;
+  const balanceLink = `/group/${groupId}/balance`;
 
   return (
     <Flex

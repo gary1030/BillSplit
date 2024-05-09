@@ -1,12 +1,12 @@
 import GoogleSignInButton from "@/components/auth/googleSignInButton";
-import Header from "@/components/header";
 import Footer from "@/components/footer";
+import Header from "@/components/header";
 import { Box, Center, Flex, Image, Text } from "@chakra-ui/react";
 
 export default function Home() {
   return (
     <Flex direction="column" align="center" w="full">
-      <Header loggedIn={false} isgroup={false} />
+      <Header loggedIn={false} isGroup={false} />
       <Flex
         direction={{ base: "column", md: "row" }}
         w="93%"
