@@ -1,8 +1,8 @@
-const PersonalTransaction = require("../models/personalTransaction");
-const GroupTransaction = require("../models/groupTransaction");
-const GroupRepayment = require("../models/groupRepayment");
-const UserConcealedTransaction = require("../models/userConcealedTransaction");
-const Currency = require("../models/currency");
+const PersonalTransaction = require('../models/personalTransaction');
+const GroupTransaction = require('../models/groupTransaction');
+const GroupRepayment = require('../models/groupRepayment');
+const UserConcealedTransaction = require('../models/userConcealedTransaction');
+const Currency = require('../models/currency');
 
 class TransactionControllers {
   async createPersonalTransaction(userId, categoryId, type, title, amount) {
@@ -54,7 +54,7 @@ class TransactionControllers {
       if (
         !this.checkTransactionAmount(payerDetails, splitDetails, totalAmount)
       ) {
-        throw new Error("Transaction amount is not correct");
+        throw new Error('Transaction amount is not correct');
       }
       const groupTransaction = await GroupTransaction.createGroupTransaction({
         groupId,
@@ -290,6 +290,58 @@ class TransactionControllers {
       });
 
       return { group_id: groupId, share, balance };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getGroupAnalysis(groupId) {
+    try {
+      const groupTransactions =
+        await GroupTransaction.getGroupTransactionsByGroupId(groupId);
+      let total = 0;
+
+      const analysis = groupTransactions.reduce((acc, item) => {
+        if (acc[item.categoryId]) {
+          acc[item.categoryId] += item.totalAmount;
+        } else {
+          acc[item.categoryId] = item.totalAmount;
+        }
+        total += item.totalAmount;
+        return acc;
+      }, {});
+
+      return { analysis, total };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getGroupPersonalAnalysis(groupId, userId) {
+    try {
+      const groupTransactions =
+        await GroupTransaction.getGroupTransactionsByGroupId(groupId);
+      let total = 0;
+
+      const analysis = groupTransactions.reduce((acc, item) => {
+        let userSplit = item.splitDetails.filter(
+          (obj) => obj.sharerId == userId
+        );
+        const sum = userSplit.reduce((acc, split) => {
+          acc += split.amount;
+          return acc;
+        }, 0);
+
+        if (acc[item.categoryId]) {
+          acc[item.categoryId] += sum;
+        } else {
+          acc[item.categoryId] = sum;
+        }
+        total += sum;
+        return acc;
+      }, {});
+
+      return { analysis, total };
     } catch (error) {
       throw error;
     }

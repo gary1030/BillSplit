@@ -101,18 +101,28 @@ class GroupTransaction {
     return groupTransaction;
   }
 
-  async getGroupTransactionsByGroupId(groupId, startTime, endTime) {
-    const groupTransactions = await prisma.groupTransaction.findMany({
-      where: {
-        groupId: groupId,
-        consumptionDate: {
-          gte: new Date(startTime),
-          lte: getEndOfDate(endTime),
+  async getGroupTransactionsByGroupId(groupId, startTime=null, endTime=null) {
+    if (startTime && endTime) {
+      const groupTransactions = await prisma.groupTransaction.findMany({
+        where: {
+          groupId: groupId, 
+          consumptionDate: {
+            gte: new Date(startTime),
+            lte: getEndOfDate(endTime),
+          },
         },
-      },
-    });
+      });
+  
+      return groupTransactions;
+    } else {
+      const groupTransactions = await prisma.groupTransaction.findMany({
+        where: {
+          groupId: groupId, 
+        },
+      });
 
-    return groupTransactions;
+      return groupTransactions;
+    }
   }
 }
 
