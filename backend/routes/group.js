@@ -152,23 +152,30 @@ router.get("/:id/transactions", async function (req, res, next) {
       return;
     }
 
+    var startTime = req.query.startTime
+    var endTime = req.query.endTime
+
     // check start time and end time and format
     if (
-      req.query.startTime === undefined ||
-      req.query.endTime === undefined ||
-      isNaN(Date.parse(req.query.startTime)) ||
-      isNaN(Date.parse(req.query.endTime))
+      startTime === undefined ||
+      endTime === undefined
+    ) {
+      startTime = new Date(0); // January 1, 1970
+      endTime = new Date();
+    } else if (
+      isNaN(Date.parse(startTime)) ||
+      isNaN(Date.parse(endTime))
     ) {
       res
         .status(400)
-        .json({ message: "Start time and end time are required!" });
+        .json({ message: "Start time and end time are illegal!" });
       return;
     }
 
     const groupTransactions = await TransactionControllers.getGroupTransactions(
       req.params.id,
-      req.query.startTime,
-      req.query.endTime
+      startTime,
+      endTime
     );
 
     res.send(groupTransactions);
@@ -477,5 +484,46 @@ router.get("/:id/personal-stat", async function (req, res, next) {
     res.status(400).json({ message: "Bad Request" });
   }
 });
+
+/* Get group analysis */
+router.get("/:id/analysis/group", async function (req, res, next) {
+  try {
+    const isUserInGroup = await GroupControllers.isUserInGroup(
+      req.params.id,
+      req.userId
+    );
+    if (!isUserInGroup) {
+      res.status(401).json({ message: "Unauthorized!" });
+      return;
+    }
+
+    const data = await TransactionControllers.getGroupAnalysis(req.params.id);
+    res.send(data);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Bad Request" });
+  }
+});
+
+/* Get group analysis */
+router.get("/:id/analysis/personal", async function (req, res, next) {
+  try {
+    const isUserInGroup = await GroupControllers.isUserInGroup(
+      req.params.id,
+      req.userId
+    );
+    if (!isUserInGroup) {
+      res.status(401).json({ message: "Unauthorized!" });
+      return;
+    }
+
+    const data = await TransactionControllers.getGroupPersonalAnalysis(req.params.id, req.userId);
+    res.send(data);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Bad Request" });
+  }
+});
+
 
 module.exports = router;
