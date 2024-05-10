@@ -2,7 +2,7 @@
 import httpAgent from "@/agent/httpAgent";
 import { cookies } from "next/headers";
 
-export default async function fetchGroupSingleTransactionB(
+export default async function fetchGroupSingleTransaction(
   groupId: string,
   transactionId: string
 ) {
