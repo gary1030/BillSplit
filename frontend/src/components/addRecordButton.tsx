@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { MdOutlineAddBox } from "react-icons/md";
 import { Button } from "@chakra-ui/react";
-import AddGroupTransactionForm from "./addGroupTransactionForm";
+import EditGroupTransactionForm from "./editGroupTransactionForm";
 import ReadGroupTransactionForm from "./readGroupTransactionForm";
 import { group } from "console";
 
@@ -54,21 +54,23 @@ export default function AddRecordButton({
         <MdOutlineAddBox size={40} />
         <span style={{ marginTop: "3px" }}>Add a record</span>
       </Button>
-      {/* <ReadGroupTransactionForm
+      <ReadGroupTransactionForm
         isOpen={isOpen}
         onClose={handleCloseModal}
         members={members}
         groupId={groupId}
         name={name}
         transactionId="663cfac4fdb27f02831d1417"
-      /> */}
-      <AddGroupTransactionForm
+      />
+      {/* <EditGroupTransactionForm
+        mode="edit"
         isOpen={isOpen}
         onClose={handleCloseModal}
         name={name}
         members={members}
         groupId={groupId}
-      />
+        transactionId="663e12b258f4883f8b8a93d7"
+      /> */}
     </>
   );
 }

@@ -33,6 +33,8 @@ import { GoNote } from "react-icons/go";
 import FormHeader from "./formHeader";
 import Loading from "./loading";
 
+import EditGroupTransactionForm from "./editGroupTransactionForm";
+
 import fetchCategories from "@/actions/fetchCategories";
 import fetchGroupSingleTransaction from "@/actions/group/fetchGroupTransaction";
 
@@ -169,6 +171,24 @@ export default function ReadGroupTransactionForm({
     onClose();
   };
 
+  const handleCloseModal = () => {};
+
+  const turnToEdit = () => {
+    return (
+      <>
+        <EditGroupTransactionForm
+          mode="edit"
+          isOpen={isOpen}
+          onClose={handleCloseModal}
+          name={name}
+          members={members}
+          groupId={groupId}
+          transactionId={transactionId}
+        />
+      </>
+    );
+  };
+
   return (
     <>
       <Modal isOpen={isOpen} onClose={onModelClose}>
@@ -177,7 +197,7 @@ export default function ReadGroupTransactionForm({
           <FormHeader
             title="Expense"
             onClose={onModelClose}
-            onEdit={onModelClose}
+            onEdit={turnToEdit}
             onDelete={onModelClose}
           />
           <ModalBody>
