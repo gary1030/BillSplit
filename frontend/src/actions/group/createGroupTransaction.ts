@@ -35,7 +35,7 @@ export default async function createGroupTransaction(
     });
     return data;
   } catch (error) {
-    console.error("Failed to create group transaction", error);
+    console.error("Failed to create group transaction!", error);
     return null;
   }
 }
