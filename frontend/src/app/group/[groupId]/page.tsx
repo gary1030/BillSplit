@@ -2,6 +2,7 @@ import Footer from "@/components/footer";
 import Header from "@/components/header";
 import Sidebar from "@/components/sidebar";
 import { Container } from "@chakra-ui/react";
+import GroupRecord from "./groupRecord";
 
 export default function Page({ params }: { params: { groupId: string } }) {
   return (
@@ -9,7 +10,7 @@ export default function Page({ params }: { params: { groupId: string } }) {
       <Header loggedIn={true} isGroup={true} />
       <Sidebar groupId={params.groupId} />
       <Container
-        w={{ base: "95%", md: "85%" }}
+        w={{ base: "100%", md: "90%" }}
         maxW="800px"
         mt="40px"
         mb="30px"
@@ -18,8 +19,7 @@ export default function Page({ params }: { params: { groupId: string } }) {
           md: "calc(164px + 1rem)",
         }}
       >
-        <h1>Single Group Page</h1>
-        <p>Group ID: {params.groupId}</p>
+        <GroupRecord groupId={params.groupId} />
       </Container>
       <Footer />
     </>

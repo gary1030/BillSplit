@@ -1,10 +1,8 @@
 "use client";
-import { useState } from "react";
-import { MdOutlineAddBox } from "react-icons/md";
 import { Button } from "@chakra-ui/react";
-import EditGroupTransactionForm from "./editGroupTransactionForm";
-import ReadGroupTransactionForm from "./readGroupTransactionForm";
-import { group } from "console";
+import { useState } from "react";
+import { FiPlusCircle } from "react-icons/fi";
+import AddGroupTransactionForm from "./addGroupTransactionForm";
 
 interface User {
   id: string;
@@ -38,30 +36,31 @@ export default function AddRecordButton({
       <Button
         style={{
           position: "fixed",
-          bottom: "20px",
-          right: "20px",
+          bottom: "50px",
+          right: "10px",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           border: "none",
           background: "none",
           cursor: "pointer",
-          width: "120px",
-          height: "150px",
+          width: "100px",
+          height: "70px",
+          padding: "0",
         }}
         onClick={handleOpenModal}
       >
-        <MdOutlineAddBox size={40} />
+        <FiPlusCircle size={40} />
         <span style={{ marginTop: "3px" }}>Add a record</span>
       </Button>
-      <ReadGroupTransactionForm
+      {/* <ReadGroupTransactionForm
         isOpen={isOpen}
         onClose={handleCloseModal}
         members={members}
         groupId={groupId}
         name={name}
         transactionId="663cfac4fdb27f02831d1417"
-      />
+      /> */}
       {/* <EditGroupTransactionForm
         mode="edit"
         isOpen={isOpen}
