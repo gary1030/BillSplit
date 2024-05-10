@@ -22,7 +22,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useCookies } from "react-cookie";
 
@@ -40,14 +40,26 @@ import Loading from "./loading";
 
 import fetchCategories from "@/actions/fetchCategories";
 import createGroupTransaction from "@/actions/group/createGroupTransaction";
+import editGroupTransaction from "@/actions/group/editGroupTransaction";
 import fetchGroupSingleTransaction from "@/actions/group/fetchGroupTransaction";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { group } from "console";
 
 interface User {
   id: string;
   email: string;
   username: string;
+}
+
+interface Payer {
+  payerId: string;
+  amount: number;
+}
+
+interface Sharer {
+  sharerId: string;
+  amount: number;
 }
 
 interface SharerCheckBoxStates {
@@ -72,20 +84,37 @@ interface Category {
 }
 
 interface GroupTransactionFormProps {
+  mode: "create" | "edit";
   onClose: () => void;
   isOpen: boolean;
   name: string;
   members: Array<User>;
   groupId: string;
+  transactionId?: string;
 }
 
-export default function AddGroupTransactionForm({
+export default function EditGroupTransactionForm({
   onClose,
   isOpen,
   name,
+  mode,
   members,
   groupId,
+  transactionId,
 }: GroupTransactionFormProps) {
+  /* Transaction Data */
+  let groupTransaction = undefined;
+  if (mode === "edit" && transactionId !== undefined) {
+    const { data: transactionData, error: transactionError } = useQuery({
+      queryKey: ["transaction"],
+      queryFn: () => fetchGroupSingleTransaction(groupId, transactionId),
+      staleTime: Infinity,
+    });
+    if (transactionData !== undefined) {
+      groupTransaction = transactionData.data;
+    }
+  }
+
   const [cookies, setCookie] = useCookies(["name"]);
 
   const [title, setTitle] = useState("");
@@ -122,6 +151,14 @@ export default function AddGroupTransactionForm({
 
   const toast = useToast();
 
+  /* Title */
+  // initialize title in edit mode
+  useEffect(() => {
+    if (mode === "edit" && groupTransaction !== undefined) {
+      setTitle(groupTransaction.title);
+    }
+  }, [mode, groupTransaction]);
+
   /* Categories */
   // fetch categories
   const {
@@ -149,8 +186,22 @@ export default function AddGroupTransactionForm({
     label: category.name,
   }));
 
+  // initialize category in edit mode
+  useEffect(() => {
+    if (mode === "edit" && groupTransaction !== undefined) {
+      setCategory(groupTransaction.categoryId);
+    }
+  }, [mode, groupTransaction]);
+
   /* Amount */
   // Handle amount input change
+  useEffect(() => {
+    if (mode === "edit" && groupTransaction !== undefined) {
+      setAmount(groupTransaction.totalAmount);
+      setAmountString(groupTransaction.totalAmount.toString());
+    }
+  }, [mode, groupTransaction]);
+
   const handleAmountInputChange = (valueAsString: string) => {
     // If the input is empty, set the amount to 0
     if (valueAsString.trim() === "") {
@@ -177,16 +228,63 @@ export default function AddGroupTransactionForm({
     setAmount(numericValue);
   };
 
-  /* Payer */
-  // initialize payerCheckBoxStates with all members unchecked
+  /* Switch */
+  // initialize customize switches in edit mode
   useEffect(() => {
+    if (mode === "edit") {
+      setPayerCustomizeSwitchOn(true);
+      setSharerCustomizeSwitchOn(true);
+    }
+  }, [mode]);
+
+  /* Payer */
+  // initialize payer total amount in edit mode
+  useEffect(() => {
+    if (mode === "edit" && groupTransaction !== undefined) {
+      let totalAmount = 0;
+      groupTransaction.payerDetails.forEach((payer: Payer) => {
+        totalAmount += payer.amount;
+      });
+      setTotalPayerAmount(totalAmount);
+    }
+  }, [mode, groupTransaction]);
+
+  // initialize payerCheckBoxStates
+  useEffect(() => {
+    // set the payer checkbox states to unchecked for all members
     const initialState: PayerCheckBoxStates = {};
     members.forEach((member) => {
       initialState[member.id] = false;
     });
-    initialState[(cookies as any).userId] = true;
+    // create mode: set the payer checkbox state to checked for the current user
+    if (mode === "create") {
+      initialState[(cookies as any).userId] = true;
+    }
     setPayerCheckBoxStates(initialState);
-  }, [members]);
+
+    // edit mode
+    if (mode === "edit" && groupTransaction !== undefined) {
+      groupTransaction.payerDetails.forEach((payer: Payer) => {
+        if (payer.amount > 0) {
+          // set the payer checkbox states to checked for the payers with positive amounts
+          setPayerCheckBoxStates((prev) => ({
+            ...prev,
+            [payer.payerId]: true,
+          }));
+          // set the payer amount strings to the amounts of the payers with positive amounts
+          setPayerAmountStrings((prev) => ({
+            ...prev,
+            [payer.payerId]: payer.amount.toString(),
+          }));
+          // set the payer amounts to the amounts of the payers with positive amounts
+          setPayerAmounts((prev) => ({
+            ...prev,
+            [payer.payerId]: payer.amount,
+          }));
+        }
+      });
+    }
+  }, [members, mode]);
 
   // Handle amount changes
   const handlePayerAmountInputChange = (id: string, valueAsString: string) => {
@@ -293,14 +391,44 @@ export default function AddGroupTransactionForm({
   }, [amount, payerCheckBoxStates, payerCustomizeSwitchOn, members]);
 
   /* Sharer */
-  // initialize sharerCheckBoxStates with all members checked
+  // initialize sharer total amount in edit mode
   useEffect(() => {
+    if (mode === "edit" && groupTransaction !== undefined) {
+      let totalAmount = 0;
+      groupTransaction.splitDetails.forEach((sharer: Sharer) => {
+        totalAmount += sharer.amount;
+      });
+      setTotalSharerAmount(totalAmount);
+    }
+  }, [mode, groupTransaction]);
+
+  // initialize sharerCheckBoxStates
+  useEffect(() => {
+    // set the sharer checkbox states to checked for all members
     const initialState: SharerCheckBoxStates = {};
     members.forEach((member) => {
       initialState[member.id] = true;
     });
     setSharerCheckBoxStates(initialState);
-  }, [members]);
+
+    // edit mode
+    if (mode === "edit" && groupTransaction !== undefined) {
+      groupTransaction.splitDetails.forEach((sharer: Sharer) => {
+        if (sharer.amount > 0) {
+          // set the sharer amount strings to the amounts of the sharers with positive amounts
+          setSharerAmountStrings((prev) => ({
+            ...prev,
+            [sharer.sharerId]: sharer.amount.toString(),
+          }));
+          // set the sharer amounts to the amounts of the sharers with positive amounts
+          setSharerAmounts((prev) => ({
+            ...prev,
+            [sharer.sharerId]: sharer.amount,
+          }));
+        }
+      });
+    }
+  }, [members, mode]);
 
   // Handle amount changes when the customize switch is on
   const handleSharerAmountInputChange = (id: string, valueAsString: string) => {
@@ -405,6 +533,14 @@ export default function AddGroupTransactionForm({
     }
   }, [amount, sharerCheckBoxStates, sharerCustomizeSwitchOn, members]);
 
+  /* Note */
+  // initialize note in edit mode
+  useEffect(() => {
+    if (mode === "edit" && groupTransaction !== undefined) {
+      setNote(groupTransaction.note);
+    }
+  }, [mode, groupTransaction]);
+
   const { mutate: createGroupTransactionMutation, isPending } = useMutation({
     mutationFn: () =>
       createGroupTransaction(
@@ -423,7 +559,7 @@ export default function AddGroupTransactionForm({
         })),
         note
       ),
-    onSuccess: (newGroupTransaction) => {
+    onSuccess: () => {
       setTitle("");
       setDate(new Date());
       setCategory("");
@@ -461,32 +597,96 @@ export default function AddGroupTransactionForm({
     },
   });
 
+  const { mutate: editGroupTransactionMutation, isPending: isEditPending } =
+    useMutation({
+      mutationFn: () => {
+        if (!transactionId) {
+          throw new Error("Transaction ID is required");
+        }
+        return editGroupTransaction(
+          transactionId,
+          title,
+          groupId,
+          date,
+          category,
+          amount,
+          Object.entries(payerAmounts).map(([payerId, amount]) => ({
+            payerId,
+            amount,
+          })),
+          Object.entries(sharerAmounts).map(([sharerId, amount]) => ({
+            sharerId,
+            amount,
+          })),
+          note
+        );
+      },
+      onSuccess: () => {
+        setTitle("");
+        setDate(new Date());
+        setCategory("");
+        setAmountString("0");
+        setAmount(0);
+        setPayerCustomizeSwitchOn(false);
+        const initialPayerStates: PayerCheckBoxStates = {};
+        members.forEach((member) => {
+          initialPayerStates[member.id] = false;
+        });
+        initialPayerStates[(cookies as any).userId] = true;
+        setPayerCheckBoxStates(initialPayerStates);
+        setPayerAmountStrings({});
+        setPayerAmounts({});
+        setTotalPayerAmount(0);
+        setSharerCustomizeSwitchOn(false);
+        const initialSharerStates: SharerCheckBoxStates = {};
+        members.forEach((member) => {
+          initialSharerStates[member.id] = true;
+        });
+        setSharerCheckBoxStates(initialSharerStates);
+        setSharerAmountStrings({});
+        setSharerAmounts({});
+        setTotalSharerAmount(0);
+        setNote("");
+        onClose();
+      },
+      onError: () => {
+        toast({
+          title: "An error occurred",
+          status: "error",
+          duration: 2000,
+          isClosable: true,
+        });
+      },
+    });
+
   const onModelClose = () => {
-    setTitle("");
-    setDate(new Date());
-    setCategory("");
-    setAmountString("0");
-    setAmount(0);
-    setPayerCustomizeSwitchOn(false);
-    const initialPayerStates: PayerCheckBoxStates = {};
-    members.forEach((member) => {
-      initialPayerStates[member.id] = false;
-    });
-    initialPayerStates[(cookies as any).userId] = true;
-    setPayerCheckBoxStates(initialPayerStates);
-    setPayerAmountStrings({});
-    setPayerAmounts({});
-    setTotalPayerAmount(0);
-    setSharerCustomizeSwitchOn(false);
-    const initialSharerStates: SharerCheckBoxStates = {};
-    members.forEach((member) => {
-      initialSharerStates[member.id] = true;
-    });
-    setSharerCheckBoxStates(initialSharerStates);
-    setSharerAmountStrings({});
-    setSharerAmounts({});
-    setTotalSharerAmount(0);
-    setNote("");
+    if (mode === "create") {
+      setTitle("");
+      setDate(new Date());
+      setCategory("");
+      setAmountString("0");
+      setAmount(0);
+      setPayerCustomizeSwitchOn(false);
+      const initialPayerStates: PayerCheckBoxStates = {};
+      members.forEach((member) => {
+        initialPayerStates[member.id] = false;
+      });
+      initialPayerStates[(cookies as any).userId] = true;
+      setPayerCheckBoxStates(initialPayerStates);
+      setPayerAmountStrings({});
+      setPayerAmounts({});
+      setTotalPayerAmount(0);
+      setSharerCustomizeSwitchOn(false);
+      const initialSharerStates: SharerCheckBoxStates = {};
+      members.forEach((member) => {
+        initialSharerStates[member.id] = true;
+      });
+      setSharerCheckBoxStates(initialSharerStates);
+      setSharerAmountStrings({});
+      setSharerAmounts({});
+      setTotalSharerAmount(0);
+      setNote("");
+    }
     onClose();
   };
 
@@ -557,10 +757,15 @@ export default function AddGroupTransactionForm({
       });
     }
     if (!hasErrors) {
-      console.log("totalAmount", amount);
-      createGroupTransactionMutation();
-      onClose();
-      return;
+      if (mode === "edit") {
+        editGroupTransactionMutation();
+        onClose();
+        return;
+      } else if (mode == "create") {
+        createGroupTransactionMutation();
+        onClose();
+        return;
+      }
     }
   };
 
@@ -915,7 +1120,7 @@ export default function AddGroupTransactionForm({
           </ModalFooter>
         </ModalContent>
       </Modal>
-      {isPending ? <Loading /> : null}
+      {isPending || isEditPending ? <Loading /> : null}
     </>
   );
 }
