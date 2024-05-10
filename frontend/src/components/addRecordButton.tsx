@@ -3,6 +3,7 @@ import { Button } from "@chakra-ui/react";
 import { useState } from "react";
 import { FiPlusCircle } from "react-icons/fi";
 import AddGroupTransactionForm from "./addGroupTransactionForm";
+import ReadGroupTransactionForm from "./readGroupTransactionForm";
 
 interface User {
   id: string;
@@ -53,16 +54,16 @@ export default function AddRecordButton({
         <FiPlusCircle size={40} />
         <span style={{ marginTop: "3px" }}>Add a record</span>
       </Button>
-      {/* <ReadGroupTransactionForm
+      <ReadGroupTransactionForm
         isOpen={isOpen}
         onClose={handleCloseModal}
         members={members}
         groupId={groupId}
         name={name}
         transactionId="663cfac4fdb27f02831d1417"
-      /> */}
-      {/* <EditGroupTransactionForm
-        mode="edit"
+      />
+      {/* <AddGroupTransactionForm
+        mode="create"
         isOpen={isOpen}
         onClose={handleCloseModal}
         name={name}

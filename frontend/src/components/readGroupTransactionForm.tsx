@@ -33,7 +33,7 @@ import { GoNote } from "react-icons/go";
 import FormHeader from "./formHeader";
 import Loading from "./loading";
 
-import EditGroupTransactionForm from "./editGroupTransactionForm";
+import AddGroupTransactionForm from "./addGroupTransactionForm";
 
 import fetchCategories from "@/actions/fetchCategories";
 import fetchGroupSingleTransaction from "@/actions/group/fetchGroupTransaction";
@@ -78,12 +78,14 @@ export default function ReadGroupTransactionForm({
   members,
   transactionId,
 }: GroupTransactionFormProps) {
-  const toast = useToast();
-
   /* Fetch datas */
 
   /* Categories */
-  const { data: categoryData, error: categoryError } = useQuery({
+  const {
+    data: categoryData,
+    error: categoryError,
+    isLoading: categoryLoading,
+  } = useQuery({
     queryKey: ["categories"],
     queryFn: () => fetchCategories(),
     staleTime: Infinity,
@@ -176,7 +178,7 @@ export default function ReadGroupTransactionForm({
   const turnToEdit = () => {
     return (
       <>
-        <EditGroupTransactionForm
+        <AddGroupTransactionForm
           mode="edit"
           isOpen={isOpen}
           onClose={handleCloseModal}
