@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Flex, Hide, Link, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Hide, Link, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { GoNote } from "react-icons/go";
 import { IoSettingsOutline } from "react-icons/io5";
@@ -25,7 +25,7 @@ export default function Sidebar({ groupId }: SidebarProps) {
 
   return (
     <Flex
-      w={{ base: "58px", md: "164px" }}
+      w={{ base: "50px", md: "155px" }}
       h="full"
       borderRight="2px"
       pos="fixed"
@@ -36,17 +36,17 @@ export default function Sidebar({ groupId }: SidebarProps) {
       display="flex"
       flexDirection={"column"}
     >
+      <Box h="100px" />
       <Link href={managementLink}>
         <Button
           variant="ghost"
           colorScheme="gray"
           size="lg"
           px={2}
-          w="full"
+          minW="30px"
           justifyContent={"flex-start"}
-          mt={115}
         >
-          <IoSettingsOutline size={30}></IoSettingsOutline>
+          <IoSettingsOutline size={24}></IoSettingsOutline>
           <Hide below="md">
             <Text ml={2} fontSize="md">
               Management
@@ -60,10 +60,10 @@ export default function Sidebar({ groupId }: SidebarProps) {
           colorScheme="gray"
           size="lg"
           px={2}
-          w="full"
+          minW="30px"
           justifyContent={"flex-start"}
         >
-          <GoNote size={30}></GoNote>
+          <GoNote size={24}></GoNote>
           <Hide below="md">
             <Text ml={2} fontSize="md">
               Record
@@ -77,10 +77,10 @@ export default function Sidebar({ groupId }: SidebarProps) {
           colorScheme="gray"
           size="lg"
           px={2}
-          w="full"
+          minW="30px"
           justifyContent={"flex-start"}
         >
-          <MdPieChart size={30}></MdPieChart>
+          <MdPieChart size={24}></MdPieChart>
           <Hide below="md">
             <Text ml={2} fontSize="md">
               Analysis
@@ -94,10 +94,10 @@ export default function Sidebar({ groupId }: SidebarProps) {
           colorScheme="gray"
           size="lg"
           px={2}
-          w="full"
+          minW="30px"
           justifyContent={"flex-start"}
         >
-          <MdOutlineMonetizationOn size={30}></MdOutlineMonetizationOn>
+          <MdOutlineMonetizationOn size={24}></MdOutlineMonetizationOn>
           <Hide below="md">
             <Text ml={2} fontSize="md">
               Balance

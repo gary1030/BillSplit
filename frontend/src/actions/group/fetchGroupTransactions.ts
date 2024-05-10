@@ -2,12 +2,12 @@
 import httpAgent from "@/agent/httpAgent";
 import { cookies } from "next/headers";
 
-export default async function fetchCategories() {
+export default async function fetchGroupTransactions(groupId: string) {
   const cookieStore = cookies();
   const token = cookieStore.get("token")?.value;
 
   try {
-    const data = await httpAgent(`/categories`, {
+    const data = await httpAgent(`/groups/${groupId}/transactions`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -16,6 +16,6 @@ export default async function fetchCategories() {
     });
     return data.data;
   } catch (error) {
-    throw new Error("Failed to fetch categories");
+    throw new Error("Failed to fetch group transactions!");
   }
 }

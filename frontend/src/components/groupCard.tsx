@@ -10,7 +10,7 @@ import {
   Image,
   Text,
 } from "@chakra-ui/react";
-import { useRouter } from 'next/navigation'
+import { useRouter } from "next/navigation";
 
 interface GroupCardProps {
   groupId: string;
@@ -44,7 +44,7 @@ export default function GroupCard({
         align="center"
         w="220px"
         h="270px"
-        onClick={() => router.push(`/group/${groupId}/management`)}
+        onClick={() => router.push(`/group/${groupId}`)}
         _hover={{
           cursor: "pointer",
           transform: "scale(1.03)",

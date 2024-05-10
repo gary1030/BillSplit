@@ -27,7 +27,9 @@ export default function Home() {
           <Center>
             <Image
               src="images/landingPageImage.png"
-              boxSize="350px"
+              boxSize="25vw"
+              minW="300px"
+              minH="300px"
               alt="Landing Page Image"
               borderRadius={10}
             />

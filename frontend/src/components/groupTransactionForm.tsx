@@ -2,37 +2,35 @@
 
 import {
   Box,
+  Checkbox,
   Flex,
   Input,
-  Text,
-  Textarea,
-  Select,
-  Switch,
-  Checkbox,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalOverlay,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  Select,
+  Switch,
+  Text,
+  Textarea,
   useToast,
 } from "@chakra-ui/react";
 
 // import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 
-import { MdDateRange } from "react-icons/md";
-import { HiUserGroup } from "react-icons/hi";
-import { MdCategory } from "react-icons/md";
-import { MdAttachMoney } from "react-icons/md";
-import { IoPerson } from "react-icons/io5";
 import { GoNote } from "react-icons/go";
+import { HiUserGroup } from "react-icons/hi";
+import { IoPerson } from "react-icons/io5";
+import { MdAttachMoney, MdCategory, MdDateRange } from "react-icons/md";
 
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 
@@ -42,7 +40,7 @@ import Loading from "./loading";
 import fetchCategories from "@/actions/fetchCategories";
 import createGroupTransaction from "@/actions/group/createGroupTransaction";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 
 interface User {
   id: string;
@@ -142,7 +140,7 @@ export default function GroupTransactionForm({
 
   // extract unique categories
   const uniqueCategoryMap = new Map<string, Category>();
-  categoryData?.data.forEach((item: Category) => {
+  categoryData?.forEach((item: Category) => {
     if (!uniqueCategoryMap.has(item.name)) {
       uniqueCategoryMap.set(item.name, item);
     }

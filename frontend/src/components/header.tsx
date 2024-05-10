@@ -52,7 +52,7 @@ export default function Header({ loggedIn, isGroup }: HeaderProps) {
       borderBottom="2px"
       pos="sticky"
       top="0"
-      mb="50px"
+      mb="30px"
       zIndex={1}
     >
       <Link
@@ -64,7 +64,7 @@ export default function Header({ loggedIn, isGroup }: HeaderProps) {
         <Flex alignItems="center" cursor="pointer">
           <Image
             src="/images/icon.svg"
-            boxSize="50px"
+            boxSize="40px"
             mr={2}
             border="2px"
             borderRadius={15}
@@ -72,7 +72,7 @@ export default function Header({ loggedIn, isGroup }: HeaderProps) {
             alt="Icon"
           />
           <Hide below="sm">
-            <Text fontSize="3xl" fontWeight="bold" ml={2}>
+            <Text fontSize="2xl" fontWeight="bold" mr={3}>
               BillSplit
             </Text>
           </Hide>

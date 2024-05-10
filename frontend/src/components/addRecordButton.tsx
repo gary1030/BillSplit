@@ -1,9 +1,8 @@
 "use client";
-import { useState } from "react";
-import { MdOutlineAddBox } from "react-icons/md";
 import { Button } from "@chakra-ui/react";
+import { useState } from "react";
+import { FiPlusCircle } from "react-icons/fi";
 import GroupTransactionForm from "./groupTransactionForm";
-import { group } from "console";
 
 interface User {
   id: string;
@@ -37,20 +36,21 @@ export default function AddRecordButton({
       <Button
         style={{
           position: "fixed",
-          bottom: "20px",
-          right: "20px",
+          bottom: "50px",
+          right: "10px",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           border: "none",
           background: "none",
           cursor: "pointer",
-          width: "120px",
-          height: "150px",
+          width: "100px",
+          height: "70px",
+          padding: "0",
         }}
         onClick={handleOpenModal}
       >
-        <MdOutlineAddBox size={40} />
+        <FiPlusCircle size={40} />
         <span style={{ marginTop: "3px" }}>Add a record</span>
       </Button>
       <GroupTransactionForm
