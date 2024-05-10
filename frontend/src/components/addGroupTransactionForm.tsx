@@ -22,7 +22,6 @@ import {
   useToast,
 } from "@chakra-ui/react";
 
-// import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useCookies } from "react-cookie";
@@ -41,6 +40,7 @@ import Loading from "./loading";
 
 import fetchCategories from "@/actions/fetchCategories";
 import createGroupTransaction from "@/actions/group/createGroupTransaction";
+import fetchGroupSingleTransaction from "@/actions/group/fetchGroupTransaction";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -79,7 +79,7 @@ interface GroupTransactionFormProps {
   groupId: string;
 }
 
-export default function GroupTransactionForm({
+export default function AddGroupTransactionForm({
   onClose,
   isOpen,
   name,
@@ -121,12 +121,6 @@ export default function GroupTransactionForm({
   const [note, setNote] = useState("");
 
   const toast = useToast();
-  // const router = useRouter();
-  // const queryClient = useQueryClient();
-
-  // function onChange(newName: string) {
-  //   setCookie("name", newName);
-  // }
 
   /* Categories */
   // fetch categories
