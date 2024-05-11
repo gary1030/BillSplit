@@ -76,6 +76,24 @@ class GroupRepayment {
 
     return groupRepayments;
   }
+
+  async getGroupRepaymentsByGroupIdAndUserId(groupId, userId) {
+    const groupRepayments = await prisma.groupRepayment.findMany({
+      where: {
+        groupId: groupId,
+        OR: [
+          {
+            payerId: userId,
+          },
+          {
+            receiverId: userId,
+          },
+        ],
+      },
+    });
+
+    return groupRepayments;
+  }
 }
 
 module.exports = new GroupRepayment();

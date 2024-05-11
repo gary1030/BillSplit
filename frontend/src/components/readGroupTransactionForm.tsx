@@ -2,20 +2,18 @@
 
 import {
   Box,
+  Container,
   Flex,
-  Text,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalOverlay,
-  useToast,
-  Container,
-  Heading,
   Table,
   TableContainer,
   Tbody,
   Td,
+  Text,
   Th,
   Thead,
   Tr,
@@ -28,17 +26,17 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
   AlertDialogCloseButton,
+  useToast,
 } from "@chakra-ui/react";
 
 import React, { useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { MdDateRange } from "react-icons/md";
-import { HiUserGroup } from "react-icons/hi";
-import { MdCategory } from "react-icons/md";
-import { MdAttachMoney } from "react-icons/md";
-import { IoPerson } from "react-icons/io5";
 import { GoNote } from "react-icons/go";
+import { HiUserGroup } from "react-icons/hi";
+import { IoPerson } from "react-icons/io5";
+import { MdAttachMoney, MdCategory, MdDateRange } from "react-icons/md";
 
 import FormHeader from "./formHeader";
 import Loading from "./loading";
@@ -49,7 +47,7 @@ import fetchCategories from "@/actions/fetchCategories";
 import fetchGroupSingleTransaction from "@/actions/group/fetchGroupTransaction";
 import deleteGroupSingleTransaction from "@/actions/group/deleteGroupTransaction";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Category, Transaction } from "@/types";
 
 interface User {
   id: string;
@@ -65,11 +63,6 @@ interface Payer {
 interface Sharer {
   sharerId: string;
   amount: number;
-}
-
-interface Category {
-  id: string;
-  name: string;
 }
 
 interface GroupTransactionFormProps {
@@ -161,24 +154,17 @@ export default function ReadGroupTransactionForm({
 
   /* Transaction */
   const {
-    data: transactionData,
+    data: groupTransaction,
     error: transactionError,
     isLoading,
-  } = useQuery({
+  } = useQuery<Transaction>({
     queryKey: ["transaction", transactionId],
     queryFn: () => fetchGroupSingleTransaction(groupId, transactionId),
   });
 
-  const groupTransaction = transactionData?.data;
-  if (!groupTransaction) {
-    return (
-      <Box textAlign="center" mt="20px">
-        <Text>No transaction data found.</Text>
-      </Box>
-    );
-  }
+  console.log(groupTransaction);
 
-  if (isLoading) {
+  if (isLoading || !groupTransaction) {
     return <Loading />;
   }
 
@@ -186,7 +172,7 @@ export default function ReadGroupTransactionForm({
 
   // Get category name
   const selectedOption = options.find(
-    (option) => option.value === groupTransaction.categoryId
+    (option) => option.value === groupTransaction?.categoryId
   );
   const categoryName = selectedOption?.label;
 

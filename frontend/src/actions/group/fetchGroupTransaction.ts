@@ -20,7 +20,7 @@ export default async function fetchGroupSingleTransaction(
         },
       }
     );
-    return data;
+    return data.data;
   } catch (error) {
     throw new Error("Failed to fetch group transaction!");
   }

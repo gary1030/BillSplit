@@ -43,14 +43,14 @@ model Group {
 
 model Category {
   id                   String                @id @default(auto()) @map("_id") @db.ObjectId
-  name                 String
+  name                 String                @unique
   PersonalTransactions PersonalTransaction[]
   GroupTransactions    GroupTransaction[]
 }
 
 model Currency {
   id                   String                @id @default(auto()) @map("_id") @db.ObjectId
-  name                 String
+  name                 String                @unique
   value                Float
   PersonalTransactions PersonalTransaction[]
   GroupTransactions    GroupTransaction[]
@@ -119,6 +119,7 @@ model GroupRepayment {
   receiverId String   @db.ObjectId
   receiver   User     @relation("receiver", fields: [receiverId], references: [id])
   amount     Float
+  createdAt  DateTime @default(now())
 }
 
 model UserConcealedTransaction {
