@@ -1,4 +1,5 @@
 const PersonalTransaction = require("../models/personalTransaction");
+const Group = require("../models/group");
 const GroupTransaction = require("../models/groupTransaction");
 const GroupRepayment = require("../models/groupRepayment");
 const UserConcealedTransaction = require("../models/userConcealedTransaction");
@@ -358,6 +359,45 @@ class TransactionControllers {
       }, {});
 
       return { analysis, total };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getGroupStatistics(groupId) {
+    try {
+      const groupTransactions =
+        await GroupTransaction.getGroupTransactionsByGroupId(groupId);
+      const groupRepayments = await GroupRepayment.getGroupRepaymentsByGroupId(
+        groupId
+      );
+      const group = await Group.getGroupById(groupId);
+      const userIds = group.memberIds;
+      let userShare = {};
+      let userBalance = {};
+
+      userIds.forEach((userId) => {
+        userShare[userId] = 0;
+        userBalance[userId] = 0;
+      });
+
+      groupTransactions.forEach((transaction) => {
+        transaction.payerDetails.forEach((payerDetail) => {
+          userBalance[payerDetail.payerId] -= payerDetail.amount;
+        });
+
+        transaction.splitDetails.forEach((splitDetail) => {
+          userBalance[splitDetail.sharerId] += splitDetail.amount;
+          userShare[splitDetail.sharerId] += splitDetail.amount;
+        });
+      });
+
+      groupRepayments.forEach((repayment) => {
+        userBalance[repayment.payerId] -= repayment.amount;
+        userBalance[repayment.receiverId] += repayment.amount;
+      });
+
+      return { groupId, userShare, userBalance };
     } catch (error) {
       throw error;
     }
