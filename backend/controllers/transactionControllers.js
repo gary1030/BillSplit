@@ -402,6 +402,91 @@ class TransactionControllers {
       throw error;
     }
   }
+
+  async getGroupBalanceAndDebts(groupId) {
+    try {
+      const groupTransactions =
+        await GroupTransaction.getGroupTransactionsByGroupId(groupId);
+      const groupRepayments = await GroupRepayment.getGroupRepaymentsByGroupId(
+        groupId
+      );
+      const group = await Group.getGroupById(groupId);
+      const userIds = group.memberIds;
+      let balanceAndDebts = {};
+      let balanceForCalculation = {};
+
+      userIds.forEach((userId) => {
+        balanceAndDebts[userId] = { balance: 0, debts: [] };
+        balanceForCalculation[userId] = 0;
+      });
+
+      groupTransactions.forEach((transaction) => {
+        transaction.payerDetails.forEach((payerDetail) => {
+          balanceAndDebts[payerDetail.payerId].balance -= payerDetail.amount;
+          balanceForCalculation[payerDetail.payerId] -= payerDetail.amount;
+        });
+
+        transaction.splitDetails.forEach((splitDetail) => {
+          balanceAndDebts[splitDetail.sharerId].balance += splitDetail.amount;
+          balanceForCalculation[splitDetail.sharerId] += splitDetail.amount;
+        });
+      });
+
+      groupRepayments.forEach((repayment) => {
+        balanceAndDebts[repayment.payerId].balance -= repayment.amount;
+        balanceAndDebts[repayment.receiverId].balance += repayment.amount;
+        balanceForCalculation[repayment.payerId] -= repayment.amount;
+        balanceForCalculation[repayment.receiverId] += repayment.amount;
+      });
+
+      let debtors = [];
+      let creditors = [];
+      for (let userId in balanceAndDebts) {
+        if (balanceForCalculation[userId] > 0) {
+          debtors.push(userId);
+        } else if (balanceForCalculation[userId] < 0) {
+          creditors.push(userId);
+        }
+      }
+
+      while (debtors.length > 0 && creditors.length > 0) {
+        debtors.sort(
+          (a, b) => balanceForCalculation[a] - balanceForCalculation[b]
+        );
+        creditors.sort(
+          (a, b) => balanceForCalculation[b] - balanceForCalculation[a]
+        );
+
+        let debtor = debtors[0];
+        let creditor = creditors[0];
+        let amount = Math.min(
+          Math.abs(balanceForCalculation[debtor]),
+          Math.abs(balanceForCalculation[creditor])
+        );
+
+        let simulatedRepayment = {
+          payerId: debtor,
+          receiverId: creditor,
+          amount: amount,
+        };
+        balanceAndDebts[debtor].debts.push(simulatedRepayment);
+        balanceAndDebts[creditor].debts.push(simulatedRepayment);
+
+        balanceForCalculation[debtor] -= amount;
+        balanceForCalculation[creditor] += amount;
+        if (balanceForCalculation[debtor] === 0) {
+          debtors.shift();
+        }
+        if (balanceForCalculation[creditor] === 0) {
+          creditors.shift();
+        }
+      }
+
+      return { groupId, balanceAndDebts };
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 module.exports = new TransactionControllers();

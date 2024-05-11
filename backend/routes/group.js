@@ -540,4 +540,26 @@ router.get("/:id/stat", async function (req, res, next) {
   }
 });
 
+/* Get group balance and debts */
+router.get("/:id/balanceDebts", async function (req, res, next) {
+  try {
+    const isUserInGroup = await GroupControllers.isUserInGroup(
+      req.params.id,
+      req.userId
+    );
+    if (!isUserInGroup) {
+      res.status(401).json({ message: "Unauthorized!" });
+      return;
+    }
+
+    const data = await TransactionControllers.getGroupBalanceAndDebts(
+      req.params.id
+    );
+    res.send(data);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Bad Request" });
+  }
+});
+
 module.exports = router;
