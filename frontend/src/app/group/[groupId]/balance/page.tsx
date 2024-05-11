@@ -2,6 +2,7 @@ import Footer from "@/components/footer";
 import Header from "@/components/header";
 import Sidebar from "@/components/sidebar";
 import { Container } from "@chakra-ui/react";
+import GroupBalance from "./groupBalance";
 
 export default function Page({ params }: { params: { groupId: string } }) {
   return (
@@ -18,8 +19,7 @@ export default function Page({ params }: { params: { groupId: string } }) {
           md: "calc(158px + 1rem)",
         }}
       >
-        <h1>Group Balance Page</h1>
-        <p>Group ID: {params.groupId}</p>
+        <GroupBalance groupId={params.groupId} />
       </Container>
       <Footer />
     </>
