@@ -355,7 +355,7 @@ export default function ReadGroupTransactionForm({
                 </Text>
               </Box>
               <Box>
-                <Text fontSize="md" noOfLines={1} pl="10px" pr="5px">
+                <Text fontSize="md" pl="10px" pr="5px">
                   {groupTransaction.note ? groupTransaction.note : ""}
                 </Text>
               </Box>
