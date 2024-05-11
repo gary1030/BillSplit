@@ -482,7 +482,16 @@ class TransactionControllers {
         }
       }
 
-      return { groupId, balanceAndDebts };
+      let data = [];
+      for (let userId in balanceAndDebts) {
+        data.push({
+          userId: userId,
+          balance: balanceAndDebts[userId].balance,
+          debts: balanceAndDebts[userId].debts,
+        });
+      }
+
+      return { data: data };
     } catch (error) {
       throw error;
     }
