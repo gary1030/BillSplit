@@ -373,31 +373,31 @@ class TransactionControllers {
       );
       const group = await Group.getGroupById(groupId);
       const userIds = group.memberIds;
-      let userShare = {};
-      let userBalance = {};
+      let share = {};
+      let balance = {};
 
       userIds.forEach((userId) => {
-        userShare[userId] = 0;
-        userBalance[userId] = 0;
+        share[userId] = 0;
+        balance[userId] = 0;
       });
 
       groupTransactions.forEach((transaction) => {
         transaction.payerDetails.forEach((payerDetail) => {
-          userBalance[payerDetail.payerId] -= payerDetail.amount;
+          balance[payerDetail.payerId] -= payerDetail.amount;
         });
 
         transaction.splitDetails.forEach((splitDetail) => {
-          userBalance[splitDetail.sharerId] += splitDetail.amount;
-          userShare[splitDetail.sharerId] += splitDetail.amount;
+          balance[splitDetail.sharerId] += splitDetail.amount;
+          share[splitDetail.sharerId] += splitDetail.amount;
         });
       });
 
       groupRepayments.forEach((repayment) => {
-        userBalance[repayment.payerId] -= repayment.amount;
-        userBalance[repayment.receiverId] += repayment.amount;
+        balance[repayment.payerId] -= repayment.amount;
+        balance[repayment.receiverId] += repayment.amount;
       });
 
-      return { groupId, userShare, userBalance };
+      return { groupId, share, balance };
     } catch (error) {
       throw error;
     }
