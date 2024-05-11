@@ -41,7 +41,7 @@ import createGroupTransaction from "@/actions/group/createGroupTransaction";
 import editGroupTransaction from "@/actions/group/editGroupTransaction";
 import fetchGroupSingleTransaction from "@/actions/group/fetchGroupTransaction";
 
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface User {
   id: string;
@@ -103,7 +103,7 @@ export default function AddGroupTransactionForm({
   let groupTransaction = undefined;
   if (mode === "edit" && transactionId !== undefined) {
     const { data: transactionData, error: transactionError } = useQuery({
-      queryKey: ["transaction"],
+      queryKey: ["transaction", transactionId],
       queryFn: () => fetchGroupSingleTransaction(groupId, transactionId),
       staleTime: Infinity,
     });
@@ -121,7 +121,9 @@ export default function AddGroupTransactionForm({
   const [amountString, setAmountString] = useState("0");
   const [amount, setAmount] = useState(0);
 
-  const [payerCustomizeSwitchOn, setPayerCustomizeSwitchOn] = useState(false);
+  const [payerCustomizeSwitchOn, setPayerCustomizeSwitchOn] = useState(
+    mode === "edit" ? true : false
+  );
   const [payerCheckBoxStates, setPayerCheckBoxStates] =
     useState<PayerCheckBoxStates>({});
   const [payerNumber, setPayerNumber] = useState(0);
@@ -133,7 +135,9 @@ export default function AddGroupTransactionForm({
   );
   const [totalPayerAmount, setTotalPayerAmount] = useState(0);
 
-  const [sharerCustomizeSwitchOn, setSharerCustomizeSwitchOn] = useState(false);
+  const [sharerCustomizeSwitchOn, setSharerCustomizeSwitchOn] = useState(
+    mode === "edit" ? true : false
+  );
   const [sharerCheckBoxStates, setSharerCheckBoxStates] =
     useState<SharerCheckBoxStates>({});
   const [sharerNumber, setSharerNumber] = useState(0);
@@ -147,6 +151,7 @@ export default function AddGroupTransactionForm({
   const [note, setNote] = useState("");
 
   const toast = useToast();
+  const queryClient = useQueryClient();
 
   /* Title */
   // initialize title in edit mode
@@ -191,7 +196,6 @@ export default function AddGroupTransactionForm({
   }, [mode, groupTransaction]);
 
   /* Amount */
-  // Handle amount input change
   useEffect(() => {
     if (mode === "edit" && groupTransaction !== undefined) {
       setAmount(groupTransaction.totalAmount);
@@ -199,6 +203,7 @@ export default function AddGroupTransactionForm({
     }
   }, [mode, groupTransaction]);
 
+  // Handle amount input change
   const handleAmountInputChange = (valueAsString: string) => {
     // If the input is empty, set the amount to 0
     if (valueAsString.trim() === "") {
@@ -225,15 +230,6 @@ export default function AddGroupTransactionForm({
     setAmount(numericValue);
   };
 
-  /* Switch */
-  // initialize customize switches in edit mode
-  useEffect(() => {
-    if (mode === "edit") {
-      setPayerCustomizeSwitchOn(true);
-      setSharerCustomizeSwitchOn(true);
-    }
-  }, [mode]);
-
   /* Payer */
   // initialize payer total amount in edit mode
   useEffect(() => {
@@ -247,6 +243,7 @@ export default function AddGroupTransactionForm({
   }, [mode, groupTransaction]);
 
   // initialize payerCheckBoxStates
+
   useEffect(() => {
     // set the payer checkbox states to unchecked for all members
     const initialState: PayerCheckBoxStates = {};
@@ -268,11 +265,13 @@ export default function AddGroupTransactionForm({
             ...prev,
             [payer.payerId]: true,
           }));
+
           // set the payer amount strings to the amounts of the payers with positive amounts
           setPayerAmountStrings((prev) => ({
             ...prev,
             [payer.payerId]: payer.amount.toString(),
           }));
+
           // set the payer amounts to the amounts of the payers with positive amounts
           setPayerAmounts((prev) => ({
             ...prev,
@@ -281,7 +280,7 @@ export default function AddGroupTransactionForm({
         }
       });
     }
-  }, [members, mode]);
+  }, [members, mode, groupTransaction]);
 
   // Handle amount changes
   const handlePayerAmountInputChange = (id: string, valueAsString: string) => {
@@ -362,7 +361,7 @@ export default function AddGroupTransactionForm({
           : 0;
       const formattedAverageAmount: string = averageAmount.toFixed(2);
 
-      // Update the sharer amounts
+      // Update the payer amounts
       const newPayerAmounts: PayerAmounts = {};
       const newPayerAmountStrings: { [key: string]: string } = {};
 
@@ -401,31 +400,44 @@ export default function AddGroupTransactionForm({
 
   // initialize sharerCheckBoxStates
   useEffect(() => {
-    // set the sharer checkbox states to checked for all members
-    const initialState: SharerCheckBoxStates = {};
-    members.forEach((member) => {
-      initialState[member.id] = true;
-    });
-    setSharerCheckBoxStates(initialState);
-
-    // edit mode
+    // set the sharer checkbox states to checked for all members in create mode
+    if (mode == "create") {
+      const initialState: SharerCheckBoxStates = {};
+      members.forEach((member) => {
+        initialState[member.id] = true;
+      });
+      setSharerCheckBoxStates(initialState);
+    }
+    // set the sharer checkbox states to checked for the sharers with positive amounts in edit mode
     if (mode === "edit" && groupTransaction !== undefined) {
+      const initialState: SharerCheckBoxStates = {};
       groupTransaction.splitDetails.forEach((sharer: Sharer) => {
         if (sharer.amount > 0) {
-          // set the sharer amount strings to the amounts of the sharers with positive amounts
-          setSharerAmountStrings((prev) => ({
-            ...prev,
-            [sharer.sharerId]: sharer.amount.toString(),
-          }));
-          // set the sharer amounts to the amounts of the sharers with positive amounts
-          setSharerAmounts((prev) => ({
-            ...prev,
-            [sharer.sharerId]: sharer.amount,
-          }));
+          initialState[sharer.sharerId] = true;
         }
       });
+      setSharerCheckBoxStates(initialState);
     }
   }, [members, mode]);
+
+  // initialize sharerCheckBoxStates, sharerAmounts, and totalSharerAmount
+  useEffect(() => {
+    // edit mode
+    if (mode === "edit" && groupTransaction !== undefined) {
+      const initialAmounts: SharerAmounts = {};
+      const initialAmountStrings: { [key: string]: string } = {};
+
+      groupTransaction.splitDetails.forEach((sharer: Sharer) => {
+        if (sharer.amount > 0) {
+          initialAmounts[sharer.sharerId] = sharer.amount;
+          initialAmountStrings[sharer.sharerId] = sharer.amount.toString();
+        }
+      });
+
+      setSharerAmounts(initialAmounts);
+      setSharerAmountStrings(initialAmountStrings);
+    }
+  }, [members, mode, groupTransaction]);
 
   // Handle amount changes when the customize switch is on
   const handleSharerAmountInputChange = (id: string, valueAsString: string) => {
@@ -618,7 +630,14 @@ export default function AddGroupTransactionForm({
           note
         );
       },
+      mutationKey: ["transaction", transactionId],
       onSuccess: () => {
+        if (transactionId) {
+          queryClient.invalidateQueries({
+            queryKey: ["transaction", transactionId],
+          });
+        }
+
         setTitle("");
         setDate(new Date());
         setCategory("");
@@ -688,6 +707,7 @@ export default function AddGroupTransactionForm({
   };
 
   const handleAdd = () => {
+    console.log("amount: ", amount);
     let hasErrors = false;
 
     if (!title || title.trim() === "") {
@@ -768,7 +788,7 @@ export default function AddGroupTransactionForm({
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onModelClose}>
+      <Modal isOpen={isOpen} onClose={onModelClose} blockScrollOnMount={false}>
         <ModalOverlay />
         <ModalContent w="90%" maxW="700px">
           <FormHeader

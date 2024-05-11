@@ -19,6 +19,7 @@ import {
   Th,
   Thead,
   Tr,
+  useDisclosure,
 } from "@chakra-ui/react";
 
 import { useQuery } from "@tanstack/react-query";
@@ -78,6 +79,11 @@ export default function ReadGroupTransactionForm({
   members,
   transactionId,
 }: GroupTransactionFormProps) {
+  const {
+    isOpen: isOpenEdit,
+    onOpen: onOpenEdit,
+    onClose: onCloseEdit,
+  } = useDisclosure();
   /* Fetch datas */
 
   /* Categories */
@@ -93,7 +99,7 @@ export default function ReadGroupTransactionForm({
 
   // extract unique categories
   const uniqueCategoryMap = new Map<string, Category>();
-  categoryData?.data.forEach((item: Category) => {
+  categoryData?.forEach((item: Category) => {
     if (!uniqueCategoryMap.has(item.name)) {
       uniqueCategoryMap.set(item.name, item);
     }
@@ -112,12 +118,10 @@ export default function ReadGroupTransactionForm({
     error: transactionError,
     isLoading,
   } = useQuery({
-    queryKey: ["transaction"],
+    queryKey: ["transaction", transactionId],
     queryFn: () => fetchGroupSingleTransaction(groupId, transactionId),
-    staleTime: Infinity,
   });
   const groupTransaction = transactionData?.data;
-
   if (isLoading) {
     return <Loading />;
   }
@@ -175,31 +179,15 @@ export default function ReadGroupTransactionForm({
 
   const handleCloseModal = () => {};
 
-  const turnToEdit = () => {
-    return (
-      <>
-        <AddGroupTransactionForm
-          mode="edit"
-          isOpen={isOpen}
-          onClose={handleCloseModal}
-          name={name}
-          members={members}
-          groupId={groupId}
-          transactionId={transactionId}
-        />
-      </>
-    );
-  };
-
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onModelClose}>
+      <Modal isOpen={isOpen} onClose={onModelClose} blockScrollOnMount={false}>
         <ModalOverlay />
         <ModalContent w="90%" maxW="700px">
           <FormHeader
             title="Expense"
             onClose={onModelClose}
-            onEdit={turnToEdit}
+            onEdit={onOpenEdit}
             onDelete={onModelClose}
           />
           <ModalBody>
@@ -385,6 +373,17 @@ export default function ReadGroupTransactionForm({
           </ModalFooter>
         </ModalContent>
       </Modal>
+      {isOpenEdit && (
+        <AddGroupTransactionForm
+          mode="edit"
+          isOpen={isOpen}
+          onClose={onCloseEdit}
+          name={name}
+          members={members}
+          groupId={groupId}
+          transactionId={transactionId}
+        />
+      )}
     </>
   );
 }
