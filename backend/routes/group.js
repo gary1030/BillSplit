@@ -214,7 +214,7 @@ router.put("/:id/transactions/:transactionId", async function (req, res, next) {
     }
 
     // check amount
-    if (req.body.amount <= 0) {
+    if (req.body.totalAmount <= 0) {
       res.status(400).json({ message: "Amount should be a positive number!" });
       return;
     }
@@ -231,7 +231,7 @@ router.put("/:id/transactions/:transactionId", async function (req, res, next) {
         req.params.id,
         req.body.categoryId,
         req.body.title,
-        req.body.amount,
+        req.body.totalAmount,
         req.body.payerDetails,
         req.body.splitDetails,
         req.body.note,
