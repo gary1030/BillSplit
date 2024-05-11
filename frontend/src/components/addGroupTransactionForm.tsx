@@ -801,7 +801,7 @@ export default function AddGroupTransactionForm({
               <Box>
                 <Input
                   placeholder="Title"
-                  fontSize={30}
+                  fontSize={24}
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                 />
@@ -853,7 +853,7 @@ export default function AddGroupTransactionForm({
                   placeholder="Select category"
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  width={180}
+                  width={150}
                 >
                   {options.map((option) => (
                     <option key={option.value} value={option.value}>
@@ -880,7 +880,7 @@ export default function AddGroupTransactionForm({
                   onChange={handleAmountInputChange}
                   onBlur={handleAmountInputBlur}
                   value={amountString}
-                  width={180}
+                  width={150}
                 >
                   <NumberInputField />
                   <NumberInputStepper>
@@ -891,7 +891,12 @@ export default function AddGroupTransactionForm({
               </Box>
             </Flex>
             <Box w="140px"></Box>
-            <Flex mt="40px" alignItems="center" justifyContent="space-between">
+            <Flex
+              mt="40px"
+              alignItems="center"
+              justifyContent="space-between"
+              wrap="wrap"
+            >
               <Box display="flex" alignItems="center">
                 <Box w="30px">
                   <IoPerson size={24} />
@@ -901,7 +906,11 @@ export default function AddGroupTransactionForm({
                     Paid by
                   </Text>
                 </Box>
-                <Box display="flex" alignItems="center" marginLeft={260}>
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  marginLeft={{ base: "0", md: "260px" }}
+                >
                   <Switch
                     colorScheme="blue"
                     size="md"
@@ -924,7 +933,7 @@ export default function AddGroupTransactionForm({
               </Box>
             </Flex>
             <Flex>
-              <Box mt="15px" marginLeft={178}>
+              <Box mt="15px" marginLeft={{ base: "0", md: "178px" }}>
                 {members.map((member) => (
                   <Flex key={member.id} alignItems="center" w="full" mt="2">
                     <Checkbox
@@ -948,9 +957,9 @@ export default function AddGroupTransactionForm({
                     >
                       {member.username}
                     </Text>
-                    <Box marginLeft={160}>
+                    <Box marginLeft={{ base: "90px", md: "160px" }}>
                       <NumberInput
-                        maxW="150px"
+                        maxW="120px"
                         defaultValue={0}
                         min={0}
                         precision={2}
@@ -984,14 +993,15 @@ export default function AddGroupTransactionForm({
               </Box>
             </Flex>
             <Flex>
-              <Box mt="15px" marginLeft={163}>
+              <Box mt="15px" w="full" marginLeft={["0", "0", "163px"]}>
                 <Text
                   fontSize="sm"
                   as="b"
-                  noOfLines={1}
-                  pl="10px"
+                  pl={["0", "0", "10px"]}
                   pr="5px"
                   color="red"
+                  whiteSpace="normal"
+                  overflowWrap="break-word"
                 >
                   {(!payerCustomizeSwitchOn && payerNumber) ||
                   totalPayerAmount === amount
@@ -1010,7 +1020,11 @@ export default function AddGroupTransactionForm({
                     For whom
                   </Text>
                 </Box>
-                <Box display="flex" alignItems="center" marginLeft={260}>
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  marginLeft={{ base: "0", md: "260px" }}
+                >
                   <Switch
                     colorScheme="blue"
                     size="md"
@@ -1033,7 +1047,7 @@ export default function AddGroupTransactionForm({
               </Box>
             </Flex>
             <Flex>
-              <Box mt="15px" marginLeft={178}>
+              <Box mt="15px" marginLeft={{ base: "0", md: "178px" }}>
                 {members.map((member) => (
                   <Flex key={member.id} alignItems="center" w="full" mt="2">
                     <Checkbox
@@ -1057,9 +1071,9 @@ export default function AddGroupTransactionForm({
                     >
                       {member.username}
                     </Text>
-                    <Box marginLeft={160}>
+                    <Box marginLeft={{ base: "90px", md: "160px" }}>
                       <NumberInput
-                        maxW="150px"
+                        maxW="120px"
                         defaultValue={0}
                         min={0}
                         precision={2}
@@ -1096,12 +1110,11 @@ export default function AddGroupTransactionForm({
               </Box>
             </Flex>
             <Flex>
-              <Box mt="15px" marginLeft={163}>
+              <Box mt="15px" marginLeft={["0", "0", "163px"]}>
                 <Text
                   fontSize="sm"
                   as="b"
-                  noOfLines={1}
-                  pl="10px"
+                  pl={{ base: "0", md: "10px" }}
                   pr="5px"
                   color="red"
                 >
@@ -1125,7 +1138,7 @@ export default function AddGroupTransactionForm({
                 <Textarea
                   placeholder="Note"
                   height={50}
-                  width={440}
+                  width={["100%", "100%", "440px"]}
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                 />
