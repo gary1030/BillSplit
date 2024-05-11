@@ -14,8 +14,8 @@ export default function Page({ params }: { params: { groupId: string } }) {
         mt="40px"
         mb="30px"
         pl={{
-          base: "calc(58px + 1rem)",
-          md: "calc(164px + 1rem)",
+          base: "calc(50px + 1rem)",
+          md: "calc(158px + 1rem)",
         }}
       >
         <h1>Single Analysis Page</h1>
