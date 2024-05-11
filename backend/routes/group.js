@@ -497,7 +497,7 @@ router.get("/:id/analysis/group", async function (req, res, next) {
   }
 });
 
-/* Get group analysis */
+/* Get personal analysis */
 router.get("/:id/analysis/personal", async function (req, res, next) {
   try {
     const isUserInGroup = await GroupControllers.isUserInGroup(
@@ -513,6 +513,26 @@ router.get("/:id/analysis/personal", async function (req, res, next) {
       req.params.id,
       req.userId
     );
+    res.send(data);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Bad Request" });
+  }
+});
+
+/* Get group statistics */
+router.get("/:id/stat", async function (req, res, next) {
+  try {
+    const isUserInGroup = await GroupControllers.isUserInGroup(
+      req.params.id,
+      req.userId
+    );
+    if (!isUserInGroup) {
+      res.status(401).json({ message: "Unauthorized!" });
+      return;
+    }
+
+    const data = await TransactionControllers.getGroupStatistics(req.params.id);
     res.send(data);
   } catch (error) {
     console.log(error);

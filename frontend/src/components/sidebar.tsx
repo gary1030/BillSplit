@@ -25,7 +25,7 @@ export default function Sidebar({ groupId }: SidebarProps) {
 
   return (
     <Flex
-      w={{ base: "50px", md: "155px" }}
+      w={{ base: "50px", md: "158px" }}
       h="full"
       borderRight="2px"
       pos="fixed"
@@ -44,6 +44,7 @@ export default function Sidebar({ groupId }: SidebarProps) {
           size="lg"
           px={2}
           minW="30px"
+          w="full"
           justifyContent={"flex-start"}
         >
           <IoSettingsOutline size={24}></IoSettingsOutline>
@@ -61,6 +62,7 @@ export default function Sidebar({ groupId }: SidebarProps) {
           size="lg"
           px={2}
           minW="30px"
+          w="full"
           justifyContent={"flex-start"}
         >
           <GoNote size={24}></GoNote>
@@ -78,6 +80,7 @@ export default function Sidebar({ groupId }: SidebarProps) {
           size="lg"
           px={2}
           minW="30px"
+          w="full"
           justifyContent={"flex-start"}
         >
           <MdPieChart size={24}></MdPieChart>
@@ -95,6 +98,7 @@ export default function Sidebar({ groupId }: SidebarProps) {
           size="lg"
           px={2}
           minW="30px"
+          w="full"
           justifyContent={"flex-start"}
         >
           <MdOutlineMonetizationOn size={24}></MdOutlineMonetizationOn>
