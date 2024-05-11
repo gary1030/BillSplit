@@ -54,23 +54,22 @@ export default function AddRecordButton({
         <FiPlusCircle size={40} />
         <span style={{ marginTop: "3px" }}>Add a record</span>
       </Button>
-      <ReadGroupTransactionForm
+      {/* <ReadGroupTransactionForm
         isOpen={isOpen}
         onClose={handleCloseModal}
         members={members}
         groupId={groupId}
         name={name}
-        transactionId="663e4b43e4a0ebe50234c8e8"
-      />
-      {/* <AddGroupTransactionForm
+        transactionId="663f087f64b4714197f67840"
+      /> */}
+      <AddGroupTransactionForm
         mode="create"
         isOpen={isOpen}
         onClose={handleCloseModal}
         name={name}
         members={members}
         groupId={groupId}
-        transactionId="663e12b258f4883f8b8a93d7"
-      /> */}
+      />
     </>
   );
 }

@@ -20,8 +20,17 @@ import {
   Thead,
   Tr,
   useDisclosure,
+  Button,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+  AlertDialogCloseButton,
 } from "@chakra-ui/react";
 
+import React, { useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 
 import { MdDateRange } from "react-icons/md";
@@ -38,6 +47,7 @@ import AddGroupTransactionForm from "./addGroupTransactionForm";
 
 import fetchCategories from "@/actions/fetchCategories";
 import fetchGroupSingleTransaction from "@/actions/group/fetchGroupTransaction";
+import deleteGroupSingleTransaction from "@/actions/group/deleteGroupTransaction";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -79,11 +89,48 @@ export default function ReadGroupTransactionForm({
   members,
   transactionId,
 }: GroupTransactionFormProps) {
+  const toast = useToast();
+  const queryClient = useQueryClient();
+
   const {
     isOpen: isOpenEdit,
     onOpen: onOpenEdit,
     onClose: onCloseEdit,
   } = useDisclosure();
+
+  const {
+    isOpen: isOpenDelete,
+    onOpen: onOpenDelete,
+    onClose: onCloseDelete,
+  } = useDisclosure();
+
+  const cancelRef = useRef<HTMLButtonElement>(null);
+
+  const { mutate: deleteGroupTransactionMutation, isPending } = useMutation({
+    mutationFn: () => deleteGroupSingleTransaction(groupId, transactionId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["transaction", transactionId],
+      });
+      toast({
+        title: "Transaction deleted successfully",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
+      onClose();
+      onCloseDelete();
+    },
+    onError: () => {
+      toast({
+        title: "Failed to delete transaction",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+      });
+    },
+  });
+
   /* Fetch datas */
 
   /* Categories */
@@ -121,7 +168,16 @@ export default function ReadGroupTransactionForm({
     queryKey: ["transaction", transactionId],
     queryFn: () => fetchGroupSingleTransaction(groupId, transactionId),
   });
+
   const groupTransaction = transactionData?.data;
+  if (!groupTransaction) {
+    return (
+      <Box textAlign="center" mt="20px">
+        <Text>No transaction data found.</Text>
+      </Box>
+    );
+  }
+
   if (isLoading) {
     return <Loading />;
   }
@@ -177,7 +233,14 @@ export default function ReadGroupTransactionForm({
     onClose();
   };
 
-  const handleCloseModal = () => {};
+  const handleOpenDeleteDialog = () => {
+    onOpenDelete();
+  };
+
+  const handleConfirmDelete = () => {
+    deleteGroupTransactionMutation();
+    onCloseDelete();
+  };
 
   return (
     <>
@@ -188,7 +251,7 @@ export default function ReadGroupTransactionForm({
             title="Expense"
             onClose={onModelClose}
             onEdit={onOpenEdit}
-            onDelete={onModelClose}
+            onDelete={handleOpenDeleteDialog}
           />
           <ModalBody>
             <Flex mt="20px" justifyContent="center" alignItems="center">
@@ -373,6 +436,32 @@ export default function ReadGroupTransactionForm({
           </ModalFooter>
         </ModalContent>
       </Modal>
+      <AlertDialog
+        isOpen={isOpenDelete}
+        onClose={onCloseDelete}
+        leastDestructiveRef={cancelRef}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Delete Transaction
+            </AlertDialogHeader>
+            <AlertDialogCloseButton />
+            <AlertDialogBody>
+              Are you sure you want to delete this transaction?
+            </AlertDialogBody>
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={onCloseDelete}>
+                Cancel
+              </Button>
+              <Button colorScheme="red" onClick={handleConfirmDelete} ml={3}>
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+
       {isOpenEdit && (
         <AddGroupTransactionForm
           mode="edit"

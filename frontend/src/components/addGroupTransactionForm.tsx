@@ -594,6 +594,12 @@ export default function AddGroupTransactionForm({
       setSharerAmounts({});
       setTotalSharerAmount(0);
       setNote("");
+      toast({
+        title: "Transaction created successfully",
+        status: "success",
+        duration: 2000,
+        isClosable: true,
+      });
       onClose();
     },
     onError: () => {
@@ -663,6 +669,12 @@ export default function AddGroupTransactionForm({
         setSharerAmounts({});
         setTotalSharerAmount(0);
         setNote("");
+        toast({
+          title: "Transaction edited successfully",
+          status: "success",
+          duration: 2000,
+          isClosable: true,
+        });
         onClose();
       },
       onError: () => {
@@ -853,7 +865,7 @@ export default function AddGroupTransactionForm({
                   placeholder="Select category"
                   value={category}
                   onChange={(e) => setCategory(e.target.value)}
-                  width={150}
+                  width={180}
                 >
                   {options.map((option) => (
                     <option key={option.value} value={option.value}>
