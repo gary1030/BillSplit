@@ -1,9 +1,12 @@
 "use client";
 
-import { Category, Transaction } from "@/types";
+import { Category, Repayment, Transaction } from "@/types";
 
 import fetchCategories from "@/actions/fetchCategories";
+import fetchGroup from "@/actions/group/fetchGroup";
+import fetchGroupRepayments from "@/actions/group/fetchGroupRepayments";
 import fetchGroupTransactions from "@/actions/group/fetchGroupTransactions";
+import fetchUserBatch from "@/actions/user/fetchUserBatch";
 import {
   Box,
   Table,
@@ -61,6 +64,29 @@ const TABLE_COLUMNS = [
 
 const PADDING = "8px";
 
+interface UnifiedRecord {
+  id: string;
+  categoryId?: string;
+  title?: string;
+  totalAmount?: number;
+  amount?: number;
+  consumptionDate: string;
+  payerDetails?: Array<{ payerId: string; amount: number }>;
+  splitDetails?: Array<{ sharerId: string; amount: number }>;
+  payerId?: string;
+  receiverId?: string;
+}
+
+interface User {
+  id: string;
+  username: string;
+  email: string;
+}
+
+interface MembersData {
+  users: User[];
+}
+
 export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
   const [cookies] = useCookies(["userId"]);
 
@@ -72,6 +98,30 @@ export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
   const { data: records } = useQuery<Transaction[]>({
     queryKey: ["groupTransactions", groupId],
     queryFn: () => fetchGroupTransactions(groupId),
+  });
+
+  const { data: repayments } = useQuery<Repayment[]>({
+    queryKey: ["groupRepayments", groupId],
+    queryFn: () => fetchGroupRepayments(groupId),
+  });
+
+  const repaymentsWithDate = repayments?.map((repayment) => ({
+    ...repayment,
+    consumptionDate: repayment.createdAt,
+  }));
+  const allRecords: UnifiedRecord[] = [
+    ...(records || []),
+    ...(repaymentsWithDate || []),
+  ];
+
+  const { data: group } = useQuery({
+    queryKey: ["group", groupId],
+    queryFn: () => fetchGroup(groupId),
+  });
+
+  const { data: membersData } = useQuery<MembersData>({
+    queryKey: ["groupMembers", group?.memberIds || []],
+    queryFn: () => fetchUserBatch(group.memberIds || []),
   });
 
   const categoryToIcon = (categoryId: string) => {
@@ -105,7 +155,31 @@ export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
     }
   };
 
+  const showTitle = (record: any) => {
+    let title = record.title || "";
+    if (record.receiverId && record.payerId) {
+      const receiver = membersData?.users.find(
+        (user) => user.id === record.receiverId
+      );
+      const payer = membersData?.users.find(
+        (user) => user.id === record.payerId
+      );
+      title = `${payer?.username} repaid ${receiver?.username}`;
+    }
+
+    return (
+      <Box display="flex">
+        {categoryToIcon(record.categoryId || "Repayment")}
+        <Text ml={2}>{title}</Text>
+      </Box>
+    );
+  };
+
   const showStatus = (record: any) => {
+    if (!record.payerDetails || !record.splitDetails) {
+      return <Text>--</Text>;
+    }
+
     let balance = 0;
     let textColor = "green.500";
     let balanceText = `+$${balance}`;
@@ -204,7 +278,7 @@ export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
           </Tr>
         </Thead>
         <Tbody>
-          {records
+          {allRecords
             ?.sort(
               (a, b) =>
                 new Date(b.consumptionDate).getTime() -
@@ -229,17 +303,16 @@ export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
                   minWidth={TABLE_COLUMNS[1].minWidth}
                   textAlign={(TABLE_COLUMNS[1].textAlign as any) || "left"}
                 >
-                  <Box display="flex">
-                    {categoryToIcon(record.categoryId)}
-                    <Text ml={2}>{record.title}</Text>
-                  </Box>
+                  {showTitle(record)}
                 </Td>
                 <Td
                   padding={PADDING}
                   minWidth={TABLE_COLUMNS[2].minWidth}
                   isNumeric
                 >
-                  {`$${record.totalAmount}`}
+                  {record.totalAmount
+                    ? `$${record.totalAmount}`
+                    : `$${record.amount}`}
                 </Td>
                 <Td
                   padding={PADDING}

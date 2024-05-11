@@ -2,20 +2,18 @@
 
 import {
   Box,
+  Container,
   Flex,
-  Text,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalOverlay,
-  useToast,
-  Container,
-  Heading,
   Table,
   TableContainer,
   Tbody,
   Td,
+  Text,
   Th,
   Thead,
   Tr,
@@ -24,12 +22,10 @@ import {
 
 import { useQuery } from "@tanstack/react-query";
 
-import { MdDateRange } from "react-icons/md";
-import { HiUserGroup } from "react-icons/hi";
-import { MdCategory } from "react-icons/md";
-import { MdAttachMoney } from "react-icons/md";
-import { IoPerson } from "react-icons/io5";
 import { GoNote } from "react-icons/go";
+import { HiUserGroup } from "react-icons/hi";
+import { IoPerson } from "react-icons/io5";
+import { MdAttachMoney, MdCategory, MdDateRange } from "react-icons/md";
 
 import FormHeader from "./formHeader";
 import Loading from "./loading";
@@ -39,7 +35,7 @@ import AddGroupTransactionForm from "./addGroupTransactionForm";
 import fetchCategories from "@/actions/fetchCategories";
 import fetchGroupSingleTransaction from "@/actions/group/fetchGroupTransaction";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Category, Transaction } from "@/types";
 
 interface User {
   id: string;
@@ -55,11 +51,6 @@ interface Payer {
 interface Sharer {
   sharerId: string;
   amount: number;
-}
-
-interface Category {
-  id: string;
-  name: string;
 }
 
 interface GroupTransactionFormProps {
@@ -114,15 +105,17 @@ export default function ReadGroupTransactionForm({
 
   /* Transaction */
   const {
-    data: transactionData,
+    data: groupTransaction,
     error: transactionError,
     isLoading,
-  } = useQuery({
+  } = useQuery<Transaction>({
     queryKey: ["transaction", transactionId],
     queryFn: () => fetchGroupSingleTransaction(groupId, transactionId),
   });
-  const groupTransaction = transactionData?.data;
-  if (isLoading) {
+
+  console.log(groupTransaction);
+
+  if (isLoading || !groupTransaction) {
     return <Loading />;
   }
 
@@ -130,7 +123,7 @@ export default function ReadGroupTransactionForm({
 
   // Get category name
   const selectedOption = options.find(
-    (option) => option.value === groupTransaction.categoryId
+    (option) => option.value === groupTransaction?.categoryId
   );
   const categoryName = selectedOption?.label;
 

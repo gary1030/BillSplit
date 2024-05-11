@@ -274,6 +274,11 @@ class TransactionControllers {
     try {
       const groupTransactions =
         await GroupTransaction.getGroupTransactionsByGroupId(groupId);
+      const groupRepayments =
+        await GroupRepayment.getGroupRepaymentsByGroupIdAndUserId(
+          groupId,
+          userId
+        );
       let share = 0;
       let balance = 0;
 
@@ -290,6 +295,14 @@ class TransactionControllers {
             share += splitDetail.amount;
           }
         });
+      });
+
+      groupRepayments.forEach((repayment) => {
+        if (repayment.payerId === userId) {
+          balance -= repayment.amount;
+        } else {
+          balance += repayment.amount;
+        }
       });
 
       return { group_id: groupId, share, balance };

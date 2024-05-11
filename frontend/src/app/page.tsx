@@ -23,7 +23,7 @@ export default function Home() {
             <br /> Simplifying shared expense
           </Text>
         </Box>
-        <Box w="400px">
+        <Box w="450px" mt="5px">
           <Center>
             <Image
               src="images/landingPageImage.png"
