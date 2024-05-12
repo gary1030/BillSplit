@@ -9,6 +9,7 @@ import fetchGroupTransactions from "@/actions/group/fetchGroupTransactions";
 import fetchUserBatch from "@/actions/user/fetchUserBatch";
 import {
   Box,
+  Hide,
   Table,
   TableContainer,
   Tbody,
@@ -17,6 +18,7 @@ import {
   Th,
   Thead,
   Tr,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { useCookies } from "react-cookie";
@@ -33,6 +35,9 @@ import {
 import { PiMoneyLight } from "react-icons/pi";
 import { TbMoneybag } from "react-icons/tb";
 
+import { useState } from "react";
+import ReadGroupTransactionForm from "./readGroupTransactionForm";
+
 interface GroupRecordTableProps {
   groupId: string;
 }
@@ -45,7 +50,11 @@ const TABLE_COLUMNS = [
     textAlign: "center",
     maxWidth: "80px",
   },
-  { key: "title", name: "Title" },
+  {
+    key: "title",
+    name: "Title",
+    maxWidth: { base: "95px", md: "280px" },
+  },
   {
     key: "amount",
     name: "Amount",
@@ -62,7 +71,7 @@ const TABLE_COLUMNS = [
   },
 ];
 
-const PADDING = "8px";
+const PADDING = "8px !important";
 
 interface UnifiedRecord {
   id: string;
@@ -89,6 +98,17 @@ interface MembersData {
 
 export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
   const [cookies] = useCookies(["userId"]);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [selectedRecord, setSelectedRecord] = useState<UnifiedRecord | null>(
+    null
+  );
+
+  const onRecordClick = (record: UnifiedRecord) => {
+    console.log(record.id);
+    if (!record.title) return;
+    setSelectedRecord(record);
+    onOpen();
+  };
 
   const { data: categoryData } = useQuery<Category[]>({
     queryKey: ["categories"],
@@ -169,8 +189,13 @@ export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
 
     return (
       <Box display="flex">
-        {categoryToIcon(record.categoryId || "Repayment")}
-        <Text ml={2}>{title}</Text>
+        <Hide below="sm">
+          {categoryToIcon(record.categoryId || "Repayment")}
+          <Box w="10px" />
+        </Hide>
+        <Text textOverflow="ellipsis" whiteSpace="nowrap" overflow="hidden">
+          {title}
+        </Text>
       </Box>
     );
   };
@@ -259,72 +284,85 @@ export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
   };
 
   return (
-    <TableContainer mt={5}>
-      <Table size={"md"} variant={"striped"}>
-        <Thead>
-          <Tr>
-            {TABLE_COLUMNS.map((column) => (
-              <Th
-                key={column.key}
-                minW={column.minWidth}
-                maxW={column.maxWidth}
-                padding={PADDING}
-                isNumeric={column.isNumeric}
-                textAlign={(column.textAlign as any) || "left"}
-              >
-                {column.name}
-              </Th>
-            ))}
-          </Tr>
-        </Thead>
-        <Tbody>
-          {allRecords
-            ?.sort(
-              (a, b) =>
-                new Date(b.consumptionDate).getTime() -
-                new Date(a.consumptionDate).getTime()
-            )
-            .map((record) => (
-              <Tr
-                key={record.id}
-                _hover={{ cursor: "pointer" }}
-                onClick={() => console.log(record.id)}
-              >
-                <Td
+    <>
+      <TableContainer mt={5}>
+        <Table size={{ base: "sm", md: "md" }} variant={"striped"}>
+          <Thead>
+            <Tr>
+              {TABLE_COLUMNS.map((column) => (
+                <Th
+                  key={column.key}
+                  minW={column.minWidth}
+                  maxW={column.maxWidth}
                   padding={PADDING}
-                  minWidth={TABLE_COLUMNS[0].minWidth}
-                  maxWidth={TABLE_COLUMNS[0].maxWidth}
-                  textAlign={(TABLE_COLUMNS[0].textAlign as any) || "left"}
+                  isNumeric={column.isNumeric}
+                  textAlign={(column.textAlign as any) || "left"}
                 >
-                  {showDate(new Date(record.consumptionDate))}
-                </Td>
-                <Td
-                  padding={PADDING}
-                  minWidth={TABLE_COLUMNS[1].minWidth}
-                  textAlign={(TABLE_COLUMNS[1].textAlign as any) || "left"}
+                  {column.name}
+                </Th>
+              ))}
+            </Tr>
+          </Thead>
+          <Tbody>
+            {allRecords
+              ?.sort(
+                (a, b) =>
+                  new Date(b.consumptionDate).getTime() -
+                  new Date(a.consumptionDate).getTime()
+              )
+              .map((record) => (
+                <Tr
+                  key={record.id}
+                  _hover={{ cursor: "pointer" }}
+                  onClick={() => onRecordClick(record)}
                 >
-                  {showTitle(record)}
-                </Td>
-                <Td
-                  padding={PADDING}
-                  minWidth={TABLE_COLUMNS[2].minWidth}
-                  isNumeric
-                >
-                  {record.totalAmount
-                    ? `$${record.totalAmount}`
-                    : `$${record.amount}`}
-                </Td>
-                <Td
-                  padding={PADDING}
-                  minWidth={TABLE_COLUMNS[3].minWidth}
-                  isNumeric
-                >
-                  {showStatus(record)}
-                </Td>
-              </Tr>
-            ))}
-        </Tbody>
-      </Table>
-    </TableContainer>
+                  <Td
+                    padding={PADDING}
+                    minWidth={TABLE_COLUMNS[0].minWidth}
+                    maxWidth={TABLE_COLUMNS[0].maxWidth}
+                    textAlign={(TABLE_COLUMNS[0].textAlign as any) || "left"}
+                  >
+                    {showDate(new Date(record.consumptionDate))}
+                  </Td>
+                  <Td
+                    padding={PADDING}
+                    minWidth={TABLE_COLUMNS[1].minWidth}
+                    maxWidth={TABLE_COLUMNS[1].maxWidth}
+                    textAlign={(TABLE_COLUMNS[1].textAlign as any) || "left"}
+                  >
+                    {showTitle(record)}
+                  </Td>
+                  <Td
+                    padding={PADDING}
+                    minWidth={TABLE_COLUMNS[2].minWidth}
+                    isNumeric
+                  >
+                    {record.totalAmount
+                      ? `$${record.totalAmount}`
+                      : `$${record.amount}`}
+                  </Td>
+                  <Td
+                    padding={PADDING}
+                    minWidth={TABLE_COLUMNS[3].minWidth}
+                    isNumeric
+                  >
+                    {showStatus(record)}
+                  </Td>
+                </Tr>
+              ))}
+          </Tbody>
+        </Table>
+      </TableContainer>
+      {selectedRecord && isOpen && (
+        <ReadGroupTransactionForm
+          isOpen={isOpen}
+          onClose={onClose}
+          groupId={groupId}
+          members={membersData?.users || []}
+          name={selectedRecord?.title || ""}
+          transactionId={selectedRecord?.id || ""}
+        />
+      )}
+    </>
   );
 }

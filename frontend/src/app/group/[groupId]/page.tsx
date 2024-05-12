@@ -11,7 +11,7 @@ export default function Page({ params }: { params: { groupId: string } }) {
       <Sidebar groupId={params.groupId} />
       <Container
         w={{ base: "100%", md: "90%" }}
-        maxW="800px"
+        maxW="1000px"
         mt="40px"
         mb="30px"
         pl={{

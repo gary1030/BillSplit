@@ -89,7 +89,11 @@ export default function GroupCard({
               </Center>
               <Center>
                 <Text fontSize="sm" as="b">
-                  {balance <= 0 ? `+$${-balance}` : `-$${-balance}`}
+                  {balance === 0
+                    ? `$0`
+                    : balance < 0
+                    ? `+$${-balance}`
+                    : `-$${balance}`}
                 </Text>
               </Center>
             </Box>

@@ -1,7 +1,15 @@
 "use client";
 
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogCloseButton,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
   Box,
+  Button,
   Container,
   Flex,
   Modal,
@@ -18,20 +26,12 @@ import {
   Thead,
   Tr,
   useDisclosure,
-  Button,
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
-  AlertDialogCloseButton,
   useToast,
 } from "@chakra-ui/react";
 
-import React, { useRef } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { User } from "@/types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRef } from "react";
 
 import { GoNote } from "react-icons/go";
 import { HiUserGroup } from "react-icons/hi";
@@ -44,16 +44,10 @@ import Loading from "./loading";
 import AddGroupTransactionForm from "./addGroupTransactionForm";
 
 import fetchCategories from "@/actions/fetchCategories";
-import fetchGroupSingleTransaction from "@/actions/group/fetchGroupTransaction";
 import deleteGroupSingleTransaction from "@/actions/group/deleteGroupTransaction";
+import fetchGroupSingleTransaction from "@/actions/group/fetchGroupTransaction";
 
 import { Category, Transaction } from "@/types";
-
-interface User {
-  id: string;
-  email: string;
-  username: string;
-}
 
 interface Payer {
   payerId: string;
