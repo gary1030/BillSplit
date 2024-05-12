@@ -748,7 +748,7 @@ export default function AddGroupTransactionForm({
         isClosable: true,
       });
     }
-    if (totalPayerAmount != amount) {
+    if (totalPayerAmount != amount && payerCustomizeSwitchOn) {
       hasErrors = true;
       toast({
         title: `The total payer amount should be equal to Amount`,
@@ -757,7 +757,7 @@ export default function AddGroupTransactionForm({
         isClosable: true,
       });
     }
-    if (totalSharerAmount != amount) {
+    if (totalSharerAmount != amount && sharerCustomizeSwitchOn) {
       hasErrors = true;
       toast({
         title: `The total sharer amount should be equal to Amount`,
