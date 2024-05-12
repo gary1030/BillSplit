@@ -10,9 +10,12 @@ import {
   AccordionButton,
   AccordionPanel,
   AccordionIcon,
-  Box,
+  Container,
   Avatar,
   Text,
+  Flex,
+  Box,
+  Button,
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { useCookies } from "react-cookie";
@@ -72,13 +75,73 @@ export default function GroupBalanceAccordion({
 
     return (
       <>
-        <Text flex={1} color={textColor} textAlign="right" minW="80px" mx={2}>
+        <Text flex={2} color={textColor} textAlign="right" minW="80px" mx={2}>
           {balanceText}
         </Text>
         <Text flex={1} textAlign="center" minW="80px" mx={2}>
           {status}
         </Text>
       </>
+    );
+  };
+
+  const showDebts = (payerId: string, receiverId: string, amount: number) => {
+    const payerName = membersData?.users.find(
+      (user) => user.id === payerId
+    )?.username;
+    const payerAvatarUrl = `https://api.dicebear.com/8.x/open-peeps/svg?seed=${payerName}`;
+
+    const receiverName = membersData?.users.find(
+      (user) => user.id === receiverId
+    )?.username;
+    const receiverAvatarUrl = `https://api.dicebear.com/8.x/open-peeps/svg?seed=${receiverName}`;
+
+    return (
+      <Flex
+        flexDirection={"row"}
+        display="flex"
+        mb={4}
+        key={payerId + "_" + receiverId + "_" + amount}
+      >
+        <Container flex={1} minW="80px" mx={2} textAlign="center">
+          <Avatar
+            name={payerName}
+            src={payerAvatarUrl}
+            border="2px"
+            color="black"
+          />
+          <Text>{payerName}</Text>
+        </Container>
+        <Container flex={1} minW="75px" mx={2} textAlign="center">
+          <Text mr="15px" minW="75px">
+            ${amount}
+          </Text>
+          <Flex minW="90px" h="fit-content" flexDirection="row">
+            <Box mt="5px" w="full" h="2px" bg="black" float="left" />
+            <Box
+              mt="0px"
+              w="0px"
+              h="0px"
+              float="right"
+              borderTop="6px solid transparent"
+              borderBottom="6px solid transparent"
+              borderLeft="15px solid black"
+            />
+          </Flex>
+          <Button size="xs" colorScheme="gray" variant="outline" mr="15px">
+            Settle Up
+          </Button>
+        </Container>
+        <Container flex={1} minW="80px" mx={2} textAlign="center">
+          <Avatar
+            name={receiverName}
+            src={receiverAvatarUrl}
+            border="2px"
+            color="black"
+          />
+          <Text>{receiverName}</Text>
+        </Container>
+      </Flex>
     );
   };
 
@@ -89,16 +152,39 @@ export default function GroupBalanceAccordion({
     const avatarUrl = `https://api.dicebear.com/8.x/open-peeps/svg?seed=${userName}`;
 
     return (
-      <AccordionItem minW="fit-content">
+      <AccordionItem minW="fit-content" key={userId}>
         <AccordionButton>
-          <Box flex={1} minW="75px" mx={2}>
-            <Avatar name={userName} src={avatarUrl} border="2px" />
+          <Container flex={1} minW="80px" mx={2} textAlign="center">
+            <Avatar
+              name={userName}
+              src={avatarUrl}
+              border="2px"
+              color="black"
+            />
             <Text>{userName}</Text>
-          </Box>
+          </Container>
           {showStatus(balance)}
-          <AccordionIcon mx={2} />
+          <AccordionIcon mx={2} fontSize="30px" />
         </AccordionButton>
-        <AccordionPanel pb={4}>TODO</AccordionPanel>
+        <AccordionPanel pb={4}>
+          {groupBalanceData?.map(
+            (userBalanceAndDebt: any) =>
+              userId === userBalanceAndDebt.userId &&
+              (!userBalanceAndDebt.debts ||
+                userBalanceAndDebt.debts.length === 0) && (
+                <Text textAlign="center" key={userId + "noDebt"}>
+                  No debts to pay or receive.
+                </Text>
+              )
+          )}
+          {groupBalanceData?.map(
+            (userBalanceAndDebt: any) =>
+              userId === userBalanceAndDebt.userId &&
+              userBalanceAndDebt.debts?.map((debt: any) =>
+                showDebts(debt.payerId, debt.receiverId, debt.amount)
+              )
+          )}
+        </AccordionPanel>
       </AccordionItem>
     );
   };
