@@ -359,7 +359,8 @@ export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
           onClose={onClose}
           groupId={groupId}
           members={membersData?.users || []}
-          name={selectedRecord?.title || ""}
+          // name={selectedRecord?.title || ""}
+          name={group?.name || ""}
           transactionId={selectedRecord?.id || ""}
         />
       )}
