@@ -461,10 +461,10 @@ class TransactionControllers {
 
       while (debtors.length > 0 && creditors.length > 0) {
         debtors.sort(
-          (a, b) => balanceForCalculation[a] - balanceForCalculation[b]
+          (a, b) => balanceForCalculation[b] - balanceForCalculation[a]
         );
         creditors.sort(
-          (a, b) => balanceForCalculation[b] - balanceForCalculation[a]
+          (a, b) => balanceForCalculation[a] - balanceForCalculation[b]
         );
 
         let debtor = debtors[0];
