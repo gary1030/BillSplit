@@ -75,10 +75,10 @@ export default function GroupBalanceAccordion({
 
     return (
       <>
-        <Text flex={2} color={textColor} textAlign="right" minW="80px" mx={2}>
+        <Text flex={1} color={textColor} textAlign="right" minW="120px" px={2}>
           {balanceText}
         </Text>
-        <Text flex={1} textAlign="center" minW="80px" mx={2}>
+        <Text flex={1} textAlign="center" minW="95px" px={2}>
           {status}
         </Text>
       </>
@@ -99,47 +99,46 @@ export default function GroupBalanceAccordion({
     return (
       <Flex
         flexDirection={"row"}
-        display="flex"
-        mb={4}
+        mb={2}
         key={payerId + "_" + receiverId + "_" + amount}
       >
-        <Container flex={1} minW="80px" mx={2} textAlign="center">
+        <Container flex={1} textAlign="center">
           <Avatar
             name={payerName}
             src={payerAvatarUrl}
             border="2px"
             color="black"
           />
-          <Text>{payerName}</Text>
+          <Text minW="64px">{payerName}</Text>
         </Container>
-        <Container flex={1} minW="75px" mx={2} textAlign="center">
-          <Text mr="15px" minW="75px">
+        <Container flex={1} minW="fit-content" textAlign="center">
+          <Text minW="110px" mr="15px">
             ${amount}
           </Text>
-          <Flex minW="90px" h="fit-content" flexDirection="row">
+          <Flex minW="95px" h="fit-content" flexDirection="row">
             <Box mt="5px" w="full" h="2px" bg="black" float="left" />
             <Box
               mt="0px"
               w="0px"
               h="0px"
-              float="right"
               borderTop="6px solid transparent"
               borderBottom="6px solid transparent"
               borderLeft="15px solid black"
+              float="right"
             />
           </Flex>
-          <Button size="xs" colorScheme="gray" variant="outline" mr="15px">
+          <Button size="sm" colorScheme="gray" variant="outline" mr="15px">
             Settle Up
           </Button>
         </Container>
-        <Container flex={1} minW="80px" mx={2} textAlign="center">
+        <Container flex={1} textAlign="center">
           <Avatar
             name={receiverName}
             src={receiverAvatarUrl}
             border="2px"
             color="black"
           />
-          <Text>{receiverName}</Text>
+          <Text minW="64px">{receiverName}</Text>
         </Container>
       </Flex>
     );
@@ -152,27 +151,27 @@ export default function GroupBalanceAccordion({
     const avatarUrl = `https://api.dicebear.com/8.x/open-peeps/svg?seed=${userName}`;
 
     return (
-      <AccordionItem minW="fit-content" key={userId}>
-        <AccordionButton>
-          <Container flex={1} minW="80px" mx={2} textAlign="center">
+      <AccordionItem minW="445px" key={userId}>
+        <AccordionButton textAlign="center">
+          <Container flex={1}>
             <Avatar
               name={userName}
               src={avatarUrl}
               border="2px"
               color="black"
             />
-            <Text>{userName}</Text>
+            <Text minW="64px">{userName}</Text>
           </Container>
           {showStatus(balance)}
-          <AccordionIcon mx={2} fontSize="30px" />
+          <AccordionIcon fontSize="25px" />
         </AccordionButton>
-        <AccordionPanel pb={4}>
+        <AccordionPanel pb={4} px={12}>
           {groupBalanceData?.map(
             (userBalanceAndDebt: any) =>
               userId === userBalanceAndDebt.userId &&
               (!userBalanceAndDebt.debts ||
                 userBalanceAndDebt.debts.length === 0) && (
-                <Text textAlign="center" key={userId + "noDebt"}>
+                <Text textAlign="center" px={2} key={userId + "noDebt"}>
                   No debts to pay or receive.
                 </Text>
               )
@@ -194,13 +193,7 @@ export default function GroupBalanceAccordion({
       <Heading size="lg" mb="10px">
         Balance
       </Heading>
-      <Accordion
-        allowMultiple
-        defaultIndex={[0]}
-        mt={5}
-        size={"md"}
-        overflow="auto"
-      >
+      <Accordion allowMultiple defaultIndex={[0]} mt={5} overflow="auto">
         {groupBalanceData?.map(
           (userBalanceAndDebt: any) =>
             cookies.userId === userBalanceAndDebt.userId &&
