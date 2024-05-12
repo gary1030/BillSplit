@@ -156,12 +156,9 @@ export default function ReadGroupTransactionForm({
     queryFn: () => fetchGroupSingleTransaction(groupId, transactionId),
   });
 
-  console.log(groupTransaction);
-
   if (isLoading || !groupTransaction) {
     return <Loading />;
   }
-
   /* Data Processing */
 
   // Get category name

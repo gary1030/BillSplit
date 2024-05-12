@@ -108,7 +108,7 @@ export default function AddGroupTransactionForm({
       staleTime: Infinity,
     });
     if (transactionData !== undefined) {
-      groupTransaction = transactionData.data;
+      groupTransaction = transactionData;
     }
   }
 
@@ -719,7 +719,6 @@ export default function AddGroupTransactionForm({
   };
 
   const handleAdd = () => {
-    console.log("amount: ", amount);
     let hasErrors = false;
 
     if (!title || title.trim() === "") {
