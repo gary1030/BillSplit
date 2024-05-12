@@ -397,6 +397,11 @@ class TransactionControllers {
         balance[repayment.receiverId] += repayment.amount;
       });
 
+      userIds.forEach((userId) => {
+        share[userId] = Math.round(share[userId] * 100) / 100;
+        balance[userId] = Math.round(balance[userId] * 100) / 100;
+      });
+
       return { groupId, share, balance };
     } catch (error) {
       throw error;
@@ -439,12 +444,17 @@ class TransactionControllers {
         balanceForCalculation[repayment.receiverId] += repayment.amount;
       });
 
+      userIds.forEach((userId) => {
+        balanceAndDebts[userId].balance =
+          Math.round(balanceAndDebts[userId].balance * 100) / 100;
+      });
+
       let debtors = [];
       let creditors = [];
       for (let userId in balanceAndDebts) {
-        if (balanceForCalculation[userId] > 0) {
+        if (balanceForCalculation[userId] > 0.01) {
           debtors.push(userId);
-        } else if (balanceForCalculation[userId] < 0) {
+        } else if (balanceForCalculation[userId] < -0.01) {
           creditors.push(userId);
         }
       }
@@ -459,10 +469,13 @@ class TransactionControllers {
 
         let debtor = debtors[0];
         let creditor = creditors[0];
-        let amount = Math.min(
-          Math.abs(balanceForCalculation[debtor]),
-          Math.abs(balanceForCalculation[creditor])
-        );
+        let amount =
+          Math.round(
+            Math.min(
+              Math.abs(balanceForCalculation[debtor]),
+              Math.abs(balanceForCalculation[creditor])
+            ) * 100
+          ) / 100;
 
         let simulatedRepayment = {
           payerId: debtor,
@@ -474,10 +487,10 @@ class TransactionControllers {
 
         balanceForCalculation[debtor] -= amount;
         balanceForCalculation[creditor] += amount;
-        if (balanceForCalculation[debtor] === 0) {
+        if (balanceForCalculation[debtor] < 0.01) {
           debtors.shift();
         }
-        if (balanceForCalculation[creditor] === 0) {
+        if (balanceForCalculation[creditor] > -0.01) {
           creditors.shift();
         }
       }
