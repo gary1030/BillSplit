@@ -242,8 +242,7 @@ export default function AddGroupTransactionForm({
     }
   }, [mode, groupTransaction]);
 
-  // initialize payerCheckBoxStates
-
+  // initialize payerCheckBoxStates, payerAmountStrings, and payerAmounts
   useEffect(() => {
     // set the payer checkbox states to unchecked for all members
     const initialState: PayerCheckBoxStates = {};
@@ -298,7 +297,7 @@ export default function AddGroupTransactionForm({
       setPayerAmountStrings((prev) => ({ ...prev, [id]: valueAsString }));
       let numericValue = parseFloat(valueAsString);
       if (!isNaN(numericValue)) {
-        numericValue = parseFloat(numericValue.toFixed(2));
+        numericValue = parseFloat(numericValue.toFixed(3));
         setPayerAmounts((prev) => ({ ...prev, [id]: numericValue }));
         updateTotalPayerAmount({ ...payerAmounts, [id]: numericValue });
       }
@@ -357,9 +356,9 @@ export default function AddGroupTransactionForm({
       // Calculate the average amount per checked member
       const averageAmount: number =
         checkedMembers.length > 0
-          ? parseFloat((amount / checkedMembers.length).toFixed(2))
+          ? parseFloat((amount / checkedMembers.length).toFixed(3))
           : 0;
-      const formattedAverageAmount: string = averageAmount.toFixed(2);
+      const formattedAverageAmount: string = averageAmount.toFixed(3);
 
       // Update the payer amounts
       const newPayerAmounts: PayerAmounts = {};
@@ -398,44 +397,38 @@ export default function AddGroupTransactionForm({
     }
   }, [mode, groupTransaction]);
 
-  // initialize sharerCheckBoxStates
+  // initialize sharerCheckBoxStates, sharerAmountStrings, and sharerAmounts
   useEffect(() => {
-    // set the sharer checkbox states to checked for all members in create mode
-    if (mode == "create") {
-      const initialState: SharerCheckBoxStates = {};
-      members.forEach((member) => {
-        initialState[member.id] = true;
-      });
-      setSharerCheckBoxStates(initialState);
-    }
-    // set the sharer checkbox states to checked for the sharers with positive amounts in edit mode
-    if (mode === "edit" && groupTransaction !== undefined) {
-      const initialState: SharerCheckBoxStates = {};
-      groupTransaction.splitDetails.forEach((sharer: Sharer) => {
-        if (sharer.amount > 0) {
-          initialState[sharer.sharerId] = true;
-        }
-      });
-      setSharerCheckBoxStates(initialState);
-    }
-  }, [members, mode]);
+    // set the sharer checkbox states to checked for all members
+    const initialState: PayerCheckBoxStates = {};
+    members.forEach((member) => {
+      initialState[member.id] = true;
+    });
+    setPayerCheckBoxStates(initialState);
 
-  // initialize sharerCheckBoxStates, sharerAmounts, and totalSharerAmount
-  useEffect(() => {
     // edit mode
     if (mode === "edit" && groupTransaction !== undefined) {
-      const initialAmounts: SharerAmounts = {};
-      const initialAmountStrings: { [key: string]: string } = {};
-
       groupTransaction.splitDetails.forEach((sharer: Sharer) => {
         if (sharer.amount > 0) {
-          initialAmounts[sharer.sharerId] = sharer.amount;
-          initialAmountStrings[sharer.sharerId] = sharer.amount.toString();
+          // set the sharer checkbox states to checked for the sharers with positive amounts
+          setSharerCheckBoxStates((prev) => ({
+            ...prev,
+            [sharer.sharerId]: true,
+          }));
+
+          // set the sharer amount strings to the amounts of the sharers with positive amounts
+          setSharerAmountStrings((prev) => ({
+            ...prev,
+            [sharer.sharerId]: sharer.amount.toString(),
+          }));
+
+          // set the sharer amounts to the amounts of the sharers with positive amounts
+          setSharerAmounts((prev) => ({
+            ...prev,
+            [sharer.sharerId]: sharer.amount,
+          }));
         }
       });
-
-      setSharerAmounts(initialAmounts);
-      setSharerAmountStrings(initialAmountStrings);
     }
   }, [members, mode, groupTransaction]);
 
@@ -455,7 +448,7 @@ export default function AddGroupTransactionForm({
       setSharerAmountStrings((prev) => ({ ...prev, [id]: valueAsString }));
       let numericValue = parseFloat(valueAsString);
       if (!isNaN(numericValue)) {
-        numericValue = parseFloat(numericValue.toFixed(2));
+        numericValue = parseFloat(numericValue.toFixed(3));
         setSharerAmounts((prev) => ({ ...prev, [id]: numericValue }));
         updateTotalSharerAmount({ ...sharerAmounts, [id]: numericValue });
       }
@@ -514,9 +507,9 @@ export default function AddGroupTransactionForm({
       // Calculate the average amount per checked member
       const averageAmount: number =
         checkedMembers.length > 0
-          ? parseFloat((amount / checkedMembers.length).toFixed(2))
+          ? parseFloat((amount / checkedMembers.length).toFixed(3))
           : 0;
-      const formattedAverageAmount: string = averageAmount.toFixed(2);
+      const formattedAverageAmount: string = averageAmount.toFixed(3);
 
       // Update the sharer amounts
       const newSharerAmounts: SharerAmounts = {};
@@ -611,6 +604,10 @@ export default function AddGroupTransactionForm({
       });
     },
   });
+  console.log("create-payer: ", payerAmounts);
+  console.log("create-sharer: ", sharerAmounts);
+  // console.log("edit-payer: ", payerAmounts);
+  // console.log("edit-sharer: ", sharerAmounts);
 
   const { mutate: editGroupTransactionMutation, isPending: isEditPending } =
     useMutation({
@@ -748,7 +745,7 @@ export default function AddGroupTransactionForm({
         isClosable: true,
       });
     }
-    if (totalPayerAmount != amount && payerCustomizeSwitchOn) {
+    if (parseFloat(totalPayerAmount.toFixed(2)) != amount) {
       hasErrors = true;
       toast({
         title: `The total payer amount should be equal to Amount`,
@@ -757,7 +754,7 @@ export default function AddGroupTransactionForm({
         isClosable: true,
       });
     }
-    if (totalSharerAmount != amount && sharerCustomizeSwitchOn) {
+    if (parseFloat(totalSharerAmount.toFixed(2)) != amount) {
       hasErrors = true;
       toast({
         title: `The total sharer amount should be equal to Amount`,
@@ -973,7 +970,7 @@ export default function AddGroupTransactionForm({
                         maxW="120px"
                         defaultValue={0}
                         min={0}
-                        precision={2}
+                        precision={3}
                         value={payerAmountStrings[member.id] || "0"}
                         onChange={(valueAsString) =>
                           handlePayerAmountInputChange(member.id, valueAsString)
@@ -1015,7 +1012,7 @@ export default function AddGroupTransactionForm({
                   overflowWrap="break-word"
                 >
                   {(!payerCustomizeSwitchOn && payerNumber) ||
-                  totalPayerAmount === amount
+                  parseFloat(totalPayerAmount.toFixed(2)) === amount
                     ? ""
                     : `Total payer amount ($${totalPayerAmount}) is not equal to $${amount}`}
                 </Text>
@@ -1087,7 +1084,7 @@ export default function AddGroupTransactionForm({
                         maxW="120px"
                         defaultValue={0}
                         min={0}
-                        precision={2}
+                        precision={3}
                         value={sharerAmountStrings[member.id] || "0"}
                         onChange={(valueAsString) =>
                           handleSharerAmountInputChange(
@@ -1130,9 +1127,11 @@ export default function AddGroupTransactionForm({
                   color="red"
                 >
                   {(!sharerCustomizeSwitchOn && sharerNumber) ||
-                  totalSharerAmount === amount
+                  parseFloat(totalSharerAmount.toFixed(2)) === amount
                     ? ""
-                    : `Total sharer amount ($${totalSharerAmount}) is not equal to $${amount}`}
+                    : `Total sharer amount ($${parseFloat(
+                        totalSharerAmount.toFixed(2)
+                      )}) is not equal to $${amount}`}
                 </Text>
               </Box>
             </Flex>

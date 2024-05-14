@@ -85,8 +85,8 @@ class TransactionControllers {
       splitAmount += splitDetails[i].amount;
     }
     return (
-      Math.abs(payerAmount - splitAmount) < 0.001 &&
-      Math.abs(payerAmount - totalAmount) < 0.001
+      parseFloat(payerAmount.toFixed(2)) === totalAmount &&
+      parseFloat(splitAmount.toFixed(2)) === totalAmount
     );
   }
 
