@@ -227,7 +227,7 @@ export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
     }
 
     if (balance < 0) {
-      balanceText = `-$${Math.abs(balance)}`;
+      balanceText = `-$${Math.round(Math.abs(balance) * 100) / 100}`;
       textColor = "red.500";
       status = "Payable";
     } else if (balance === 0) {
@@ -235,7 +235,7 @@ export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
       textColor = "purple.500";
       status = "Settled";
     } else {
-      balanceText = `+$${Math.abs(balance)}`;
+      balanceText = `+$${Math.round(Math.abs(balance) * 100) / 100}`;
       textColor = "green.500";
       status = "Receivable";
     }
@@ -338,8 +338,9 @@ export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
                     isNumeric
                   >
                     {record.totalAmount
-                      ? `$${record.totalAmount}`
-                      : `$${record.amount}`}
+                      ? `$${Math.round(record.totalAmount * 100) / 100}`
+                      : record.amount &&
+                        `${Math.round(record.amount * 100) / 100}`}
                   </Td>
                   <Td
                     padding={PADDING}
@@ -363,6 +364,13 @@ export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
           name={group?.name || ""}
           transactionId={selectedRecord?.id || ""}
         />
+      )}
+      {allRecords?.length === 0 && (
+        <Box mt={10}>
+          <Text textAlign="center" fontSize="xl">
+            Oops! No records found.
+          </Text>
+        </Box>
       )}
     </>
   );

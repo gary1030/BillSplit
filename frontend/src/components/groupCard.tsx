@@ -54,7 +54,7 @@ export default function GroupCard({
         borderWidth="2px"
         borderRadius="lg"
       >
-        <CardBody padding={0}>
+        <CardBody padding={0} w="216px">
           <Image
             src={`../${theme}`}
             alt="Theme"
@@ -67,19 +67,27 @@ export default function GroupCard({
             borderColor="black"
             borderWidth="1px"
             opacity={1}
-            mb="10px"
           />
-          <Text p="15px" fontSize="lg" as="b">
+          <Text
+            pl="15px"
+            pr="15px"
+            pt="12px"
+            pb="12px"
+            fontSize="lg"
+            as="b"
+            isTruncated
+            display={"block"}
+          >
             {name}
           </Text>
-          <Flex justifyContent="space-between" ml="15px" mr="15px" mt="10px">
+          <Flex justifyContent="space-between" ml="15px" mr="15px">
             <Box h="55px" w="85px" bgColor="gray.200" borderRadius="lg" p="5px">
               <Center>
                 <Text fontSize="sm">Your Share</Text>
               </Center>
               <Center>
                 <Text fontSize="sm" as="b">
-                  {`-$${share}`}
+                  {`-$${Math.round(share)}`}
                 </Text>
               </Center>
             </Box>
@@ -92,8 +100,8 @@ export default function GroupCard({
                   {balance === 0
                     ? `$0`
                     : balance < 0
-                    ? `+$${-balance}`
-                    : `-$${balance}`}
+                    ? `+$${-Math.round(balance)}`
+                    : `-$${Math.round(balance)}`}
                 </Text>
               </Center>
             </Box>
