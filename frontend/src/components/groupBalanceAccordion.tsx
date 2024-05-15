@@ -99,7 +99,8 @@ export default function GroupBalanceAccordion({
     return (
       <Flex
         flexDirection={"row"}
-        mb={2}
+        w="min-content"
+        py={4}
         key={payerId + "_" + receiverId + "_" + amount}
       >
         <Container flex={1} textAlign="center">
@@ -152,7 +153,7 @@ export default function GroupBalanceAccordion({
 
     return (
       <AccordionItem minW="445px" key={userId}>
-        <AccordionButton textAlign="center">
+        <AccordionButton textAlign="center" py={4}>
           <Container flex={1}>
             <Avatar
               name={userName}
@@ -165,7 +166,11 @@ export default function GroupBalanceAccordion({
           {showStatus(balance)}
           <AccordionIcon fontSize="25px" />
         </AccordionButton>
-        <AccordionPanel pb={4} px={12}>
+        <AccordionPanel
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+        >
           {groupBalanceData?.map(
             (userBalanceAndDebt: any) =>
               userId === userBalanceAndDebt.userId &&
