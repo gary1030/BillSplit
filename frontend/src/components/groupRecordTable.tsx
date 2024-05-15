@@ -84,6 +84,7 @@ interface UnifiedRecord {
   splitDetails?: Array<{ sharerId: string; amount: number }>;
   payerId?: string;
   receiverId?: string;
+  createdAt: string;
 }
 
 interface User {
@@ -305,11 +306,20 @@ export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
           </Thead>
           <Tbody>
             {allRecords
-              ?.sort(
-                (a, b) =>
+              ?.sort((a, b) => {
+                const consumptionDateDifference =
                   new Date(b.consumptionDate).getTime() -
-                  new Date(a.consumptionDate).getTime()
-              )
+                  new Date(a.consumptionDate).getTime();
+
+                if (consumptionDateDifference === 0) {
+                  return (
+                    new Date(b.createdAt).getTime() -
+                    new Date(a.createdAt).getTime()
+                  );
+                } else {
+                  return consumptionDateDifference;
+                }
+              })
               .map((record) => (
                 <Tr
                   key={record.id}
