@@ -100,16 +100,19 @@ export default function AddGroupTransactionForm({
   transactionId,
 }: GroupTransactionFormProps) {
   /* Transaction Data */
+  const { data: transactionData, error: transactionError } = useQuery({
+    queryKey: ["transaction", transactionId],
+    queryFn: () =>
+      mode === "edit" && transactionId !== undefined
+        ? fetchGroupSingleTransaction(groupId, transactionId)
+        : Promise.resolve(),
+    enabled: mode === "edit" && transactionId !== undefined,
+    staleTime: Infinity,
+  });
+
   let groupTransaction = undefined;
-  if (mode === "edit" && transactionId !== undefined) {
-    const { data: transactionData, error: transactionError } = useQuery({
-      queryKey: ["transaction", transactionId],
-      queryFn: () => fetchGroupSingleTransaction(groupId, transactionId),
-      staleTime: Infinity,
-    });
-    if (transactionData !== undefined) {
-      groupTransaction = transactionData;
-    }
+  if (transactionData !== undefined) {
+    groupTransaction = transactionData;
   }
 
   const [cookies, setCookie] = useCookies(["name"]);
@@ -562,6 +565,9 @@ export default function AddGroupTransactionForm({
         note
       ),
     onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["groupTransactions", groupId],
+      });
       setTitle("");
       setDate(new Date());
       setCategory("");
@@ -638,6 +644,9 @@ export default function AddGroupTransactionForm({
         if (transactionId) {
           queryClient.invalidateQueries({
             queryKey: ["transaction", transactionId],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["groupTransactions", groupId],
           });
         }
 
