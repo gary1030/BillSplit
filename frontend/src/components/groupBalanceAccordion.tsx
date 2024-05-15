@@ -59,18 +59,18 @@ export default function GroupBalanceAccordion({
     let textColor = "green.500";
     let status = "Payable";
 
-    if (balance > 0) {
+    if (balance >= 0.01) {
       balanceText = `-$${Math.abs(balance)}`;
       textColor = "red.500";
       status = "Payable";
-    } else if (balance === 0) {
-      balanceText = "$0";
-      textColor = "purple.500";
-      status = "Settled";
-    } else {
+    } else if (balance <= -0.01) {
       balanceText = `+$${Math.abs(balance)}`;
       textColor = "green.500";
       status = "Receivable";
+    } else {
+      balanceText = "$0";
+      textColor = "purple.500";
+      status = "Settled";
     }
 
     return (
