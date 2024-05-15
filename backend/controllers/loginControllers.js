@@ -7,6 +7,8 @@ class LoginControllers {
   constructor() {
     this.clientId = process.env.GOOGLE_CLIENT_ID;
     this.clientSecret = process.env.GOOGLE_CLIENT_SECRET;
+    this.redirect_uri =
+      process.env.GOOGLE_REDIRECT_URI || "http://localhost:3000";
   }
   async login(code) {
     const googleToken = await this.getTokenFromGoogle(code);
@@ -39,7 +41,7 @@ class LoginControllers {
         code,
         client_id: this.clientId,
         client_secret: this.clientSecret,
-        redirect_uri: "http://localhost:3000",
+        redirect_uri: this.redirect_uri,
         grant_type: "authorization_code",
       });
 
