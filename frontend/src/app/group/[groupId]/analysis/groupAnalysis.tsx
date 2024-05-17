@@ -3,6 +3,7 @@
 import fetchGroup from "@/actions/group/fetchGroup";
 import fetchUserBatch from "@/actions/user/fetchUserBatch";
 import AddRecordButton from "@/components/addRecordButton";
+import GroupAnalysisTabs from "@/components/groupAnalysisTabs";
 import GroupTitle from "@/components/groupTitle";
 import Loading from "@/components/loading";
 import { Container } from "@chakra-ui/react";
@@ -31,6 +32,7 @@ export default function GroupAnalysis({ groupId }: GroupAnalysisProps) {
     <>
       <Container mt="10px" ml={0} mr={0} maxW="100%" pl={0} pr={0}>
         <GroupTitle title={data.name} theme={data.theme} canEdit={false} />
+        <GroupAnalysisTabs groupId={groupId} />
       </Container>
       <AddRecordButton
         name={data.name}
