@@ -31,6 +31,8 @@ import {
 import { PiMoneyLight } from "react-icons/pi";
 import { TbMoneybag } from "react-icons/tb";
 
+import { Chart } from "react-google-charts";
+
 interface GroupAnalysisChartAndTableProps {
   isPersonal: boolean;
   groupId: string;
@@ -82,6 +84,18 @@ export default function GroupAnalysisChartAndTable({
       : () => fetchGroupAnalysis(groupId),
   });
 
+  const pieChartData = [
+    ["Category", "Amount"],
+    ...Object.entries(analysisData?.analysis || {})
+      .sort((a, b) => Number(b[1]) - Number(a[1]))
+      .map(([categoryId, amount]) => {
+        const categoryName = categoryData?.find(
+          (item) => item.id === categoryId
+        );
+        return [categoryName?.name, Math.round(Number(amount) * 100) / 100];
+      }),
+  ];
+
   const categoryToIcon = (categoryName: string) => {
     switch (categoryName) {
       case "Food":
@@ -123,6 +137,36 @@ export default function GroupAnalysisChartAndTable({
 
   return (
     <>
+      <Box mt={5} minH="225px">
+        {pieChartData && (
+          <Chart
+            chartType="PieChart"
+            data={pieChartData}
+            options={{
+              is3D: true,
+              backgroundColor: "transparent",
+              chartArea: {
+                width: "95%",
+                height: "95%",
+              },
+              legend: {
+                position: "right",
+                alignment: "center",
+                textStyle: {
+                  color: "black",
+                  fontSize: 14,
+                },
+              },
+              pieSliceTextStyle: {
+                color: "black",
+                fontSize: 16,
+                bold: true,
+              },
+              tooltip: { trigger: "selection" },
+            }}
+          />
+        )}
+      </Box>
       <TableContainer mt={5}>
         <Table size={{ base: "sm", md: "md" }} variant="striped">
           <Thead>
@@ -143,7 +187,7 @@ export default function GroupAnalysisChartAndTable({
           </Thead>
           <Tbody>
             {analysisData &&
-              Object.entries<{ [key: string]: number }>(analysisData.analysis)
+              Object.entries(analysisData.analysis)
                 .sort((a, b) => Number(b[1]) - Number(a[1]))
                 .map(([categoryId, amount]) => {
                   if (Number(amount) > 0) {

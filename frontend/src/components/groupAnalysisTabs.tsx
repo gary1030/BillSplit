@@ -22,7 +22,7 @@ export default function GroupBalanceAccordion({
       <Heading size="lg" mb="10px">
         Anaiysis
       </Heading>
-      <Tabs align="center" size={{ base: "sm", md: "md" }}>
+      <Tabs align="center" size={{ base: "sm", md: "md" }} isLazy>
         <TabList w="fit-content">
           <Tab>Group</Tab>
           <Tab>Personal</Tab>
