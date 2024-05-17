@@ -73,20 +73,14 @@ export default function GroupAnalysisChartAndTable({
     queryFn: () => fetchCategories(),
   });
 
-  let analysisData;
-  if (!isPersonal) {
-    const queryResult = useQuery({
-      queryKey: ["groupAnalysis", groupId],
-      queryFn: () => fetchGroupAnalysis(groupId),
-    });
-    analysisData = queryResult.data;
-  } else {
-    const queryResult = useQuery({
-      queryKey: ["groupPersonalAnalysis", groupId],
-      queryFn: () => fetchGroupPersonalAnalysis(groupId),
-    });
-    analysisData = queryResult.data;
-  }
+  const { data: analysisData } = useQuery({
+    queryKey: isPersonal
+      ? ["groupPersonalAnalysis", groupId]
+      : ["groupAnalysis", groupId],
+    queryFn: isPersonal
+      ? () => fetchGroupPersonalAnalysis(groupId)
+      : () => fetchGroupAnalysis(groupId),
+  });
 
   const categoryToIcon = (categoryName: string) => {
     switch (categoryName) {
