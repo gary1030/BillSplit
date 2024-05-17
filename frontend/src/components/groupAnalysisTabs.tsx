@@ -1,5 +1,6 @@
 "use client";
 
+import GroupAnalysisChartAndTable from "./groupAnalysisChartAndTable";
 import {
   Heading,
   Tabs,
@@ -27,8 +28,12 @@ export default function GroupBalanceAccordion({
           <Tab w="100px">Personal</Tab>
         </TabList>
         <TabPanels>
-          <TabPanel>GroupAnalysis</TabPanel>
-          <TabPanel>PersonalAnalysis</TabPanel>
+          <TabPanel>
+            <GroupAnalysisChartAndTable isPersonal={false} groupId={groupId} />
+          </TabPanel>
+          <TabPanel>
+            <GroupAnalysisChartAndTable isPersonal={true} groupId={groupId} />
+          </TabPanel>
         </TabPanels>
       </Tabs>
     </>
