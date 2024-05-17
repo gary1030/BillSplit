@@ -99,6 +99,9 @@ export default function ReadGroupTransactionForm({
       queryClient.invalidateQueries({
         queryKey: ["transaction", transactionId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["groupTransactions", groupId],
+      });
       toast({
         title: "Transaction deleted successfully",
         status: "success",
