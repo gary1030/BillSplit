@@ -22,16 +22,16 @@ export default function GroupBalanceAccordion({
       <Heading size="lg" mb="10px">
         Anaiysis
       </Heading>
-      <Tabs align="center">
+      <Tabs align="center" size={{ base: "sm", md: "md" }}>
         <TabList w="fit-content">
-          <Tab w="100px">Group</Tab>
-          <Tab w="100px">Personal</Tab>
+          <Tab>Group</Tab>
+          <Tab>Personal</Tab>
         </TabList>
         <TabPanels>
-          <TabPanel>
+          <TabPanel maxW="500px" p={0} mb="30px">
             <GroupAnalysisChartAndTable isPersonal={false} groupId={groupId} />
           </TabPanel>
-          <TabPanel>
+          <TabPanel maxW="500px" p={0} mb="30px">
             <GroupAnalysisChartAndTable isPersonal={true} groupId={groupId} />
           </TabPanel>
         </TabPanels>

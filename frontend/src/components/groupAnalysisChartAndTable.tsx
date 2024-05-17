@@ -41,22 +41,28 @@ const TABLE_COLUMNS = [
     key: "category",
     name: "Category",
     textAlign: "left",
+    flex: 3,
+    minWidth: "115px",
   },
   {
     key: "amount",
     name: "Amount",
     isNumeric: true,
     textAlign: "right",
+    flex: 2,
+    minWidth: "100px",
   },
   {
     key: "ratio",
     name: "Ratio",
     isNumeric: true,
     textAlign: "right",
+    flex: 2,
+    minWidth: "80px",
   },
 ];
 
-const PADDING = "8px !important";
+const PADDINGX = "8px !important";
 
 export default function GroupAnalysisChartAndTable({
   isPersonal,
@@ -123,16 +129,18 @@ export default function GroupAnalysisChartAndTable({
 
   return (
     <>
-      <TableContainer>
-        <Table size={{ base: "sm", md: "md" }} variant={"striped"}>
+      <TableContainer mt={5}>
+        <Table size={{ base: "sm", md: "md" }} variant="striped">
           <Thead>
-            <Tr>
+            <Tr display="flex">
               {TABLE_COLUMNS.map((column) => (
                 <Th
                   key={column.key}
-                  padding={PADDING}
+                  px={PADDINGX}
                   isNumeric={column.isNumeric}
                   textAlign={(column.textAlign as any) || "left"}
+                  flex={column.flex}
+                  minW={column.minWidth}
                 >
                   {column.name}
                 </Th>
@@ -146,19 +154,31 @@ export default function GroupAnalysisChartAndTable({
                 .map(([categoryId, amount]) => {
                   if (Number(amount) > 0) {
                     return (
-                      <Tr key={categoryId}>
+                      <Tr key={categoryId} display="flex">
                         <Td
-                          padding={PADDING}
+                          px={PADDINGX}
                           textAlign={
                             (TABLE_COLUMNS[0].textAlign as any) || "left"
                           }
+                          flex={TABLE_COLUMNS[0].flex}
+                          minW={TABLE_COLUMNS[0].minWidth}
                         >
                           {showCategory(categoryId)}
                         </Td>
-                        <Td padding={PADDING} isNumeric>
+                        <Td
+                          px={PADDINGX}
+                          flex={TABLE_COLUMNS[1].flex}
+                          minW={TABLE_COLUMNS[1].minWidth}
+                          isNumeric
+                        >
                           ${Math.round(Number(amount) * 100) / 100}
                         </Td>
-                        <Td padding={PADDING} isNumeric>
+                        <Td
+                          px={PADDINGX}
+                          flex={TABLE_COLUMNS[2].flex}
+                          minW={TABLE_COLUMNS[2].minWidth}
+                          isNumeric
+                        >
                           {Math.round(
                             (Number(amount) / analysisData.total) * 100 * 100
                           ) / 100}
@@ -170,14 +190,28 @@ export default function GroupAnalysisChartAndTable({
                 })}
           </Tbody>
           <Tfoot fontWeight="bold">
-            <Tr>
-              <Td padding={PADDING} textAlign="right">
+            <Tr display="flex">
+              <Td
+                px={PADDINGX}
+                textAlign="right"
+                flex={TABLE_COLUMNS[0].flex}
+                minW={TABLE_COLUMNS[0].minWidth}
+              >
                 Total
               </Td>
-              <Td padding={PADDING} isNumeric>
+              <Td
+                px={PADDINGX}
+                flex={TABLE_COLUMNS[1].flex}
+                minW={TABLE_COLUMNS[1].minWidth}
+                isNumeric
+              >
                 ${Math.round(analysisData?.total * 100) / 100}
               </Td>
-              <Td />
+              <Td
+                px={PADDINGX}
+                flex={TABLE_COLUMNS[2].flex}
+                minW={TABLE_COLUMNS[2].minWidth}
+              />
             </Tr>
           </Tfoot>
         </Table>
