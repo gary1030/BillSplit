@@ -651,9 +651,6 @@ export default function AddGroupTransactionForm({
           queryClient.invalidateQueries({
             queryKey: ["groupTransactions", groupId],
           });
-          queryClient.invalidateQueries({
-            queryKey: ["groupBalance", groupId],
-          });
         }
 
         setTitle("");
