@@ -1,14 +1,14 @@
 "use client";
 
-import GroupAnalysisChartAndTable from "./groupAnalysisChartAndTable";
 import {
   Heading,
-  Tabs,
-  TabList,
-  TabPanels,
   Tab,
+  TabList,
   TabPanel,
+  TabPanels,
+  Tabs,
 } from "@chakra-ui/react";
+import GroupAnalysisChartAndTable from "./groupAnalysisChartAndTable";
 
 interface GroupRecordTableProps {
   groupId: string;
@@ -19,8 +19,8 @@ export default function GroupBalanceAccordion({
 }: GroupRecordTableProps) {
   return (
     <>
-      <Heading size="lg" mb="10px">
-        Anaiysis
+      <Heading size={{ base: "md", md: "lg" }} mb="10px">
+        Analysis
       </Heading>
       <Tabs align="center" size={{ base: "sm", md: "md" }} isLazy>
         <TabList w="fit-content">

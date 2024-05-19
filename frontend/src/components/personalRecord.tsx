@@ -1,13 +1,21 @@
 "use client";
 
-import { Container, Text } from "@chakra-ui/react";
+import { Container, Heading } from "@chakra-ui/react";
 
-export default function PersonalRecord() {
+interface PersonalRecordProps {
+  startTime: Date;
+  endTime: Date;
+}
+
+export default function PersonalRecord({
+  startTime,
+  endTime,
+}: PersonalRecordProps) {
   return (
     <Container mt={5} mb={5} ml={0} mr={0} p={0}>
-      <Text fontSize={{ base: "xl", md: "2xl" }} as="b">
+      <Heading size={{ base: "md", md: "lg" }} mb="10px">
         Personal Record
-      </Text>
+      </Heading>
     </Container>
   );
 }

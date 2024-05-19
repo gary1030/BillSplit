@@ -1,13 +1,21 @@
 "use client";
 
-import { Container, Text } from "@chakra-ui/react";
+import { Container, Heading } from "@chakra-ui/react";
 
-export default function PersonalAnalysis() {
+interface PersonalAnalysisProps {
+  startTime: Date;
+  endTime: Date;
+}
+
+export default function PersonalAnalysis({
+  startTime,
+  endTime,
+}: PersonalAnalysisProps) {
   return (
     <Container mt={5} mb={5} ml={0} mr={0} p={0}>
-      <Text fontSize={{ base: "xl", md: "2xl" }} as="b">
+      <Heading size={{ base: "md", md: "lg" }} mb="10px">
         Personal Analysis
-      </Text>
+      </Heading>
     </Container>
   );
 }

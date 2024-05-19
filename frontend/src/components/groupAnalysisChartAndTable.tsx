@@ -6,31 +6,21 @@ import fetchCategories from "@/actions/fetchCategories";
 import fetchGroupAnalysis from "@/actions/group/fetchGroupAnalysis";
 import fetchGroupPersonalAnalysis from "@/actions/group/fetchGroupPersonalAnalysis";
 import {
-  Table,
-  Thead,
-  Tbody,
-  Tfoot,
-  Tr,
-  Th,
-  Td,
-  TableContainer,
   Box,
-  Text,
   Hide,
+  Table,
+  TableContainer,
+  Tbody,
+  Td,
+  Text,
+  Tfoot,
+  Th,
+  Thead,
+  Tr,
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
-import { FaShoppingCart } from "react-icons/fa";
-import { GiHealthNormal } from "react-icons/gi";
-import { ImSpoonKnife } from "react-icons/im";
-import {
-  MdEmojiTransportation,
-  MdHome,
-  MdOutlineCastForEducation,
-  MdOutlineSportsEsports,
-} from "react-icons/md";
-import { PiMoneyLight } from "react-icons/pi";
-import { TbMoneybag } from "react-icons/tb";
 
+import useCategory from "@/hooks/useCategory";
 import { Chart } from "react-google-charts";
 
 interface GroupAnalysisChartAndTableProps {
@@ -70,6 +60,8 @@ export default function GroupAnalysisChartAndTable({
   isPersonal,
   groupId,
 }: GroupAnalysisChartAndTableProps) {
+  const { categoryToIcon } = useCategory();
+
   const { data: categoryData } = useQuery<Category[]>({
     queryKey: ["categories"],
     queryFn: () => fetchCategories(),
@@ -95,29 +87,6 @@ export default function GroupAnalysisChartAndTable({
         return [categoryName?.name, Math.round(Number(amount) * 100) / 100];
       }),
   ];
-
-  const categoryToIcon = (categoryName: string) => {
-    switch (categoryName) {
-      case "Food":
-        return <ImSpoonKnife size={20} />;
-      case "Transportation":
-        return <MdEmojiTransportation size={20} />;
-      case "Entertainment":
-        return <MdOutlineSportsEsports size={20} />;
-      case "Shopping":
-        return <FaShoppingCart size={20} />;
-      case "Health":
-        return <GiHealthNormal size={20} />;
-      case "Education":
-        return <MdOutlineCastForEducation size={20} />;
-      case "Life":
-        return <MdHome size={20} />;
-      case "Investment":
-        return <TbMoneybag size={20} />;
-      default:
-        return <PiMoneyLight size={20} />;
-    }
-  };
 
   const showCategory = (categoryId: string) => {
     const categoryName = categoryData?.find((item) => item.id === categoryId);

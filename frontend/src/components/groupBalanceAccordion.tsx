@@ -1,21 +1,21 @@
 "use client";
 
 import fetchGroup from "@/actions/group/fetchGroup";
-import fetchUserBatch from "@/actions/user/fetchUserBatch";
 import fetchGroupBalance from "@/actions/group/fetchGroupBalance";
+import fetchUserBatch from "@/actions/user/fetchUserBatch";
 import {
-  Heading,
   Accordion,
-  AccordionItem,
   AccordionButton,
-  AccordionPanel,
   AccordionIcon,
-  Container,
+  AccordionItem,
+  AccordionPanel,
   Avatar,
-  Text,
-  Flex,
   Box,
   Button,
+  Container,
+  Flex,
+  Heading,
+  Text,
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { useCookies } from "react-cookie";
@@ -195,7 +195,7 @@ export default function GroupBalanceAccordion({
 
   return (
     <>
-      <Heading size="lg" mb="10px">
+      <Heading size={{ base: "md", md: "lg" }} mb="10px">
         Balance
       </Heading>
       <Accordion allowMultiple defaultIndex={[0]} mt={5} overflow="auto">

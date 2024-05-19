@@ -1,6 +1,6 @@
 "use client";
 
-import { Center, IconButton, Text, useDisclosure } from "@chakra-ui/react";
+import { Center, Heading, IconButton, useDisclosure } from "@chakra-ui/react";
 import { useParams } from "next/navigation";
 import { FaRegEdit } from "react-icons/fa";
 import GroupForm from "./groupForm";
@@ -21,12 +21,13 @@ export default function GroupTitle({
 
   return (
     <Center>
-      <Text fontSize={{ base: "2xl", md: "3xl" }} as="b">
+      <Heading size={{ base: "lg", md: "lg" }} mb="10px">
         {title}
-      </Text>
+      </Heading>
       {canEdit && (
         <IconButton
           ml="10px"
+          mb="6px"
           aria-label="Edit"
           bgColor={"transparent"}
           icon={<FaRegEdit size={24} />}

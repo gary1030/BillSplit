@@ -26,7 +26,7 @@ export default function GroupInvitation({ groupId }: GroupInvitationProps) {
 
   return (
     <>
-      <Heading size="lg" mb="10px">
+      <Heading size={{ base: "md", md: "lg" }} mb="10px">
         Invitation
       </Heading>
       <Stack direction={["column", "row"]} spacing="15px">

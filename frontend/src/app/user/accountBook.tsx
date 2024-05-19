@@ -19,8 +19,8 @@ export default function AccountBook() {
       </Center>
       <Text>Start Time: {startTime.toDateString()}</Text>
       <Text>End Time: {endTime.toDateString()}</Text>
-      <PersonalAnalysis />
-      <PersonalRecord />
+      <PersonalAnalysis startTime={startTime} endTime={endTime} />
+      <PersonalRecord startTime={startTime} endTime={endTime} />
     </>
   );
 }

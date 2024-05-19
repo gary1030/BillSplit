@@ -26,7 +26,7 @@ interface GroupMemberProps {
 export default function GroupMember({ groupId, members }: GroupMemberProps) {
   return (
     <>
-      <Heading size="lg" mb="10px">
+      <Heading size={{ base: "md", md: "lg" }} mb="10px">
         Members
       </Heading>
       <Container maxW="500px" p={0} mb="30px">

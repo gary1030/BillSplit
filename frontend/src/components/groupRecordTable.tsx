@@ -22,19 +22,10 @@ import {
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { useCookies } from "react-cookie";
-import { FaShoppingCart } from "react-icons/fa";
-import { GiHealthNormal } from "react-icons/gi";
-import { ImSpoonKnife } from "react-icons/im";
-import {
-  MdEmojiTransportation,
-  MdHome,
-  MdOutlineCastForEducation,
-  MdOutlineRefresh,
-  MdOutlineSportsEsports,
-} from "react-icons/md";
+import { MdOutlineRefresh } from "react-icons/md";
 import { PiMoneyLight } from "react-icons/pi";
-import { TbMoneybag } from "react-icons/tb";
 
+import useCategory from "@/hooks/useCategory";
 import { useState } from "react";
 import ReadGroupTransactionForm from "./readGroupTransactionForm";
 
@@ -103,9 +94,9 @@ export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
   const [selectedRecord, setSelectedRecord] = useState<UnifiedRecord | null>(
     null
   );
+  const { categoryToIcon } = useCategory();
 
   const onRecordClick = (record: UnifiedRecord) => {
-    console.log(record.id);
     if (!record.title) return;
     setSelectedRecord(record);
     onOpen();
@@ -145,37 +136,6 @@ export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
     queryFn: () => fetchUserBatch(group.memberIds || []),
   });
 
-  const categoryToIcon = (categoryId: string) => {
-    if (categoryId === "Repayment") {
-      return <MdOutlineRefresh size={20} />;
-    }
-    const category = categoryData?.find((item) => item.id === categoryId);
-    if (!category) {
-      return <PiMoneyLight size={20} />;
-    }
-
-    switch (category.name) {
-      case "Food":
-        return <ImSpoonKnife size={20} />;
-      case "Transportation":
-        return <MdEmojiTransportation size={20} />;
-      case "Entertainment":
-        return <MdOutlineSportsEsports size={20} />;
-      case "Shopping":
-        return <FaShoppingCart size={20} />;
-      case "Health":
-        return <GiHealthNormal size={20} />;
-      case "Education":
-        return <MdOutlineCastForEducation size={20} />;
-      case "Life":
-        return <MdHome size={20} />;
-      case "Investment":
-        return <TbMoneybag size={20} />;
-      default:
-        return <PiMoneyLight size={20} />;
-    }
-  };
-
   const showTitle = (record: any) => {
     let title = record.title || "";
     if (record.receiverId && record.payerId) {
@@ -191,7 +151,7 @@ export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
     return (
       <Box display="flex">
         <Hide below="sm">
-          {categoryToIcon(record.categoryId || "Repayment")}
+          {showCategory(record.categoryId || "Repayment")}
           <Box w="10px" />
         </Hide>
         <Text textOverflow="ellipsis" whiteSpace="nowrap" overflow="hidden">
@@ -199,6 +159,17 @@ export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
         </Text>
       </Box>
     );
+  };
+
+  const showCategory = (categoryId: string) => {
+    if (categoryId === "Repayment") {
+      return <MdOutlineRefresh size={20} />;
+    }
+    const category = categoryData?.find((item) => item.id === categoryId);
+    if (!category) {
+      return <PiMoneyLight size={20} />;
+    }
+    return categoryToIcon(category.name);
   };
 
   const showStatus = (record: any) => {
