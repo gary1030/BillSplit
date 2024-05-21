@@ -6,6 +6,7 @@ export interface Transaction {
   currencyId: string;
   title: string;
   totalAmount: number;
+  amount: number;
   consumptionDate: string;
   note: string;
   createdAt: string;
