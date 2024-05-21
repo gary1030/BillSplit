@@ -251,7 +251,7 @@ export default function ReadGroupRepaymentForm({
         <AddGroupRepaymentForm
           mode="edit"
           isOpen={isOpen}
-          onClose={onClose}
+          onClose={onCloseEdit}
           repaymentId={repaymentId}
           groupId={groupId}
           payerId={groupRepayment.payerId}

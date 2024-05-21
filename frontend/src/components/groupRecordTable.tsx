@@ -100,7 +100,9 @@ export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
   const { categoryToIcon } = useCategory();
 
   const onRecordClick = (record: UnifiedRecord) => {
-    // if (!record.title) return;
+    if (record.title) {
+      setRecordType("transaction");
+    }
     if (record.payerId) {
       setRecordType("repayment");
     }
