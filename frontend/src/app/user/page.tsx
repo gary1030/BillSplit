@@ -10,7 +10,7 @@ export default function UserPage({ params }: { params: { userId: string } }) {
 
   return (
     <>
-      <Header loggedIn={true} isGroup={true} />
+      <Header loggedIn={true} isGroup={false} />
       <Container
         w={{ base: "100%", md: "80%" }}
         maxW="600px"
