@@ -9,30 +9,35 @@ class LoginControllers {
     this.clientSecret = process.env.GOOGLE_CLIENT_SECRET;
     this.redirect_uri =
       process.env.GOOGLE_REDIRECT_URI || "http://localhost:3000";
+    this.login = this.login.bind(this);
   }
-  async login(code) {
-    const googleToken = await this.getTokenFromGoogle(code);
-    if (!googleToken) {
-      throw new Error("Unauthorized user");
+  async login(req, res) {
+    const code = req.body.code;
+
+    try {
+      const googleToken = await this.getTokenFromGoogle(code);
+      if (!googleToken) {
+        throw new Error("Unauthorized user");
+      }
+
+      const googleUser = await this.getProfileFromGoogle(googleToken);
+
+      let user = await User.getUserByGoogleId(googleUser.id);
+
+      if (!user) {
+        user = await User.createUser(
+          googleUser.name,
+          googleUser.email,
+          googleUser.id
+        );
+      }
+
+      user.token = this.generateJWTToken(user.id);
+      res.send(user);
+    } catch (error) {
+      console.log("Unauthorized client: ", error);
+      res.status(401).json({ message: "Unauthorized!" });
     }
-
-    const googleUser = await this.getProfileFromGoogle(googleToken);
-
-    const user = await User.getUserByGoogleId(googleUser.id);
-
-    if (!user) {
-      const newUser = await User.createUser(
-        googleUser.name,
-        googleUser.email,
-        googleUser.id
-      );
-
-      newUser.token = this.generateJWTToken(newUser.id);
-      return newUser;
-    }
-
-    user.token = this.generateJWTToken(user.id);
-    return user;
   }
 
   async getTokenFromGoogle(code) {

@@ -1,17 +1,21 @@
 var express = require("express");
 var router = express.Router();
+const { check, validationResult } = require("express-validator");
 
 const LoginControllers = require("../controllers/loginControllers");
 
 /* POST login. */
-router.post("/login", async function (req, res, next) {
-  try {
-    const user = await LoginControllers.login(req.body.code);
-    res.send(user);
-  } catch (error) {
-    console.log("Unauthorized client: ", error);
-    res.status(401).json({ message: "Unauthorized!" });
-  }
-});
+router.post(
+  "/login",
+  [check("code").isString().notEmpty()],
+  async function (req, res, next) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: "Bad request" });
+    }
+    next();
+  },
+  LoginControllers.login
+);
 
 module.exports = router;
