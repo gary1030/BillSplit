@@ -92,7 +92,8 @@ router.post("/:id/transactions", async function (req, res, next) {
         req.body.type,
         req.body.title,
         req.body.amount,
-        req.body.consumptionDate
+        req.body.consumptionDate,
+        req.body.note
       );
     res.send(personalTransaction);
   } catch (error) {
@@ -187,7 +188,8 @@ router.put("/:id/transactions/:transactionId", async function (req, res, next) {
         req.body.type,
         req.body.title,
         req.body.amount,
-        req.body.consumptionDate
+        req.body.consumptionDate,
+        req.body.note
       );
     res.send(personalTransaction);
   } catch (error) {

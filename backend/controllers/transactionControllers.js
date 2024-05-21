@@ -12,7 +12,8 @@ class TransactionControllers {
     type,
     title,
     amount,
-    consumptionDate
+    consumptionDate,
+    note
   ) {
     try {
       const currencyId = await Currency.getDefaultCurrencyId();
@@ -24,7 +25,8 @@ class TransactionControllers {
           type,
           title,
           amount,
-          consumptionDate
+          consumptionDate,
+          note
         );
       return personalTransaction;
     } catch (error) {
@@ -66,7 +68,8 @@ class TransactionControllers {
     type,
     title,
     amount,
-    consumptionDate
+    consumptionDate,
+    note
   ) {
     try {
       const currencyId = await Currency.getDefaultCurrencyId();
@@ -79,7 +82,8 @@ class TransactionControllers {
           type,
           title,
           amount,
-          consumptionDate
+          consumptionDate,
+          note
         );
       return updatedPersonalTransaction;
     } catch (error) {

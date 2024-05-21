@@ -28,7 +28,8 @@ class PersonalTransaction {
     type,
     title,
     amount,
-    consumptionDate
+    consumptionDate,
+    note
   ) {
     const personalTransaction = await prisma.personalTransaction.create({
       data: {
@@ -39,6 +40,7 @@ class PersonalTransaction {
         title: title,
         amount: amount,
         consumptionDate: consumptionDate,
+        note: note,
       },
     });
     return personalTransaction;
@@ -87,7 +89,8 @@ class PersonalTransaction {
     type,
     title,
     amount,
-    consumptionDate
+    consumptionDate,
+    note
   ) {
     const personalTransaction = await prisma.personalTransaction.update({
       where: {
@@ -101,6 +104,7 @@ class PersonalTransaction {
         title: title,
         amount: amount,
         consumptionDate: consumptionDate,
+        note: note,
       },
     });
     return personalTransaction;
