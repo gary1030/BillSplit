@@ -12,8 +12,10 @@ interface SidebarProps {
 
 export default function Sidebar({ groupId }: SidebarProps) {
   const [isClient, setIsClient] = useState(false);
+  const [currentPath, setCurrentPath] = useState("");
   useEffect(() => {
     setIsClient(true);
+    setCurrentPath(window.location.pathname);
   }, []);
   if (!isClient) {
     return null;
@@ -41,6 +43,7 @@ export default function Sidebar({ groupId }: SidebarProps) {
         <Button
           variant="ghost"
           colorScheme="gray"
+          color={currentPath === managementLink ? "black" : "gray.500"}
           size="lg"
           px={2}
           minW="30px"
@@ -59,6 +62,7 @@ export default function Sidebar({ groupId }: SidebarProps) {
         <Button
           variant="ghost"
           colorScheme="gray"
+          color={currentPath === recordLink ? "black" : "gray.500"}
           size="lg"
           px={2}
           minW="30px"
@@ -77,6 +81,7 @@ export default function Sidebar({ groupId }: SidebarProps) {
         <Button
           variant="ghost"
           colorScheme="gray"
+          color={currentPath === analysisLink ? "black" : "gray.500"}
           size="lg"
           px={2}
           minW="30px"
@@ -95,6 +100,7 @@ export default function Sidebar({ groupId }: SidebarProps) {
         <Button
           variant="ghost"
           colorScheme="gray"
+          color={currentPath === balanceLink ? "black" : "gray.500"}
           size="lg"
           px={2}
           minW="30px"
