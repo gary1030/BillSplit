@@ -164,6 +164,14 @@ export default function AddGroupTransactionForm({
     }
   }, [mode, groupTransaction]);
 
+  /* Date */
+  // initialize date in edit mode
+  useEffect(() => {
+    if (mode === "edit" && groupTransaction !== undefined) {
+      setDate(new Date(groupTransaction.consumptionDate));
+    }
+  }, [mode, groupTransaction]);
+
   /* Categories */
   // fetch categories
   const {
@@ -403,11 +411,13 @@ export default function AddGroupTransactionForm({
   // initialize sharerCheckBoxStates, sharerAmountStrings, and sharerAmounts
   useEffect(() => {
     // set the sharer checkbox states to checked for all members
-    const initialState: PayerCheckBoxStates = {};
-    members.forEach((member) => {
-      initialState[member.id] = true;
-    });
-    setPayerCheckBoxStates(initialState);
+    if (mode == "create") {
+      const initialState: SharerCheckBoxStates = {};
+      members.forEach((member) => {
+        initialState[member.id] = true;
+      });
+      setSharerCheckBoxStates(initialState);
+    }
 
     // edit mode
     if (mode === "edit" && groupTransaction !== undefined) {
