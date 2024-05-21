@@ -67,11 +67,11 @@ router.post("/:id/transactions", async function (req, res, next) {
       return;
     }
 
-    // check type
-    if (req.body.type !== "INCOME" && req.body.type !== "EXPENSE") {
-      res.status(400).json({ message: "Type must be INCOME or EXPENSE" });
-      return;
-    }
+    // // check type
+    // if (req.body.type !== "INCOME" && req.body.type !== "EXPENSE") {
+    //   res.status(400).json({ message: "Type must be INCOME or EXPENSE" });
+    //   return;
+    // }
 
     // check amount
     if (req.body.amount <= 0) {
@@ -89,7 +89,7 @@ router.post("/:id/transactions", async function (req, res, next) {
       await TransactionControllers.createPersonalTransaction(
         req.params.id,
         req.body.categoryId,
-        req.body.type,
+        // req.body.type,
         req.body.title,
         req.body.amount,
         req.body.consumptionDate,
@@ -163,10 +163,10 @@ router.put("/:id/transactions/:transactionId", async function (req, res, next) {
     }
 
     // check type
-    if (req.body.type !== "INCOME" && req.body.type !== "EXPENSE") {
-      res.status(400).json({ message: "Type must be INCOME or EXPENSE" });
-      return;
-    }
+    // if (req.body.type !== "INCOME" && req.body.type !== "EXPENSE") {
+    //   res.status(400).json({ message: "Type must be INCOME or EXPENSE" });
+    //   return;
+    // }
 
     // check amount
     if (req.body.amount <= 0) {
@@ -185,7 +185,7 @@ router.put("/:id/transactions/:transactionId", async function (req, res, next) {
         req.params.transactionId,
         req.params.id,
         req.body.categoryId,
-        req.body.type,
+        // req.body.type,
         req.body.title,
         req.body.amount,
         req.body.consumptionDate,
