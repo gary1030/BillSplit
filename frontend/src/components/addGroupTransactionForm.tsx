@@ -613,10 +613,6 @@ export default function AddGroupTransactionForm({
       });
     },
   });
-  console.log("create-payer: ", payerAmounts);
-  console.log("create-sharer: ", sharerAmounts);
-  // console.log("edit-payer: ", payerAmounts);
-  // console.log("edit-sharer: ", sharerAmounts);
 
   const { mutate: editGroupTransactionMutation, isPending: isEditPending } =
     useMutation({

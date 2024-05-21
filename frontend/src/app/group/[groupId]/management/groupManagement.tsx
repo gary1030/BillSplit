@@ -2,7 +2,7 @@
 
 import fetchGroup from "@/actions/group/fetchGroup";
 import fetchUserBatch from "@/actions/user/fetchUserBatch";
-import AddRecordButton from "@/components/addRecordButton";
+import AddRecordButton from "@/components/addGroupRecordButton";
 import GroupInvitation from "@/components/groupInvitation";
 import GroupMember from "@/components/groupMember";
 import GroupTitle from "@/components/groupTitle";
