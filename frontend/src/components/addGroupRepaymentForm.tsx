@@ -132,6 +132,9 @@ export default function AddGroupRepaymentForm({
       queryClient.invalidateQueries({
         queryKey: ["groupBalance", groupId],
       });
+      setSettleAmountString("0");
+      setSettleAmount(0);
+
       toast({
         title: "Repayment created successfully",
         status: "success",
@@ -171,7 +174,7 @@ export default function AddGroupRepaymentForm({
             queryKey: ["repayment", repaymentId],
           });
           queryClient.invalidateQueries({
-            queryKey: ["groupRepayments", repaymentId],
+            queryKey: ["groupRepayments", groupId],
           });
         }
 
