@@ -6,7 +6,14 @@ const UserConcealedTransaction = require("../models/userConcealedTransaction");
 const Currency = require("../models/currency");
 
 class TransactionControllers {
-  async createPersonalTransaction(userId, categoryId, type, title, amount) {
+  async createPersonalTransaction(
+    userId,
+    categoryId,
+    type,
+    title,
+    amount,
+    consumptionDate
+  ) {
     try {
       const currencyId = await Currency.getDefaultCurrencyId();
       const personalTransaction =
@@ -16,7 +23,8 @@ class TransactionControllers {
           currencyId,
           type,
           title,
-          amount
+          amount,
+          consumptionDate
         );
       return personalTransaction;
     } catch (error) {
@@ -34,6 +42,57 @@ class TransactionControllers {
           endTime
         );
       return { data: personalTransaction };
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
+  async getPersonalTransactionById(id) {
+    try {
+      const personalTransaction =
+        await PersonalTransaction.getPersonalTransactionById(id);
+      return { data: personalTransaction };
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
+  async updatePersonalTransaction(
+    transactionId,
+    userId,
+    categoryId,
+    type,
+    title,
+    amount,
+    consumptionDate
+  ) {
+    try {
+      const currencyId = await Currency.getDefaultCurrencyId();
+      const updatedPersonalTransaction =
+        await PersonalTransaction.updatePersonalTransactionById(
+          transactionId,
+          userId,
+          categoryId,
+          currencyId,
+          type,
+          title,
+          amount,
+          consumptionDate
+        );
+      return updatedPersonalTransaction;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
+  async deletePersonalTransaction(transactionId) {
+    try {
+      const deletePersonalTransaction =
+        await PersonalTransaction.deletePersonalTransactionById(transactionId);
+      return deletePersonalTransaction;
     } catch (error) {
       console.log(error);
       return null;
@@ -149,7 +208,7 @@ class TransactionControllers {
       return updatedGroupTransaction;
     } catch (error) {
       console.log(error);
-      throw error;
+      return null;
     }
   }
 
