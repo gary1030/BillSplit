@@ -28,6 +28,8 @@ import { PiMoneyLight } from "react-icons/pi";
 import useCategory from "@/hooks/useCategory";
 import { useState } from "react";
 import ReadGroupTransactionForm from "./readGroupTransactionForm";
+import ReadGroupRepaymentForm from "./readGroupRepaymentForm";
+import { set } from "date-fns";
 
 interface GroupRecordTableProps {
   groupId: string;
@@ -94,10 +96,14 @@ export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
   const [selectedRecord, setSelectedRecord] = useState<UnifiedRecord | null>(
     null
   );
+  const [recordType, setRecordType] = useState("transaction");
   const { categoryToIcon } = useCategory();
 
   const onRecordClick = (record: UnifiedRecord) => {
-    if (!record.title) return;
+    // if (!record.title) return;
+    if (record.payerId) {
+      setRecordType("repayment");
+    }
     setSelectedRecord(record);
     onOpen();
   };
@@ -335,7 +341,7 @@ export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
           </Tbody>
         </Table>
       </TableContainer>
-      {selectedRecord && isOpen && (
+      {selectedRecord && recordType == "transaction" && isOpen && (
         <ReadGroupTransactionForm
           isOpen={isOpen}
           onClose={onClose}
@@ -344,6 +350,14 @@ export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
           // name={selectedRecord?.title || ""}
           name={group?.name || ""}
           transactionId={selectedRecord?.id || ""}
+        />
+      )}
+      {selectedRecord && recordType == "repayment" && isOpen && (
+        <ReadGroupRepaymentForm
+          isOpen={isOpen}
+          onClose={onClose}
+          groupId={groupId}
+          repaymentId={selectedRecord?.id || ""}
         />
       )}
       {allRecords?.length === 0 && (

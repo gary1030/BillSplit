@@ -16,9 +16,15 @@ import {
   Flex,
   Heading,
   Text,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { useCookies } from "react-cookie";
+import { useState } from "react";
+
+import ReadGroupRepaymentForm from "./readGroupRepaymentForm";
+import AddGroupRepaymentForm from "./addGroupRepaymentForm";
+import { on } from "events";
 
 interface GroupRecordTableProps {
   groupId: string;
@@ -38,6 +44,14 @@ export default function GroupBalanceAccordion({
   groupId,
 }: GroupRecordTableProps) {
   const [cookies] = useCookies(["userId"]);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [payerId, setPayerId] = useState<string>("");
+  const [payerName, setPayerName] = useState<string>("");
+  const [payerAvatarUrl, setPayerAvatarUrl] = useState<string>("");
+  const [amount, setAmount] = useState<number>(0);
+  const [receiverId, setReceiverId] = useState<string>("");
+  const [receiverName, setReceiverName] = useState<string>("");
+  const [receiverAvatarUrl, setReceiverAvatarUrl] = useState<string>("");
 
   const { data: group } = useQuery({
     queryKey: ["group", groupId],
@@ -53,6 +67,25 @@ export default function GroupBalanceAccordion({
     queryKey: ["groupBalance", groupId],
     queryFn: () => fetchGroupBalance(groupId),
   });
+
+  const onRecordClick = (
+    payerId: string,
+    payerName: string,
+    payerAvatarUrl: string,
+    amount: number,
+    receiverId: string,
+    receiverName: string,
+    receiverAvatarUrl: string
+  ) => {
+    setPayerId(payerId);
+    setPayerName(payerName);
+    setPayerAvatarUrl(payerAvatarUrl);
+    setAmount(amount);
+    setReceiverId(receiverId);
+    setReceiverName(receiverName);
+    setReceiverAvatarUrl(receiverAvatarUrl);
+    onOpen();
+  };
 
   const showStatus = (balance: number) => {
     let balanceText = `+$${balance}`;
@@ -86,14 +119,14 @@ export default function GroupBalanceAccordion({
   };
 
   const showDebts = (payerId: string, receiverId: string, amount: number) => {
-    const payerName = membersData?.users.find(
-      (user) => user.id === payerId
-    )?.username;
+    const payerName =
+      membersData?.users.find((user) => user.id === payerId)?.username ||
+      "Unknown";
     const payerAvatarUrl = `https://api.dicebear.com/8.x/open-peeps/svg?seed=${payerName}`;
 
-    const receiverName = membersData?.users.find(
-      (user) => user.id === receiverId
-    )?.username;
+    const receiverName =
+      membersData?.users.find((user) => user.id === receiverId)?.username ||
+      "Unknown";
     const receiverAvatarUrl = `https://api.dicebear.com/8.x/open-peeps/svg?seed=${receiverName}`;
 
     return (
@@ -128,7 +161,23 @@ export default function GroupBalanceAccordion({
               float="right"
             />
           </Flex>
-          <Button size="sm" colorScheme="gray" variant="outline" mr="15px">
+          <Button
+            size="sm"
+            colorScheme="gray"
+            variant="outline"
+            mr="15px"
+            onClick={() =>
+              onRecordClick(
+                payerId,
+                payerName,
+                payerAvatarUrl,
+                amount,
+                receiverId,
+                receiverName,
+                receiverAvatarUrl
+              )
+            }
+          >
             Settle Up
           </Button>
         </Container>
@@ -210,6 +259,21 @@ export default function GroupBalanceAccordion({
             showBalance(userBalanceAndDebt.userId, userBalanceAndDebt.balance)
         )}
       </Accordion>
+      {isOpen && (
+        <AddGroupRepaymentForm
+          mode="create"
+          isOpen={isOpen}
+          onClose={onClose}
+          groupId={groupId}
+          payerId={payerId}
+          payerName={payerName}
+          payerAvatarUrl={payerAvatarUrl}
+          amount={amount}
+          receiverId={receiverId}
+          receiverName={receiverName}
+          receiverAvatarUrl={receiverAvatarUrl}
+        />
+      )}
     </>
   );
 }
