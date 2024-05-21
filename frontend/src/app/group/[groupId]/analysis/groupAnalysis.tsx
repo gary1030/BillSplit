@@ -2,7 +2,7 @@
 
 import fetchGroup from "@/actions/group/fetchGroup";
 import fetchUserBatch from "@/actions/user/fetchUserBatch";
-import AddRecordButton from "@/components/addRecordButton";
+import AddRecordButton from "@/components/addGroupRecordButton";
 import GroupAnalysisTabs from "@/components/groupAnalysisTabs";
 import GroupTitle from "@/components/groupTitle";
 import Loading from "@/components/loading";
