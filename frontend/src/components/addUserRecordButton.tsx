@@ -3,7 +3,6 @@ import { Button } from "@chakra-ui/react";
 import { useState } from "react";
 import { FiPlusCircle } from "react-icons/fi";
 import AddPersonalTransactionForm from "./addPersonalTransactionForm";
-import ReadPersonalTransactionForm from "./readPersonalTransactionForm";
 
 interface AddRecordButtonProps {
   userId: string;
@@ -25,22 +24,16 @@ export default function AddRecordButton({ userId }: AddRecordButtonProps) {
       <Button
         style={{
           position: "fixed",
-          bottom: "50px",
-          right: "10px",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
+          bottom: "58px",
+          right: "15px",
           border: "none",
           background: "none",
           cursor: "pointer",
-          width: "100px",
-          height: "70px",
           padding: "0",
         }}
         onClick={handleOpenModal}
       >
-        <FiPlusCircle size={40} />
-        <span style={{ marginTop: "3px" }}>Add a record</span>
+        <FiPlusCircle size={45} />
       </Button>
       <AddPersonalTransactionForm
         mode="create"
