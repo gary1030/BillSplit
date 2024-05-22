@@ -18,6 +18,7 @@ import {
   Th,
   Thead,
   Tr,
+  useBreakpointValue,
   useDisclosure,
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
@@ -27,9 +28,8 @@ import { PiMoneyLight } from "react-icons/pi";
 
 import useCategory from "@/hooks/useCategory";
 import { useState } from "react";
-import ReadGroupTransactionForm from "./readGroupTransactionForm";
 import ReadGroupRepaymentForm from "./readGroupRepaymentForm";
-import { set } from "date-fns";
+import ReadGroupTransactionForm from "./readGroupTransactionForm";
 
 interface GroupRecordTableProps {
   groupId: string;
@@ -186,14 +186,18 @@ export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
     }
 
     let balance = 0;
-    let textColor = "green.500";
-    let balanceText = `+$${balance}`;
-    let status = "Payable";
+    let textColor = "purple.500";
+    let balanceText = `$${balance}`;
+    let status = "Not joined";
+    let inRecord = false;
 
     if (record.payerDetails) {
       record.payerDetails.forEach((payer: any) => {
         if (payer.payerId === cookies.userId) {
           balance += payer.amount;
+          if (payer.amount !== 0) {
+            inRecord = true;
+          }
         }
       });
     }
@@ -202,22 +206,25 @@ export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
       record.splitDetails.forEach((sharer: any) => {
         if (sharer.sharerId === cookies.userId) {
           balance -= sharer.amount;
+          if (sharer.amount !== 0) {
+            inRecord = true;
+          }
         }
       });
     }
 
     if (balance < 0) {
-      balanceText = `-$${Math.round(Math.abs(balance) * 100) / 100}`;
+      balanceText = `$${Math.round(Math.abs(balance) * 100) / 100}`;
       textColor = "red.500";
-      status = "Payable";
-    } else if (balance === 0) {
+      status = "Borrowed";
+    } else if (balance === 0 && inRecord) {
       balanceText = "$0";
       textColor = "purple.500";
-      status = "Settled";
-    } else {
-      balanceText = `+$${Math.round(Math.abs(balance) * 100) / 100}`;
+      status = "Balanced";
+    } else if (balance > 0) {
+      balanceText = `$${Math.round(Math.abs(balance) * 100) / 100}`;
       textColor = "green.500";
-      status = "Receivable";
+      status = "Lent";
     }
 
     return (
@@ -228,16 +235,16 @@ export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
     );
   };
 
+  const isSmOrLarger = useBreakpointValue({ base: false, sm: true });
   const showDate = (date: Date) => {
     return (
       <Box mb="5px">
         <Text fontSize="xs">{date.getFullYear()}</Text>
         <Text as="b">{`${(date.getMonth() + 1)
           .toString()
-          .padStart(2, "0")}-${date
-          .getDate()
-          .toString()
-          .padStart(2, "0")} ${dayToString(date.getDay())}.`}</Text>
+          .padStart(2, "0")}-${date.getDate().toString().padStart(2, "0")} ${
+          isSmOrLarger ? dayToString(date.getDay()) + "." : ""
+        }`}</Text>
       </Box>
     );
   };

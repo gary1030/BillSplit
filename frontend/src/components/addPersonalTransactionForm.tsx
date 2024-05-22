@@ -309,7 +309,12 @@ export default function AddPersonalTransactionForm({
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onModelClose} blockScrollOnMount={false}>
+      <Modal
+        isOpen={isOpen}
+        onClose={onModelClose}
+        blockScrollOnMount={false}
+        isCentered
+      >
         <ModalOverlay />
         <ModalContent w="90%" maxW="700px">
           <FormHeader

@@ -224,9 +224,14 @@ export default function ReadGroupTransactionForm({
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onModelClose} blockScrollOnMount={false}>
+      <Modal
+        isOpen={isOpen}
+        onClose={onModelClose}
+        blockScrollOnMount={false}
+        isCentered
+      >
         <ModalOverlay />
-        <ModalContent w="90%" maxW="700px">
+        <ModalContent w="90%" maxW="700px" mt="65px">
           <FormHeader
             title="Expense"
             onClose={onModelClose}

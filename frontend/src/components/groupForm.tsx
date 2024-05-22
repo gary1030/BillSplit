@@ -127,7 +127,7 @@ export default function GroupForm({
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onModelClose}>
+      <Modal isOpen={isOpen} onClose={onModelClose} isCentered>
         <ModalOverlay />
         <ModalContent w="90%" maxW="800px">
           {mode === "edit" ? (

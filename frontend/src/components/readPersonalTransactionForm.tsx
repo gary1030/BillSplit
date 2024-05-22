@@ -10,32 +10,21 @@ import {
   AlertDialogOverlay,
   Box,
   Button,
-  Container,
   Flex,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalOverlay,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
   Text,
-  Th,
-  Thead,
-  Tr,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 
-import { User } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRef } from "react";
 
 import { GoNote } from "react-icons/go";
-import { HiUserGroup } from "react-icons/hi";
-import { IoPerson } from "react-icons/io5";
 import { MdAttachMoney, MdCategory, MdDateRange } from "react-icons/md";
 
 import FormHeader from "./formHeader";
@@ -175,7 +164,12 @@ export default function ReadPersonalTransactionForm({
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onModelClose} blockScrollOnMount={false}>
+      <Modal
+        isOpen={isOpen}
+        onClose={onModelClose}
+        blockScrollOnMount={false}
+        isCentered
+      >
         <ModalOverlay />
         <ModalContent w="90%" maxW="700px">
           <FormHeader
