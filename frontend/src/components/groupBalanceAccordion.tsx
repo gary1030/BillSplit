@@ -23,6 +23,7 @@ import { useState } from "react";
 import { useCookies } from "react-cookie";
 
 import AddGroupRepaymentForm from "./addGroupRepaymentForm";
+import Loading from "./loading";
 
 interface GroupRecordTableProps {
   groupId: string;
@@ -61,7 +62,7 @@ export default function GroupBalanceAccordion({
     queryFn: () => fetchUserBatch(group.memberIds || []),
   });
 
-  const { data: groupBalanceData, error: groupBalanceError } = useQuery({
+  const { data: groupBalanceData, error: groupBalanceError, isLoading: isBalanceLoading } = useQuery({
     queryKey: ["groupBalance", groupId],
     queryFn: () => fetchGroupBalance(groupId),
   });
@@ -272,6 +273,7 @@ export default function GroupBalanceAccordion({
           receiverAvatarUrl={receiverAvatarUrl}
         />
       )}
+      {isBalanceLoading && <Loading />}
     </>
   );
 }

@@ -22,6 +22,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import useCategory from "@/hooks/useCategory";
 import { Chart } from "react-google-charts";
+import Loading from "./loading";
 
 interface GroupAnalysisChartAndTableProps {
   isPersonal: boolean;
@@ -67,7 +68,7 @@ export default function GroupAnalysisChartAndTable({
     queryFn: () => fetchCategories(),
   });
 
-  const { data: analysisData } = useQuery({
+  const { data: analysisData, isLoading } = useQuery({
     queryKey: isPersonal
       ? ["groupPersonalAnalysis", groupId]
       : ["groupAnalysis", groupId],
@@ -230,6 +231,7 @@ export default function GroupAnalysisChartAndTable({
           </Text>
         </Box>
       )}
+      {isLoading && <Loading />}
     </>
   );
 }
