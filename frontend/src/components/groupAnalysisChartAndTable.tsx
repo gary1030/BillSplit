@@ -23,6 +23,7 @@ import { useQuery } from "@tanstack/react-query";
 import useCategory from "@/hooks/useCategory";
 import { Chart } from "react-google-charts";
 import Loading from "./loading";
+import { color } from "framer-motion";
 
 interface GroupAnalysisChartAndTableProps {
   isPersonal: boolean;
@@ -105,6 +106,18 @@ export default function GroupAnalysisChartAndTable({
     );
   };
 
+  const chartColors = [
+    "#FC8181", // red.300
+    "#F6AD55", // orange.300
+    "#F6E05E", // yellow.300
+    "#68D391", // green.300
+    "#63B3ED", // blue.300
+    "#76E4F7", // cyan.300
+    "#B794F4", // purple.300
+    "#E2E8F0", // gray.200
+    "#A0AEC0", // gray.400
+  ];
+
   return (
     <>
       <Box mt={5} minH="225px">
@@ -133,6 +146,7 @@ export default function GroupAnalysisChartAndTable({
                 bold: true,
               },
               tooltip: { trigger: "selection" },
+              colors: chartColors,
             }}
           />
         )}
