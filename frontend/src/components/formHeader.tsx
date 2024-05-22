@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import { Box, Flex, Text, IconButton, Center } from '@chakra-ui/react';
-import { MdOutlineClose, MdEdit } from 'react-icons/md';
-import { FiSave } from 'react-icons/fi';
-import { RiDeleteBin6Line } from 'react-icons/ri';
+import { Box, Center, Flex, IconButton, Text } from "@chakra-ui/react";
+import { FiSave } from "react-icons/fi";
+import { MdEdit, MdOutlineClose } from "react-icons/md";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 interface FormHeaderProps {
   onClose: () => void;
@@ -34,14 +34,14 @@ export default function FormHeader({
           aria-label="Close"
           icon={<MdOutlineClose size={24} />}
           _hover={{
-            cursor: 'pointer',
+            cursor: "pointer",
           }}
           onClick={onClose}
         />
       </Box>
       <Box flex={2}>
         <Center>
-          <Text fontSize="xl" color="white" as="b" >
+          <Text fontSize={{ base: "lg", md: "xl" }} color="white" as="b">
             {title}
           </Text>
         </Center>
@@ -53,7 +53,7 @@ export default function FormHeader({
             aria-label="Save"
             icon={<FiSave size={24} />}
             _hover={{
-              cursor: 'pointer',
+              cursor: "pointer",
             }}
             onClick={onSave}
           />
@@ -64,7 +64,7 @@ export default function FormHeader({
             aria-label="Delete"
             icon={<RiDeleteBin6Line size={24} />}
             _hover={{
-              cursor: 'pointer',
+              cursor: "pointer",
             }}
             onClick={onDelete}
           />
@@ -75,7 +75,7 @@ export default function FormHeader({
             aria-label="Edit"
             icon={<MdEdit size={24} />}
             _hover={{
-              cursor: 'pointer',
+              cursor: "pointer",
             }}
             onClick={onEdit}
           />

@@ -1,27 +1,25 @@
 "use client";
 
 import {
+  Avatar,
   Box,
+  Container,
   Flex,
-  Text,
   Modal,
   ModalBody,
   ModalContent,
-  ModalFooter,
   ModalOverlay,
-  Avatar,
   NumberDecrementStepper,
   NumberIncrementStepper,
   NumberInput,
   NumberInputField,
   NumberInputStepper,
-  Container,
+  Text,
   useToast,
 } from "@chakra-ui/react";
 
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { useCookies } from "react-cookie";
 
 import FormHeader from "./formHeader";
 import Loading from "./loading";
@@ -93,7 +91,7 @@ export default function AddGroupRepaymentForm({
       setSettleAmount(amount);
       setSettleAmountString(amount.toString());
     }
-  }, [mode, groupRepayment]);
+  }, [mode, groupRepayment, amount]);
 
   // Handle amount input change
   const handleSettleAmountInputChange = (valueAsString: string) => {
@@ -235,9 +233,9 @@ export default function AddGroupRepaymentForm({
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onModelClose} blockScrollOnMount={false}>
+      <Modal isOpen={isOpen} onClose={onModelClose} isCentered>
         <ModalOverlay />
-        <ModalContent w="90%" maxW="700px">
+        <ModalContent w={{ base: "90%", md: "550px" }} maxW="550px">
           <FormHeader
             title="Add a repayment"
             onClose={onModelClose}
@@ -247,10 +245,10 @@ export default function AddGroupRepaymentForm({
             <Flex
               flexDirection={"row"}
               w="full"
-              marginTop="6%"
+              marginTop="40px"
               key={payerId + "_" + receiverId + "_" + amount}
             >
-              <Container flex={1} textAlign="center">
+              <Container flex={1} textAlign="center" p={0}>
                 <Avatar
                   name={payerName}
                   src={payerAvatarUrl}
@@ -260,22 +258,25 @@ export default function AddGroupRepaymentForm({
                 <Text minW="64px">{payerName}</Text>
               </Container>
               <Container flex={1} minW="fit-content" textAlign="center">
-                <NumberInput
-                  defaultValue={0}
-                  min={0}
-                  precision={2}
-                  onChange={handleSettleAmountInputChange}
-                  onBlur={handleSettleAmountInputBlur}
-                  value={settleAmountString}
-                  marginLeft={7}
-                  width={120}
-                >
-                  <NumberInputField />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
-                </NumberInput>
+                <Box display="flex" alignItems="center" justifyContent="center">
+                  <NumberInput
+                    defaultValue={0}
+                    min={0}
+                    precision={2}
+                    onChange={handleSettleAmountInputChange}
+                    onBlur={handleSettleAmountInputBlur}
+                    value={settleAmountString}
+                    ml={4}
+                    mr={5}
+                    width={100}
+                  >
+                    <NumberInputField pl={2} />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
+                </Box>
                 <Flex minW="100px" h="fit-content" flexDirection="row">
                   <Box mt="5px" w="full" h="2px" bg="black" float="left" />
                   <Box
@@ -289,7 +290,7 @@ export default function AddGroupRepaymentForm({
                   />
                 </Flex>
               </Container>
-              <Container flex={1} textAlign="center">
+              <Container flex={1} textAlign="center" p={0}>
                 <Avatar
                   name={receiverName}
                   src={receiverAvatarUrl}
@@ -315,9 +316,6 @@ export default function AddGroupRepaymentForm({
               </Text>
             </Box>
           </ModalBody>
-          <ModalFooter>
-            <Box h="10px"></Box>
-          </ModalFooter>
         </ModalContent>
       </Modal>
       {isPending || isEditPending ? <Loading /> : null}

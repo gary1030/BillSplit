@@ -158,9 +158,9 @@ export default function ReadGroupRepaymentForm({
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onModelClose} blockScrollOnMount={false}>
+      <Modal isOpen={isOpen} onClose={onModelClose} isCentered>
         <ModalOverlay />
-        <ModalContent w="90%" maxW="700px">
+        <ModalContent w={{ base: "90%", md: "550px" }} maxW="550px">
           <FormHeader
             title="Repayment"
             onClose={onModelClose}
@@ -171,7 +171,7 @@ export default function ReadGroupRepaymentForm({
             <Flex
               flexDirection={"row"}
               w="full"
-              marginTop="6%"
+              marginTop="40px"
               key={
                 groupRepayment.payerId +
                 "_" +
@@ -180,7 +180,7 @@ export default function ReadGroupRepaymentForm({
                 groupRepayment.amount
               }
             >
-              <Container flex={1} textAlign="center">
+              <Container flex={1} textAlign="center" p={0}>
                 <Avatar
                   name={payerName}
                   src={payerAvatarUrl}
@@ -206,7 +206,7 @@ export default function ReadGroupRepaymentForm({
                   />
                 </Flex>
               </Container>
-              <Container flex={1} textAlign="center">
+              <Container flex={1} textAlign="center" p={0}>
                 <Avatar
                   name={receiverName}
                   src={receiverAvatarUrl}

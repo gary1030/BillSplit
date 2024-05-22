@@ -19,12 +19,10 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
-import { useCookies } from "react-cookie";
 import { useState } from "react";
+import { useCookies } from "react-cookie";
 
-import ReadGroupRepaymentForm from "./readGroupRepaymentForm";
 import AddGroupRepaymentForm from "./addGroupRepaymentForm";
-import { on } from "events";
 
 interface GroupRecordTableProps {
   groupId: string;
@@ -136,7 +134,7 @@ export default function GroupBalanceAccordion({
         py={4}
         key={payerId + "_" + receiverId + "_" + amount}
       >
-        <Container flex={1} textAlign="center">
+        <Container flex={1} textAlign="center" pr={{ base: "0px", md: "16px" }}>
           <Avatar
             name={payerName}
             src={payerAvatarUrl}
@@ -181,7 +179,7 @@ export default function GroupBalanceAccordion({
             Settle Up
           </Button>
         </Container>
-        <Container flex={1} textAlign="center">
+        <Container flex={1} textAlign="center" pl={{ base: "0px", md: "16px" }}>
           <Avatar
             name={receiverName}
             src={receiverAvatarUrl}
@@ -201,9 +199,9 @@ export default function GroupBalanceAccordion({
     const avatarUrl = `https://api.dicebear.com/8.x/open-peeps/svg?seed=${userName}`;
 
     return (
-      <AccordionItem minW="445px" key={userId}>
-        <AccordionButton textAlign="center" py={4}>
-          <Container flex={1}>
+      <AccordionItem minW="350px" key={userId}>
+        <AccordionButton textAlign="center" py={4} pl={1}>
+          <Container flex={1} p={0}>
             <Avatar
               name={userName}
               src={avatarUrl}
