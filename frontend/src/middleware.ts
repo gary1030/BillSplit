@@ -13,7 +13,9 @@ export function middleware(req: NextRequest) {
   }
 
   if (req.nextUrl.pathname !== "/") {
-    return NextResponse.redirect(new URL("/", req.url));
+    const redirectUrl = new URL("/", req.url);
+    redirectUrl.searchParams.append("redirect_uri", req.nextUrl.toString());
+    return NextResponse.redirect(redirectUrl);
   }
   return NextResponse.next();
 }

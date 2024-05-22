@@ -1,6 +1,6 @@
 "use client";
 import { useAuth } from "@/hooks/useAuth";
-import { Button, Image, Center, Text } from "@chakra-ui/react";
+import { Button, Center, Text } from "@chakra-ui/react";
 import { FcGoogle } from "react-icons/fc";
 
 interface GoogleSignInButtonProps {
@@ -8,7 +8,9 @@ interface GoogleSignInButtonProps {
 }
 
 const GoogleSignInButton = () => {
-  const { login } = useAuth();
+  const params = new URLSearchParams(window.location.search);
+  const redirect_uri = params.get("redirect_uri");
+  const { login } = useAuth(redirect_uri || "/group");
   return (
     <Button
       w={"full"}
@@ -21,7 +23,7 @@ const GoogleSignInButton = () => {
       marginTop={"30px"}
     >
       <Center>
-        <Text>Sign in with Google</Text>
+        <Text>Continue with Google</Text>
       </Center>
     </Button>
   );

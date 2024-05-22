@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 
 const expiration = 60 * 60 * 24 * 7 * 2; // 2 week
 
-export default async function login(code: string) {
+export default async function login(code: string, redirect_uri: string) {
   try {
     const data = await httpAgent("/auth/login", {
       method: "POST",
@@ -22,5 +22,5 @@ export default async function login(code: string) {
   } catch (error) {
     console.error("Failed to login:", error);
   }
-  redirect("/group");
+  redirect(redirect_uri || "/group");
 }
