@@ -166,20 +166,17 @@ export default function PersonalRecord({
 
     return (
       <Box display="flex">
-        <Hide below="sm">
-          {showCategory(record.categoryId)}
+        <Hide below="sm">{showCategory(record.categoryId)}</Hide>
+        <Text>
           {groupName ? (
-            <>
-              <Text ml="3" mr="1">
-                {groupName} -
-              </Text>
-            </>
+            <Text as="span" ml="3" mr="1">
+              {groupName} - {title}
+            </Text>
           ) : (
-            <Box w="10px" />
+            <Text as="span" ml="3" mr="1">
+              {title}
+            </Text>
           )}
-        </Hide>
-        <Text textOverflow="ellipsis" whiteSpace="nowrap" overflow="hidden">
-          {title}
         </Text>
       </Box>
     );
