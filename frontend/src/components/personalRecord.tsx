@@ -1,14 +1,11 @@
 "use client";
 
-import { Category, Repayment, Transaction } from "@/types";
+import { Category, Transaction } from "@/types";
 
 import fetchCategories from "@/actions/fetchCategories";
 import fetchUserGroups from "@/actions/fetchUserGroups";
 import fetchPersonalTransactions from "@/actions/user/fetchPersonalTransactions";
-import fetchGroup from "@/actions/group/fetchGroup";
-import fetchGroupRepayments from "@/actions/group/fetchGroupRepayments";
 import fetchGroupTransactions from "@/actions/group/fetchGroupTransactions";
-import fetchUserBatch from "@/actions/user/fetchUserBatch";
 
 import {
   Container,
@@ -29,14 +26,13 @@ import {
 
 import { useQuery, useQueries } from "@tanstack/react-query";
 import { useCookies } from "react-cookie";
-import { MdOutlineRefresh } from "react-icons/md";
 import { PiMoneyLight } from "react-icons/pi";
 
 import useCategory from "@/hooks/useCategory";
 import { useState } from "react";
-import ReadGroupRepaymentForm from "./readGroupRepaymentForm";
 import ReadGroupTransactionForm from "./readGroupTransactionForm";
 import Loading from "./loading";
+import ReadPersonalTransactionForm from "./readPersonalTransactionForm";
 
 interface Group {
   id: string;
@@ -76,6 +72,7 @@ const PADDING = "8px !important";
 interface UnifiedRecord {
   id: string;
   categoryId?: string;
+  groupId?: string;
   title?: string;
   totalAmount?: number;
   amount?: number;
@@ -106,10 +103,16 @@ export default function PersonalRecord({
   const [selectedRecord, setSelectedRecord] = useState<UnifiedRecord | null>(
     null
   );
+  const [recordType, setRecordType] = useState("personal");
   const { categoryToIcon } = useCategory();
 
   const onRecordClick = (record: UnifiedRecord) => {
     if (!record.title) return;
+    if (record.totalAmount) {
+      setRecordType("group");
+    } else {
+      setRecordType("personal");
+    }
     setSelectedRecord(record);
     onOpen();
   };
@@ -158,8 +161,6 @@ export default function PersonalRecord({
     ...(personalTransactions || []),
     ...(groupTransactions || []),
   ];
-
-  console.log(allRecords);
 
   const showTitle = (record: any) => {
     let title = record.title || "";
@@ -305,6 +306,30 @@ export default function PersonalRecord({
           </Tbody>
         </Table>
       </TableContainer>
+      {allRecords?.length === 0 && (
+        <Box mt={10}>
+          <Text textAlign="center" fontSize="xl">
+            Oops! No records found.
+          </Text>
+        </Box>
+      )}
+      {selectedRecord && recordType == "personal" && isOpen && (
+        <ReadPersonalTransactionForm
+          isOpen={isOpen}
+          onClose={onClose}
+          userId={cookies.userId}
+          transactionId={selectedRecord?.id || ""}
+        />
+      )}
+      {selectedRecord && recordType == "group" && isOpen && (
+        <ReadGroupTransactionForm
+          isOpen={isOpen}
+          onClose={onClose}
+          groupId={selectedRecord?.groupId || ""}
+          transactionId={selectedRecord?.id || ""}
+          isPersonal={true}
+        />
+      )}
     </Container>
   );
 }

@@ -71,6 +71,7 @@ interface GroupTransactionFormProps {
   isOpen: boolean;
   groupId: string;
   transactionId: string;
+  isPersonal?: boolean;
 }
 
 export default function ReadGroupTransactionForm({
@@ -78,6 +79,7 @@ export default function ReadGroupTransactionForm({
   isOpen,
   groupId,
   transactionId,
+  isPersonal,
 }: GroupTransactionFormProps) {
   const toast = useToast();
   const queryClient = useQueryClient();
@@ -249,12 +251,16 @@ export default function ReadGroupTransactionForm({
       >
         <ModalOverlay />
         <ModalContent w="90%" maxW="700px" mt="65px">
-          <FormHeader
-            title="Expense"
-            onClose={onModelClose}
-            onEdit={onOpenEdit}
-            onDelete={handleOpenDeleteDialog}
-          />
+          {isPersonal ? (
+            <FormHeader title="Expense" onClose={onModelClose} />
+          ) : (
+            <FormHeader
+              title="Expense"
+              onClose={onModelClose}
+              onEdit={onOpenEdit}
+              onDelete={handleOpenDeleteDialog}
+            />
+          )}
           <ModalBody>
             <Flex mt="20px" justifyContent="center" alignItems="center">
               <Box>
