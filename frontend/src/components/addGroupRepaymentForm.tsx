@@ -24,6 +24,9 @@ import { useEffect, useState } from "react";
 import FormHeader from "./formHeader";
 import Loading from "./loading";
 
+import fetchGroup from "@/actions/group/fetchGroup";
+import fetchUserBatch from "@/actions/user/fetchUserBatch";
+
 import createGroupRepayment from "@/actions/group/createGroupRepayment";
 import editGroupRepayment from "@/actions/group/editGroupRepayment";
 import fetchGroupSingleRepayment from "@/actions/group/fetchGroupRepayment";
@@ -37,12 +40,18 @@ interface GroupRepaymentFormProps {
   groupId: string;
   repaymentId?: string;
   payerId: string;
-  payerName: string;
-  payerAvatarUrl: string;
   receiverId: string;
-  receiverName: string;
-  receiverAvatarUrl: string;
   amount: number;
+}
+
+interface User {
+  id: string;
+  username: string;
+  email: string;
+}
+
+interface MembersData {
+  users: User[];
 }
 
 export default function AddGroupRepaymentForm({
@@ -52,13 +61,14 @@ export default function AddGroupRepaymentForm({
   groupId,
   repaymentId,
   payerId,
-  payerName,
-  payerAvatarUrl,
   receiverId,
-  receiverName,
-  receiverAvatarUrl,
   amount,
 }: GroupRepaymentFormProps) {
+  const [settleAmountString, setSettleAmountString] = useState("0");
+  const [settleAmount, setSettleAmount] = useState(0);
+
+  const toast = useToast();
+  const queryClient = useQueryClient();
   /* Repayment Data */
   const { data: repaymentData, error: repaymentError } = useQuery({
     queryKey: ["repayment", repaymentId],
@@ -75,11 +85,27 @@ export default function AddGroupRepaymentForm({
     groupRepayment = repaymentData;
   }
 
-  const [settleAmountString, setSettleAmountString] = useState("0");
-  const [settleAmount, setSettleAmount] = useState(0);
+  /*Member data*/
+  const { data: group } = useQuery({
+    queryKey: ["group", groupId],
+    queryFn: () => fetchGroup(groupId),
+  });
 
-  const toast = useToast();
-  const queryClient = useQueryClient();
+  const { data: membersData } = useQuery<MembersData>({
+    queryKey: ["groupMembers", group?.memberIds || []],
+    queryFn: () => fetchUserBatch(group.memberIds || []),
+  });
+
+  /*Extract payer and receiver*/
+  const payerName =
+    membersData?.users.find((user) => user.id === payerId)?.username ||
+    "Unknown";
+  const payerAvatarUrl = `https://api.dicebear.com/8.x/open-peeps/svg?seed=${payerName}`;
+
+  const receiverName =
+    membersData?.users.find((user) => user.id === receiverId)?.username ||
+    "Unknown";
+  const receiverAvatarUrl = `https://api.dicebear.com/8.x/open-peeps/svg?seed=${receiverName}`;
 
   /* Amount */
   useEffect(() => {
@@ -237,7 +263,7 @@ export default function AddGroupRepaymentForm({
         <ModalOverlay />
         <ModalContent w={{ base: "90%", md: "550px" }} maxW="550px">
           <FormHeader
-            title="Add a repayment"
+            title={mode === "create" ? "Add a repayment" : "Repayment"}
             onClose={onModelClose}
             onSave={handleAdd}
           />

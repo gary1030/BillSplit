@@ -255,12 +255,8 @@ export default function ReadGroupRepaymentForm({
           repaymentId={repaymentId}
           groupId={groupId}
           payerId={groupRepayment.payerId}
-          payerName={payerName}
-          payerAvatarUrl={payerAvatarUrl}
           amount={groupRepayment.amount}
           receiverId={groupRepayment.receiverId}
-          receiverName={receiverName}
-          receiverAvatarUrl={receiverAvatarUrl}
         />
       )}
     </>

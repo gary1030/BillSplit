@@ -45,12 +45,8 @@ export default function GroupBalanceAccordion({
   const [cookies] = useCookies(["userId"]);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [payerId, setPayerId] = useState<string>("");
-  const [payerName, setPayerName] = useState<string>("");
-  const [payerAvatarUrl, setPayerAvatarUrl] = useState<string>("");
   const [amount, setAmount] = useState<number>(0);
   const [receiverId, setReceiverId] = useState<string>("");
-  const [receiverName, setReceiverName] = useState<string>("");
-  const [receiverAvatarUrl, setReceiverAvatarUrl] = useState<string>("");
 
   const { data: group } = useQuery({
     queryKey: ["group", groupId],
@@ -62,27 +58,23 @@ export default function GroupBalanceAccordion({
     queryFn: () => fetchUserBatch(group.memberIds || []),
   });
 
-  const { data: groupBalanceData, error: groupBalanceError, isLoading: isBalanceLoading } = useQuery({
+  const {
+    data: groupBalanceData,
+    error: groupBalanceError,
+    isLoading: isBalanceLoading,
+  } = useQuery({
     queryKey: ["groupBalance", groupId],
     queryFn: () => fetchGroupBalance(groupId),
   });
 
   const onRecordClick = (
     payerId: string,
-    payerName: string,
-    payerAvatarUrl: string,
     amount: number,
-    receiverId: string,
-    receiverName: string,
-    receiverAvatarUrl: string
+    receiverId: string
   ) => {
     setPayerId(payerId);
-    setPayerName(payerName);
-    setPayerAvatarUrl(payerAvatarUrl);
     setAmount(amount);
     setReceiverId(receiverId);
-    setReceiverName(receiverName);
-    setReceiverAvatarUrl(receiverAvatarUrl);
     onOpen();
   };
 
@@ -165,17 +157,7 @@ export default function GroupBalanceAccordion({
             colorScheme="gray"
             variant="outline"
             mr="15px"
-            onClick={() =>
-              onRecordClick(
-                payerId,
-                payerName,
-                payerAvatarUrl,
-                amount,
-                receiverId,
-                receiverName,
-                receiverAvatarUrl
-              )
-            }
+            onClick={() => onRecordClick(payerId, amount, receiverId)}
           >
             Settle Up
           </Button>
@@ -265,12 +247,8 @@ export default function GroupBalanceAccordion({
           onClose={onClose}
           groupId={groupId}
           payerId={payerId}
-          payerName={payerName}
-          payerAvatarUrl={payerAvatarUrl}
           amount={amount}
           receiverId={receiverId}
-          receiverName={receiverName}
-          receiverAvatarUrl={receiverAvatarUrl}
         />
       )}
       {isBalanceLoading && <Loading />}
