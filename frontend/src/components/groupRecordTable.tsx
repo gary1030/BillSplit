@@ -336,7 +336,7 @@ export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
                     {record.totalAmount
                       ? `$${Math.round(record.totalAmount * 100) / 100}`
                       : record.amount &&
-                        `${Math.round(record.amount * 100) / 100}`}
+                        `$${Math.round(record.amount * 100) / 100}`}
                   </Td>
                   <Td
                     padding={PADDING}
