@@ -75,7 +75,11 @@ export default function AddPersonalTransactionForm({
   }
 
   const [title, setTitle] = useState("");
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(
+    mode === "edit" && personalTransaction !== undefined
+      ? new Date(personalTransaction.consumptionDate)
+      : new Date()
+  );
   const [category, setCategory] = useState("");
 
   const [amountString, setAmountString] = useState("0");
@@ -318,7 +322,7 @@ export default function AddPersonalTransactionForm({
         <ModalOverlay />
         <ModalContent w="90%" maxW="700px">
           <FormHeader
-            title="Add an expense"
+            title={mode === "edit" ? "Expense" : "Add an expense"}
             onClose={onModelClose}
             onSave={handleAdd}
           />
