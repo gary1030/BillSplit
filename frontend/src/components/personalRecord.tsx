@@ -90,10 +90,6 @@ interface User {
   email: string;
 }
 
-interface MembersData {
-  users: User[];
-}
-
 export default function PersonalRecord({
   startTime,
   endTime,
@@ -123,8 +119,9 @@ export default function PersonalRecord({
   });
 
   const { data: personalTransactions } = useQuery<Transaction[]>({
-    queryKey: ["personalTransactions", cookies.userId],
-    queryFn: () => fetchPersonalTransactions(cookies.userId),
+    queryKey: ["personalTransactions", cookies.userId, startTime, endTime],
+    queryFn: () =>
+      fetchPersonalTransactions(cookies.userId, startTime, endTime),
   });
 
   const { data: userGroups, isLoading } = useQuery({
@@ -135,19 +132,20 @@ export default function PersonalRecord({
   const groups = userGroups?.data;
 
   function fetchTransactionsForGroup(group: Group) {
-    return fetchGroupTransactions(group.id).then((transactions) =>
-      transactions.map((transaction: Transaction) => ({
-        ...transaction,
-        groupId: group.id,
-        groupName: group.name,
-      }))
+    return fetchGroupTransactions(group.id, startTime, endTime).then(
+      (transactions) =>
+        transactions.map((transaction: Transaction) => ({
+          ...transaction,
+          groupId: group.id,
+          groupName: group.name,
+        }))
     );
   }
 
   const transactionQueries = useQueries<UnifiedRecord[]>({
     queries:
       groups?.map((group: Group) => ({
-        queryKey: ["groupTransactions", group.id],
+        queryKey: ["groupTransactions", group.id, startTime, endTime],
         queryFn: () => fetchTransactionsForGroup(group),
         enabled: groups !== undefined,
       })) || [],
