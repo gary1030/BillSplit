@@ -102,10 +102,34 @@ export default function AddGroupTransactionForm({
   groupId,
   transactionId,
 }: GroupTransactionFormProps) {
+  /* Transaction Data */
+  const { data: transactionData, error: transactionError } = useQuery({
+    queryKey: ["transaction", transactionId],
+    queryFn: () =>
+      mode === "edit" && transactionId !== undefined
+        ? fetchGroupSingleTransaction(groupId, transactionId)
+        : Promise.resolve(),
+    enabled: mode === "edit" && transactionId !== undefined,
+    staleTime: Infinity,
+  });
+
+  let groupTransaction = undefined;
+  if (transactionData !== undefined) {
+    groupTransaction = transactionData;
+  }
+
   const [cookies, setCookie] = useCookies(["name"]);
 
-  const [title, setTitle] = useState("");
-  const [date, setDate] = useState(new Date());
+  const [title, setTitle] = useState(
+    mode === "edit" && groupTransaction !== undefined
+      ? groupTransaction.title
+      : ""
+  );
+  const [date, setDate] = useState(
+    mode === "edit" && groupTransaction !== undefined
+      ? new Date(groupTransaction.consumptionDate)
+      : new Date()
+  );
   const [category, setCategory] = useState("");
 
   const [amountString, setAmountString] = useState("0");
@@ -138,26 +162,14 @@ export default function AddGroupTransactionForm({
     {}
   );
   const [totalSharerAmount, setTotalSharerAmount] = useState(0);
-  const [note, setNote] = useState("");
+  const [note, setNote] = useState(
+    mode === "edit" && groupTransaction !== undefined
+      ? groupTransaction.note
+      : ""
+  );
 
   const toast = useToast();
   const queryClient = useQueryClient();
-
-  /* Transaction Data */
-  const { data: transactionData, error: transactionError } = useQuery({
-    queryKey: ["transaction", transactionId],
-    queryFn: () =>
-      mode === "edit" && transactionId !== undefined
-        ? fetchGroupSingleTransaction(groupId, transactionId)
-        : Promise.resolve(),
-    enabled: mode === "edit" && transactionId !== undefined,
-    staleTime: Infinity,
-  });
-
-  let groupTransaction = undefined;
-  if (transactionData !== undefined) {
-    groupTransaction = transactionData;
-  }
 
   /*Members data*/
   const { data: group } = useQuery({
@@ -173,22 +185,6 @@ export default function AddGroupTransactionForm({
   /* Group Name */
   const groupName = group.name;
   const members = membersData?.users || [];
-
-  /* Title */
-  // initialize title in edit mode
-  useEffect(() => {
-    if (mode === "edit" && groupTransaction !== undefined) {
-      setTitle(groupTransaction.title);
-    }
-  }, [mode, groupTransaction]);
-
-  /* Date */
-  // initialize date in edit mode
-  useEffect(() => {
-    if (mode === "edit" && groupTransaction !== undefined) {
-      setDate(new Date(groupTransaction.consumptionDate));
-    }
-  }, [mode, groupTransaction]);
 
   /* Categories */
   // fetch categories
@@ -308,7 +304,8 @@ export default function AddGroupTransactionForm({
         }
       });
     }
-  }, [members, mode, groupTransaction]);
+  }, [mode, groupTransaction]);
+  // }, [members, mode, groupTransaction]);
 
   // Handle amount changes
   const handlePayerAmountInputChange = (id: string, valueAsString: string) => {
@@ -412,7 +409,8 @@ export default function AddGroupTransactionForm({
       );
       setTotalPayerAmount(newTotalPayerAmount);
     }
-  }, [amount, payerCheckBoxStates, payerCustomizeSwitchOn, members]);
+  }, [amount, payerCheckBoxStates, payerCustomizeSwitchOn]);
+  // }, [amount, payerCheckBoxStates, payerCustomizeSwitchOn, members]);
 
   /* Sharer */
   // initialize sharer total amount in edit mode
@@ -461,7 +459,8 @@ export default function AddGroupTransactionForm({
         }
       });
     }
-  }, [members, mode, groupTransaction]);
+  }, [mode, groupTransaction]);
+  // }, [members, mode, groupTransaction]);
 
   // Handle amount changes when the customize switch is on
   const handleSharerAmountInputChange = (id: string, valueAsString: string) => {
@@ -564,15 +563,8 @@ export default function AddGroupTransactionForm({
       ).reduce((sum, amount) => sum + amount, 0);
       setTotalSharerAmount(newTotalSharerAmount);
     }
-  }, [amount, sharerCheckBoxStates, sharerCustomizeSwitchOn, members]);
-
-  /* Note */
-  // initialize note in edit mode
-  useEffect(() => {
-    if (mode === "edit" && groupTransaction !== undefined) {
-      setNote(groupTransaction.note);
-    }
-  }, [mode, groupTransaction]);
+  }, [amount, sharerCheckBoxStates, sharerCustomizeSwitchOn]);
+  // }, [amount, sharerCheckBoxStates, sharerCustomizeSwitchOn, members]);
 
   const { mutate: createGroupTransactionMutation, isPending } = useMutation({
     mutationFn: () =>
