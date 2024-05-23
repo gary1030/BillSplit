@@ -34,11 +34,7 @@ export default function GroupAnalysis({ groupId }: GroupAnalysisProps) {
         <GroupTitle title={data.name} theme={data.theme} canEdit={false} />
         <GroupAnalysisTabs groupId={groupId} />
       </Container>
-      <AddRecordButton
-        name={data.name}
-        members={membersData?.users || []}
-        groupId={groupId}
-      />
+      <AddRecordButton groupId={groupId} />
     </>
   );
 }

@@ -38,11 +38,7 @@ export default function GroupManagement({ groupId }: GroupManagementProps) {
         <GroupMember groupId={groupId} members={membersData?.users || []} />
         <GroupInvitation groupId={groupId} />
       </Container>
-      <AddRecordButton
-        name={data.name}
-        members={membersData?.users || []}
-        groupId={groupId}
-      />
+      <AddRecordButton groupId={groupId} />
     </>
   );
 }

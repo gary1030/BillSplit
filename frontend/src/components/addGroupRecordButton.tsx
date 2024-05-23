@@ -4,23 +4,11 @@ import { useState } from "react";
 import { FiPlusCircle } from "react-icons/fi";
 import AddGroupTransactionForm from "./addGroupTransactionForm";
 
-interface User {
-  id: string;
-  email: string;
-  username: string;
-}
-
 interface AddRecordButtonProps {
-  name: string;
-  members: Array<User>;
   groupId: string;
 }
 
-export default function AddRecordButton({
-  name,
-  members,
-  groupId,
-}: AddRecordButtonProps) {
+export default function AddRecordButton({ groupId }: AddRecordButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleOpenModal = () => {
@@ -51,8 +39,6 @@ export default function AddRecordButton({
         mode="create"
         isOpen={isOpen}
         onClose={handleCloseModal}
-        name={name}
-        members={members}
         groupId={groupId}
       />
     </>

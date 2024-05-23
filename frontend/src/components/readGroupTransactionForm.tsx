@@ -43,6 +43,9 @@ import Loading from "./loading";
 
 import AddGroupTransactionForm from "./addGroupTransactionForm";
 
+import fetchGroup from "@/actions/group/fetchGroup";
+import fetchUserBatch from "@/actions/user/fetchUserBatch";
+
 import fetchCategories from "@/actions/fetchCategories";
 import deleteGroupSingleTransaction from "@/actions/group/deleteGroupTransaction";
 import fetchGroupSingleTransaction from "@/actions/group/fetchGroupTransaction";
@@ -59,12 +62,14 @@ interface Sharer {
   amount: number;
 }
 
+interface MembersData {
+  users: User[];
+}
+
 interface GroupTransactionFormProps {
   onClose: () => void;
   isOpen: boolean;
   groupId: string;
-  members: Array<User>;
-  name: string;
   transactionId: string;
 }
 
@@ -72,8 +77,6 @@ export default function ReadGroupTransactionForm({
   onClose,
   isOpen,
   groupId,
-  name,
-  members,
   transactionId,
 }: GroupTransactionFormProps) {
   const toast = useToast();
@@ -122,6 +125,19 @@ export default function ReadGroupTransactionForm({
   });
 
   /* Fetch datas */
+  /*Members data*/
+  const { data: group } = useQuery({
+    queryKey: ["group", groupId],
+    queryFn: () => fetchGroup(groupId),
+  });
+
+  const { data: membersData } = useQuery<MembersData>({
+    queryKey: ["groupMembers", group?.memberIds || []],
+    queryFn: () => fetchUserBatch(group.memberIds || []),
+  });
+
+  const groupName = group?.name;
+  const members = membersData?.users || [];
 
   /* Categories */
   const {
@@ -162,6 +178,7 @@ export default function ReadGroupTransactionForm({
   if (isLoading || !groupTransaction) {
     return <Loading />;
   }
+
   /* Data Processing */
 
   // Get category name
@@ -257,7 +274,7 @@ export default function ReadGroupTransactionForm({
               </Box>
               <Box>
                 <Text fontSize="md" noOfLines={1} pl="10px" pr="5px">
-                  {name}
+                  {groupName}
                 </Text>
               </Box>
             </Flex>
@@ -452,8 +469,6 @@ export default function ReadGroupTransactionForm({
           mode="edit"
           isOpen={isOpen}
           onClose={onCloseEdit}
-          name={name}
-          members={members}
           groupId={groupId}
           transactionId={transactionId}
         />

@@ -36,6 +36,9 @@ import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import FormHeader from "./formHeader";
 import Loading from "./loading";
 
+import fetchGroup from "@/actions/group/fetchGroup";
+import fetchUserBatch from "@/actions/user/fetchUserBatch";
+
 import fetchCategories from "@/actions/fetchCategories";
 import createGroupTransaction from "@/actions/group/createGroupTransaction";
 import editGroupTransaction from "@/actions/group/editGroupTransaction";
@@ -57,6 +60,10 @@ interface Payer {
 interface Sharer {
   sharerId: string;
   amount: number;
+}
+
+interface MembersData {
+  users: User[];
 }
 
 interface SharerCheckBoxStates {
@@ -84,8 +91,6 @@ interface GroupTransactionFormProps {
   mode: "create" | "edit";
   onClose: () => void;
   isOpen: boolean;
-  name: string;
-  members: Array<User>;
   groupId: string;
   transactionId?: string;
 }
@@ -93,28 +98,10 @@ interface GroupTransactionFormProps {
 export default function AddGroupTransactionForm({
   onClose,
   isOpen,
-  name,
   mode,
-  members,
   groupId,
   transactionId,
 }: GroupTransactionFormProps) {
-  /* Transaction Data */
-  const { data: transactionData, error: transactionError } = useQuery({
-    queryKey: ["transaction", transactionId],
-    queryFn: () =>
-      mode === "edit" && transactionId !== undefined
-        ? fetchGroupSingleTransaction(groupId, transactionId)
-        : Promise.resolve(),
-    enabled: mode === "edit" && transactionId !== undefined,
-    staleTime: Infinity,
-  });
-
-  let groupTransaction = undefined;
-  if (transactionData !== undefined) {
-    groupTransaction = transactionData;
-  }
-
   const [cookies, setCookie] = useCookies(["name"]);
 
   const [title, setTitle] = useState("");
@@ -155,6 +142,37 @@ export default function AddGroupTransactionForm({
 
   const toast = useToast();
   const queryClient = useQueryClient();
+
+  /* Transaction Data */
+  const { data: transactionData, error: transactionError } = useQuery({
+    queryKey: ["transaction", transactionId],
+    queryFn: () =>
+      mode === "edit" && transactionId !== undefined
+        ? fetchGroupSingleTransaction(groupId, transactionId)
+        : Promise.resolve(),
+    enabled: mode === "edit" && transactionId !== undefined,
+    staleTime: Infinity,
+  });
+
+  let groupTransaction = undefined;
+  if (transactionData !== undefined) {
+    groupTransaction = transactionData;
+  }
+
+  /*Members data*/
+  const { data: group } = useQuery({
+    queryKey: ["group", groupId],
+    queryFn: () => fetchGroup(groupId),
+  });
+
+  const { data: membersData } = useQuery<MembersData>({
+    queryKey: ["groupMembers", group?.memberIds || []],
+    queryFn: () => fetchUserBatch(group.memberIds || []),
+  });
+
+  /* Group Name */
+  const groupName = group.name;
+  const members = membersData?.users || [];
 
   /* Title */
   // initialize title in edit mode
@@ -826,7 +844,7 @@ export default function AddGroupTransactionForm({
         <ModalOverlay />
         <ModalContent w="90%" maxW="700px" mt="65px">
           <FormHeader
-            title="Add an expense"
+            title={mode === "create" ? "Add an expense" : "Expense"}
             onClose={onModelClose}
             onSave={handleAdd}
           />
@@ -852,7 +870,7 @@ export default function AddGroupTransactionForm({
               </Box>
               <Box>
                 <Text fontSize="md" as="b" noOfLines={1} pl="10px" pr="5px">
-                  {name}
+                  {groupName}
                 </Text>
               </Box>
             </Flex>
