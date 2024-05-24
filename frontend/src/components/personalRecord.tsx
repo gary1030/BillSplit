@@ -160,6 +160,19 @@ export default function PersonalRecord({
     ...(groupTransactions || []),
   ];
 
+  const filteredRecords = allRecords.filter((record) => {
+    if (!record.totalAmount) {
+      return true;
+    }
+    return record.splitDetails?.some(
+      (splitDetail) => splitDetail.sharerId === cookies.userId
+    );
+  });
+
+  console.log("userId", cookies.userId);
+  console.log("all", allRecords);
+  console.log("filtered", filteredRecords);
+
   const showTitle = (record: any) => {
     let title = record.title || "";
     let groupName = record.groupName || "";
@@ -188,6 +201,16 @@ export default function PersonalRecord({
       return <PiMoneyLight size={20} />;
     }
     return categoryToIcon(category.name);
+  };
+
+  const getSplitAmount = (record: UnifiedRecord, userId: string) => {
+    if (!record.splitDetails) {
+      return -1;
+    }
+    const splitDetail = record.splitDetails.find(
+      (splitDetail) => splitDetail.sharerId === userId
+    );
+    return splitDetail ? splitDetail.amount : -1;
   };
 
   const isSmOrLarger = useBreakpointValue({ base: false, sm: true });
@@ -249,7 +272,7 @@ export default function PersonalRecord({
             </Tr>
           </Thead>
           <Tbody>
-            {allRecords
+            {filteredRecords
               ?.sort((a, b) => {
                 const consumptionDateDifference =
                   new Date(b.consumptionDate).getTime() -
@@ -292,7 +315,7 @@ export default function PersonalRecord({
                     isNumeric
                   >
                     {record.totalAmount
-                      ? `$${Math.round(record.totalAmount * 100) / 100}`
+                      ? `$${getSplitAmount(record, cookies.userId)}`
                       : record.amount &&
                         `$${Math.round(record.amount * 100) / 100}`}
                   </Td>
@@ -301,7 +324,7 @@ export default function PersonalRecord({
           </Tbody>
         </Table>
       </TableContainer>
-      {allRecords?.length === 0 && (
+      {filteredRecords?.length === 0 && (
         <Box mt={10}>
           <Text textAlign="center" fontSize="xl">
             Oops! No records found.
