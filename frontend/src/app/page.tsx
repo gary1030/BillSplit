@@ -19,6 +19,8 @@ export default function Home() {
             as="b"
             textShadow="2px 2px 4px rgba(0, 0, 0, 0.3)"
           >
+            Welcome to BillSplit:
+            <br />
             Empower Your Finance!
           </Text>
         </Box>
