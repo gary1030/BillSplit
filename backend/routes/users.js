@@ -272,4 +272,35 @@ router.get("/:id/concealedTransactions", async function (req, res, next) {
   }
 });
 
+/* GET user analysis */
+router.get("/:id/analysis", async function (req, res, next) {
+  try {
+    if (req.userId !== req.params.id) {
+      res.status(401).json({ message: "Unauthorized!" });
+      return;
+    }
+
+    // check start time and end time and format
+    if (
+      req.query.startTime === undefined ||
+      req.query.endTime === undefined ||
+      isNaN(Date.parse(req.query.startTime)) ||
+      isNaN(Date.parse(req.query.endTime))
+    ) {
+      res.status(400).json({ message: "Bad Request" });
+      return;
+    }
+
+    const userAnalysis = await TransactionControllers.getUserAnalysis(
+      req.userId,
+      req.query.startTime,
+      req.query.endTime
+    );
+    res.send(userAnalysis);
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "Bad Request" });
+  }
+});
+
 module.exports = router;

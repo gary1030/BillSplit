@@ -4,6 +4,7 @@ const GroupTransaction = require("../models/groupTransaction");
 const GroupRepayment = require("../models/groupRepayment");
 const UserConcealedTransaction = require("../models/userConcealedTransaction");
 const Currency = require("../models/currency");
+const User = require("../models/user");
 
 class TransactionControllers {
   async createPersonalTransaction(
@@ -568,6 +569,60 @@ class TransactionControllers {
       }
 
       return { data: data };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getUserAnalysis(userId, startTime, endTime) {
+    try {
+      const personalTransactions =
+        await PersonalTransaction.getPersonalTransactionByUserId(
+          userId,
+          startTime,
+          endTime
+        );
+
+      const groups = await User.getUserGroups(userId);
+      const groupIds = groups.map((group) => group.id);
+
+      let groupTransactions = [];
+      for (let i = 0; i < groupIds.length; i++) {
+        const transactions =
+          await GroupTransaction.getGroupTransactionsByGroupId(
+            groupIds[i],
+            startTime,
+            endTime
+          );
+        groupTransactions = groupTransactions.concat(transactions);
+      }
+
+      let total = 0;
+      let analysis = {};
+
+      personalTransactions.forEach((transaction) => {
+        if (analysis[transaction.categoryId]) {
+          analysis[transaction.categoryId] += transaction.amount;
+        } else {
+          analysis[transaction.categoryId] = transaction.amount;
+        }
+        total += transaction.amount;
+      });
+
+      groupTransactions.forEach((transaction) => {
+        transaction.splitDetails.forEach((splitDetail) => {
+          if (splitDetail.sharerId === userId) {
+            if (analysis[transaction.categoryId]) {
+              analysis[transaction.categoryId] += splitDetail.amount;
+            } else {
+              analysis[transaction.categoryId] = splitDetail.amount;
+            }
+            total += splitDetail.amount;
+          }
+        });
+      });
+
+      return { analysis, total };
     } catch (error) {
       throw error;
     }
