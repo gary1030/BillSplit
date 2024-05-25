@@ -23,7 +23,6 @@ import { useQuery } from "@tanstack/react-query";
 import useCategory from "@/hooks/useCategory";
 import { Chart } from "react-google-charts";
 import Loading from "./loading";
-import { color } from "framer-motion";
 
 interface GroupAnalysisChartAndTableProps {
   isPersonal: boolean;
