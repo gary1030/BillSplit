@@ -146,6 +146,7 @@ export default function GroupAnalysisChartAndTable({
               },
               tooltip: { trigger: "selection" },
               colors: chartColors,
+              sliceVisibilityThreshold: 0,
             }}
           />
         )}

@@ -151,6 +151,7 @@ export default function PersonalAnalysis({
               },
               tooltip: { trigger: "selection" },
               colors: chartColors,
+              sliceVisibilityThreshold: 0,
             }}
           />
         )}
