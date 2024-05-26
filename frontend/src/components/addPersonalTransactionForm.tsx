@@ -22,6 +22,7 @@ import {
 
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+import { useCookies } from "react-cookie";
 
 import { GoNote } from "react-icons/go";
 import { MdAttachMoney, MdCategory, MdDateRange } from "react-icons/md";
@@ -49,6 +50,8 @@ interface PersonalTransactionFormProps {
   isOpen: boolean;
   userId: string;
   transactionId?: string;
+  startTime?: Date;
+  endTime?: Date;
 }
 
 export default function AddPersonalTransactionForm({
@@ -57,7 +60,10 @@ export default function AddPersonalTransactionForm({
   mode,
   userId,
   transactionId,
+  startTime = new Date(),
+  endTime = new Date(),
 }: PersonalTransactionFormProps) {
+  const [cookies] = useCookies(["userId"]);
   /* Transaction Data */
   const { data: transactionData, error: transactionError } = useQuery({
     queryKey: ["personalTransaction", transactionId],
@@ -180,6 +186,9 @@ export default function AddPersonalTransactionForm({
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["personalTransactions", userId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["personalAnalysis", cookies.userId, startTime, endTime],
       });
       setTitle("");
       setDate(new Date());

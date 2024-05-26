@@ -1,6 +1,6 @@
 "use client";
 
-import AddRecordButton from "@/components/addUserRecordButton";
+import AddUserRecordButton from "@/components/addUserRecordButton";
 import PersonalAnalysis from "@/components/personalAnalysis";
 import PersonalRecord from "@/components/personalRecord";
 import { Center, IconButton, Text } from "@chakra-ui/react";
@@ -87,7 +87,11 @@ export default function AccountBook() {
         endTime={selectedDates[1]}
       />
       <PersonalRecord startTime={selectedDates[0]} endTime={selectedDates[1]} />
-      <AddRecordButton userId={cookies.userId} />
+      <AddUserRecordButton
+        userId={cookies.userId}
+        startTime={selectedDates[0]}
+        endTime={selectedDates[1]}
+      />
     </>
   );
 }

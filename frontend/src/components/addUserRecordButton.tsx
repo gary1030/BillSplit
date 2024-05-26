@@ -6,9 +6,15 @@ import AddPersonalTransactionForm from "./addPersonalTransactionForm";
 
 interface AddRecordButtonProps {
   userId: string;
+  startTime?: Date;
+  endTime?: Date;
 }
 
-export default function AddRecordButton({ userId }: AddRecordButtonProps) {
+export default function AddUserRecordButton({
+  userId,
+  startTime,
+  endTime,
+}: AddRecordButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleOpenModal = () => {
@@ -40,6 +46,8 @@ export default function AddRecordButton({ userId }: AddRecordButtonProps) {
         isOpen={isOpen}
         onClose={handleCloseModal}
         userId={userId}
+        startTime={startTime}
+        endTime={endTime}
       />
     </>
   );

@@ -4,13 +4,13 @@ import { Category, Transaction } from "@/types";
 
 import fetchCategories from "@/actions/fetchCategories";
 import fetchUserGroups from "@/actions/fetchUserGroups";
-import fetchPersonalTransactions from "@/actions/user/fetchPersonalTransactions";
 import fetchGroupTransactions from "@/actions/group/fetchGroupTransactions";
+import fetchPersonalTransactions from "@/actions/user/fetchPersonalTransactions";
 
 import {
+  Box,
   Container,
   Heading,
-  Box,
   Hide,
   Table,
   TableContainer,
@@ -24,14 +24,13 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 
-import { useQuery, useQueries } from "@tanstack/react-query";
+import { useQueries, useQuery } from "@tanstack/react-query";
 import { useCookies } from "react-cookie";
 import { PiMoneyLight } from "react-icons/pi";
 
 import useCategory from "@/hooks/useCategory";
 import { useState } from "react";
 import ReadGroupTransactionForm from "./readGroupTransactionForm";
-import Loading from "./loading";
 import ReadPersonalTransactionForm from "./readPersonalTransactionForm";
 
 interface Group {
@@ -56,7 +55,7 @@ const TABLE_COLUMNS = [
   {
     key: "title",
     name: "Title",
-    maxWidth: { base: "95px", md: "280px" },
+    maxWidth: { base: "180px", md: "350px" },
   },
   {
     key: "amount",
@@ -82,12 +81,6 @@ interface UnifiedRecord {
   payerId?: string;
   receiverId?: string;
   createdAt: string;
-}
-
-interface User {
-  id: string;
-  username: string;
-  email: string;
 }
 
 export default function PersonalRecord({
@@ -169,28 +162,25 @@ export default function PersonalRecord({
     );
   });
 
-  console.log("userId", cookies.userId);
-  console.log("all", allRecords);
-  console.log("filtered", filteredRecords);
-
   const showTitle = (record: any) => {
     let title = record.title || "";
     let groupName = record.groupName || "";
 
     return (
       <Box display="flex">
-        <Hide below="sm">{showCategory(record.categoryId)}</Hide>
-        <Text>
-          {groupName ? (
-            <Text as="span" ml="3" mr="1">
-              {groupName} - {title}
-            </Text>
-          ) : (
-            <Text as="span" ml="3" mr="1">
-              {title}
-            </Text>
-          )}
-        </Text>
+        <Hide below="sm">
+          {showCategory(record.categoryId)}
+          <Box w="10px" />
+        </Hide>
+        {groupName ? (
+          <Text textOverflow="ellipsis" whiteSpace="nowrap" overflow="hidden">
+            {groupName} - {title}
+          </Text>
+        ) : (
+          <Text textOverflow="ellipsis" whiteSpace="nowrap" overflow="hidden">
+            {title}
+          </Text>
+        )}
       </Box>
     );
   };
@@ -249,7 +239,7 @@ export default function PersonalRecord({
   };
 
   return (
-    <Container mt={5} mb={5} ml={0} mr={0} p={0}>
+    <Container mt={5} mb={5} ml={0} mr={0} p={0} maxW="100%">
       <Heading size={{ base: "md", md: "lg" }} mb="10px">
         Personal Record
       </Heading>
