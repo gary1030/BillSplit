@@ -10,13 +10,13 @@ import {
 } from "@chakra-ui/react";
 import GroupAnalysisChartAndTable from "./groupAnalysisChartAndTable";
 
-interface GroupRecordTableProps {
+interface GroupBalanceAccordionProps {
   groupId: string;
 }
 
 export default function GroupBalanceAccordion({
   groupId,
-}: GroupRecordTableProps) {
+}: GroupBalanceAccordionProps) {
   return (
     <>
       <Heading size={{ base: "md", md: "lg" }} mb="10px">
