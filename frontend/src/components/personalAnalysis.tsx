@@ -124,132 +124,6 @@ export default function PersonalAnalysis({
       <Heading size={{ base: "md", md: "lg" }} mb="10px">
         Personal Analysis
       </Heading>
-      <Box mt={5} minH="225px">
-        {pieChartData && (
-          <Chart
-            chartType="PieChart"
-            data={pieChartData}
-            options={{
-              is3D: true,
-              backgroundColor: "transparent",
-              chartArea: {
-                width: "95%",
-                height: "95%",
-              },
-              legend: {
-                position: "right",
-                alignment: "center",
-                textStyle: {
-                  color: "black",
-                  fontSize: 14,
-                },
-              },
-              pieSliceTextStyle: {
-                color: "black",
-                fontSize: 16,
-                bold: true,
-              },
-              tooltip: { trigger: "selection" },
-              colors: chartColors,
-              sliceVisibilityThreshold: 0,
-            }}
-          />
-        )}
-      </Box>
-      <TableContainer mt={5}>
-        <Table size={{ base: "sm", md: "md" }} variant="striped">
-          <Thead>
-            <Tr display="flex">
-              {TABLE_COLUMNS.map((column) => (
-                <Th
-                  key={column.key}
-                  px={PADDINGX}
-                  isNumeric={column.isNumeric}
-                  textAlign={(column.textAlign as any) || "left"}
-                  flex={column.flex}
-                  minW={column.minWidth}
-                >
-                  {column.name}
-                </Th>
-              ))}
-            </Tr>
-          </Thead>
-          <Tbody>
-            {analysisData &&
-              Object.entries(analysisData.analysis)
-                .sort((a, b) => Number(b[1]) - Number(a[1]))
-                .map(([categoryId, amount]) => {
-                  if (Number(amount) > 0) {
-                    return (
-                      <Tr key={categoryId} display="flex">
-                        <Td
-                          px={PADDINGX}
-                          textAlign={
-                            (TABLE_COLUMNS[0].textAlign as any) || "left"
-                          }
-                          flex={TABLE_COLUMNS[0].flex}
-                          minW={TABLE_COLUMNS[0].minWidth}
-                        >
-                          {showCategory(categoryId)}
-                        </Td>
-                        <Td
-                          px={PADDINGX}
-                          flex={TABLE_COLUMNS[1].flex}
-                          minW={TABLE_COLUMNS[1].minWidth}
-                          isNumeric
-                        >
-                          ${Math.round(Number(amount) * 100) / 100}
-                        </Td>
-                        <Td
-                          px={PADDINGX}
-                          flex={TABLE_COLUMNS[2].flex}
-                          minW={TABLE_COLUMNS[2].minWidth}
-                          isNumeric
-                        >
-                          {Math.round(
-                            (Number(amount) / analysisData.total) * 100 * 100
-                          ) / 100}
-                          %
-                        </Td>
-                      </Tr>
-                    );
-                  }
-                })}
-          </Tbody>
-          <Tfoot fontWeight="bold">
-            <Tr display="flex">
-              <Td
-                px={PADDINGX}
-                textAlign="right"
-                flex={TABLE_COLUMNS[0].flex}
-                minW={TABLE_COLUMNS[0].minWidth}
-              >
-                Total
-              </Td>
-              <Td
-                px={PADDINGX}
-                flex={TABLE_COLUMNS[1].flex}
-                minW={TABLE_COLUMNS[1].minWidth}
-                isNumeric
-              >
-                ${Math.round(analysisData?.total * 100) / 100}
-              </Td>
-              <Td
-                px={PADDINGX}
-                flex={TABLE_COLUMNS[2].flex}
-                minW={TABLE_COLUMNS[2].minWidth}
-              />
-            </Tr>
-          </Tfoot>
-        </Table>
-      </TableContainer>
-      {analysisData && analysisData.total === 0 && (
-        <Box mt={10}>
-          <Text textAlign="center" fontSize="xl">
-            Oops! No analyses found.
-          </Text>
-        </Box>
-      )}
       {endTime === undefined && (
         <Box mt={10}>
           <Text textAlign="center" fontSize="xl">
@@ -257,6 +131,141 @@ export default function PersonalAnalysis({
           </Text>
         </Box>
       )}
+      {startTime !== undefined && endTime !== undefined && (
+        <Container>
+          {pieChartData.length > 1 && (
+            <Chart
+              chartType="PieChart"
+              data={pieChartData}
+              options={{
+                is3D: true,
+                backgroundColor: "transparent",
+                chartArea: {
+                  width: "95%",
+                  height: "95%",
+                },
+                legend: {
+                  position: "right",
+                  alignment: "center",
+                  textStyle: {
+                    color: "black",
+                    fontSize: 14,
+                  },
+                },
+                pieSliceTextStyle: {
+                  color: "black",
+                  fontSize: 16,
+                  bold: true,
+                },
+                tooltip: { trigger: "selection" },
+                colors: chartColors,
+                sliceVisibilityThreshold: 0,
+              }}
+            />
+          )}
+          <TableContainer mt={5}>
+            <Table size={{ base: "sm", md: "md" }} variant="striped">
+              <Thead>
+                <Tr display="flex">
+                  {TABLE_COLUMNS.map((column) => (
+                    <Th
+                      key={column.key}
+                      px={PADDINGX}
+                      isNumeric={column.isNumeric}
+                      textAlign={(column.textAlign as any) || "left"}
+                      flex={column.flex}
+                      minW={column.minWidth}
+                    >
+                      {column.name}
+                    </Th>
+                  ))}
+                </Tr>
+              </Thead>
+              {analysisData?.total > 0 && (
+                <>
+                  <Tbody>
+                    {Object.entries(analysisData.analysis)
+                      .sort((a, b) => Number(b[1]) - Number(a[1]))
+                      .map(([categoryId, amount]) => {
+                        if (Number(amount) > 0) {
+                          return (
+                            <Tr key={categoryId} display="flex">
+                              <Td
+                                px={PADDINGX}
+                                textAlign={
+                                  (TABLE_COLUMNS[0].textAlign as any) || "left"
+                                }
+                                flex={TABLE_COLUMNS[0].flex}
+                                minW={TABLE_COLUMNS[0].minWidth}
+                              >
+                                {showCategory(categoryId)}
+                              </Td>
+                              <Td
+                                px={PADDINGX}
+                                flex={TABLE_COLUMNS[1].flex}
+                                minW={TABLE_COLUMNS[1].minWidth}
+                                isNumeric
+                              >
+                                ${Math.round(Number(amount) * 100) / 100}
+                              </Td>
+                              <Td
+                                px={PADDINGX}
+                                flex={TABLE_COLUMNS[2].flex}
+                                minW={TABLE_COLUMNS[2].minWidth}
+                                isNumeric
+                              >
+                                {Math.round(
+                                  (Number(amount) / analysisData.total) *
+                                    100 *
+                                    100
+                                ) / 100}
+                                %
+                              </Td>
+                            </Tr>
+                          );
+                        }
+                      })}
+                  </Tbody>
+                  <Tfoot fontWeight="bold">
+                    <Tr display="flex">
+                      <Td
+                        px={PADDINGX}
+                        textAlign="right"
+                        flex={TABLE_COLUMNS[0].flex}
+                        minW={TABLE_COLUMNS[0].minWidth}
+                      >
+                        Total
+                      </Td>
+                      <Td
+                        px={PADDINGX}
+                        flex={TABLE_COLUMNS[1].flex}
+                        minW={TABLE_COLUMNS[1].minWidth}
+                        isNumeric
+                      >
+                        ${Math.round(analysisData?.total * 100) / 100}
+                      </Td>
+                      <Td
+                        px={PADDINGX}
+                        flex={TABLE_COLUMNS[2].flex}
+                        minW={TABLE_COLUMNS[2].minWidth}
+                      />
+                    </Tr>
+                  </Tfoot>
+                </>
+              )}
+            </Table>
+          </TableContainer>
+        </Container>
+      )}
+      {startTime !== undefined &&
+        endTime !== undefined &&
+        (!analysisData || analysisData?.total === 0) && (
+          <Box mt={10}>
+            <Text textAlign="center" fontSize="xl">
+              Oops! No analyses found.
+            </Text>
+          </Box>
+        )}
       {isLoading && <Loading />}
     </Container>
   );
