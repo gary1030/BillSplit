@@ -24,7 +24,7 @@ export default function Home() {
             Empower Your Finance!
           </Text>
         </Box>
-        <Box w="450px" mt="5px">
+        <Box mx="75px" mt="5px">
           <Center>
             <Image
               src="images/landingPageImage.png"
