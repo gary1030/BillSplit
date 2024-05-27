@@ -80,7 +80,7 @@ export default function Header({ loggedIn, isGroup }: HeaderProps) {
       </Link>
       {loggedIn && (
         <>
-          <Box>
+          <Box display="flex" flex-direction="row">
             <Link href="/user">
               <Button
                 variant="ghost"
