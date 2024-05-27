@@ -239,6 +239,9 @@ export default function AddPersonalTransactionForm({
           queryClient.invalidateQueries({
             queryKey: ["personalTransactions", userId],
           });
+          queryClient.invalidateQueries({
+            queryKey: ["personalAnalysis", userId],
+          });
         }
 
         setTitle("");

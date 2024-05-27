@@ -77,6 +77,9 @@ export default function ReadPersonalTransactionForm({
       queryClient.invalidateQueries({
         queryKey: ["personalTransactions", userId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["personalAnalysis", userId],
+      });
       toast({
         title: "Transaction deleted successfully",
         status: "success",
