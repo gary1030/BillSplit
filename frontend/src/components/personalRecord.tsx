@@ -264,7 +264,6 @@ export default function PersonalRecord({
                     isNumeric={column.isNumeric}
                     textAlign={(column.textAlign as any) || "left"}
                   >
-                  <Td
                     {column.name}
                   </Th>
                 ))}
@@ -324,13 +323,15 @@ export default function PersonalRecord({
           </Table>
         </TableContainer>
       )}
-      {filteredRecords?.length === 0 && (
-        <Box mt={10}>
-          <Text textAlign="center" fontSize="xl">
-            Oops! No records found.
-          </Text>
-        </Box>
-      )}
+      {startTime !== undefined &&
+        endTime !== undefined &&
+        filteredRecords?.length === 0 && (
+          <Box mt={10}>
+            <Text textAlign="center" fontSize="xl">
+              Oops! No records found.
+            </Text>
+          </Box>
+        )}
       {selectedRecord && recordType == "personal" && isOpen && (
         <ReadPersonalTransactionForm
           isOpen={isOpen}
