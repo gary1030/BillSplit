@@ -37,24 +37,21 @@ const TABLE_COLUMNS = [
     key: "category",
     name: "Category",
     textAlign: "left",
-    flex: 3,
-    minWidth: "115px",
+    minWidth: "110px",
   },
   {
     key: "amount",
     name: "Amount",
     isNumeric: true,
     textAlign: "right",
-    flex: 2,
-    minWidth: "100px",
+    minWidth: "60px",
   },
   {
     key: "ratio",
     name: "Ratio",
     isNumeric: true,
     textAlign: "right",
-    flex: 2,
-    minWidth: "80px",
+    minWidth: "70px",
   },
 ];
 
@@ -166,14 +163,13 @@ export default function PersonalAnalysis({
           <TableContainer mt={5}>
             <Table size={{ base: "sm", md: "md" }} variant="striped">
               <Thead>
-                <Tr display="flex">
+                <Tr>
                   {TABLE_COLUMNS.map((column) => (
                     <Th
                       key={column.key}
                       px={PADDINGX}
                       isNumeric={column.isNumeric}
                       textAlign={(column.textAlign as any) || "left"}
-                      flex={column.flex}
                       minW={column.minWidth}
                     >
                       {column.name}
@@ -189,20 +185,18 @@ export default function PersonalAnalysis({
                       .map(([categoryId, amount]) => {
                         if (Number(amount) > 0) {
                           return (
-                            <Tr key={categoryId} display="flex">
+                            <Tr key={categoryId}>
                               <Td
                                 px={PADDINGX}
                                 textAlign={
                                   (TABLE_COLUMNS[0].textAlign as any) || "left"
                                 }
-                                flex={TABLE_COLUMNS[0].flex}
                                 minW={TABLE_COLUMNS[0].minWidth}
                               >
                                 {showCategory(categoryId)}
                               </Td>
                               <Td
                                 px={PADDINGX}
-                                flex={TABLE_COLUMNS[1].flex}
                                 minW={TABLE_COLUMNS[1].minWidth}
                                 isNumeric
                               >
@@ -210,7 +204,6 @@ export default function PersonalAnalysis({
                               </Td>
                               <Td
                                 px={PADDINGX}
-                                flex={TABLE_COLUMNS[2].flex}
                                 minW={TABLE_COLUMNS[2].minWidth}
                                 isNumeric
                               >
@@ -227,28 +220,22 @@ export default function PersonalAnalysis({
                       })}
                   </Tbody>
                   <Tfoot fontWeight="bold">
-                    <Tr display="flex">
+                    <Tr>
                       <Td
                         px={PADDINGX}
                         textAlign="right"
-                        flex={TABLE_COLUMNS[0].flex}
                         minW={TABLE_COLUMNS[0].minWidth}
                       >
                         Total
                       </Td>
                       <Td
                         px={PADDINGX}
-                        flex={TABLE_COLUMNS[1].flex}
                         minW={TABLE_COLUMNS[1].minWidth}
                         isNumeric
                       >
                         ${Math.round(analysisData?.total * 100) / 100}
                       </Td>
-                      <Td
-                        px={PADDINGX}
-                        flex={TABLE_COLUMNS[2].flex}
-                        minW={TABLE_COLUMNS[2].minWidth}
-                      />
+                      <Td px={PADDINGX} minW={TABLE_COLUMNS[2].minWidth} />
                     </Tr>
                   </Tfoot>
                 </>
