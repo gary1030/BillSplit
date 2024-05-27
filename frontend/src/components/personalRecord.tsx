@@ -243,77 +243,87 @@ export default function PersonalRecord({
       <Heading size={{ base: "md", md: "lg" }} mb="10px">
         Personal Record
       </Heading>
-      <TableContainer mt={5}>
-        <Table size={{ base: "sm", md: "md" }} variant={"striped"}>
-          <Thead>
-            <Tr>
-              {TABLE_COLUMNS.map((column) => (
-                <Th
-                  key={column.key}
-                  minW={column.minWidth}
-                  maxW={column.maxWidth}
-                  padding={PADDING}
-                  isNumeric={column.isNumeric}
-                  textAlign={(column.textAlign as any) || "left"}
-                >
-                  {column.name}
-                </Th>
-              ))}
-            </Tr>
-          </Thead>
-          <Tbody>
-            {filteredRecords
-              ?.sort((a, b) => {
-                const consumptionDateDifference =
-                  new Date(b.consumptionDate).getTime() -
-                  new Date(a.consumptionDate).getTime();
+      {endTime === undefined && (
+        <Box mt={10}>
+          <Text textAlign="center" fontSize="xl">
+            Invalid date range.
+          </Text>
+        </Box>
+      )}
+      {startTime !== undefined && endTime !== undefined && (
+        <TableContainer mt={5}>
+          <Table size={{ base: "sm", md: "md" }} variant={"striped"}>
+            <Thead>
+              <Tr>
+                {TABLE_COLUMNS.map((column) => (
+                  <Th
+                    key={column.key}
+                    minW={column.minWidth}
+                    maxW={column.maxWidth}
+                    padding={PADDING}
+                    isNumeric={column.isNumeric}
+                    textAlign={(column.textAlign as any) || "left"}
+                  >
+                  <Td
+                    {column.name}
+                  </Th>
+                ))}
+              </Tr>
+            </Thead>
+            <Tbody>
+              {filteredRecords
+                ?.sort((a, b) => {
+                  const consumptionDateDifference =
+                    new Date(b.consumptionDate).getTime() -
+                    new Date(a.consumptionDate).getTime();
 
-                if (consumptionDateDifference === 0) {
-                  return (
-                    new Date(b.createdAt).getTime() -
-                    new Date(a.createdAt).getTime()
-                  );
-                } else {
-                  return consumptionDateDifference;
-                }
-              })
-              .map((record) => (
-                <Tr
-                  key={record.id}
-                  _hover={{ cursor: "pointer" }}
-                  onClick={() => onRecordClick(record)}
-                >
-                  <Td
-                    padding={PADDING}
-                    minWidth={TABLE_COLUMNS[0].minWidth}
-                    maxWidth={TABLE_COLUMNS[0].maxWidth}
-                    textAlign={(TABLE_COLUMNS[0].textAlign as any) || "left"}
+                  if (consumptionDateDifference === 0) {
+                    return (
+                      new Date(b.createdAt).getTime() -
+                      new Date(a.createdAt).getTime()
+                    );
+                  } else {
+                    return consumptionDateDifference;
+                  }
+                })
+                .map((record) => (
+                  <Tr
+                    key={record.id}
+                    _hover={{ cursor: "pointer" }}
+                    onClick={() => onRecordClick(record)}
                   >
-                    {showDate(new Date(record.consumptionDate))}
-                  </Td>
-                  <Td
-                    padding={PADDING}
-                    minWidth={TABLE_COLUMNS[1].minWidth}
-                    maxWidth={TABLE_COLUMNS[1].maxWidth}
-                    textAlign={(TABLE_COLUMNS[1].textAlign as any) || "left"}
-                  >
-                    {showTitle(record)}
-                  </Td>
-                  <Td
-                    padding={PADDING}
-                    minWidth={TABLE_COLUMNS[2].minWidth}
-                    isNumeric
-                  >
-                    {record.totalAmount
-                      ? `$${getSplitAmount(record, cookies.userId)}`
-                      : record.amount &&
-                        `$${Math.round(record.amount * 100) / 100}`}
-                  </Td>
-                </Tr>
-              ))}
-          </Tbody>
-        </Table>
-      </TableContainer>
+                    <Td
+                      padding={PADDING}
+                      minWidth={TABLE_COLUMNS[0].minWidth}
+                      maxWidth={TABLE_COLUMNS[0].maxWidth}
+                      textAlign={(TABLE_COLUMNS[0].textAlign as any) || "left"}
+                    >
+                      {showDate(new Date(record.consumptionDate))}
+                    </Td>
+                    <Td
+                      padding={PADDING}
+                      minWidth={TABLE_COLUMNS[1].minWidth}
+                      maxWidth={TABLE_COLUMNS[1].maxWidth}
+                      textAlign={(TABLE_COLUMNS[1].textAlign as any) || "left"}
+                    >
+                      {showTitle(record)}
+                    </Td>
+                    <Td
+                      padding={PADDING}
+                      minWidth={TABLE_COLUMNS[2].minWidth}
+                      isNumeric
+                    >
+                      {record.totalAmount
+                        ? `$${getSplitAmount(record, cookies.userId)}`
+                        : record.amount &&
+                          `$${Math.round(record.amount * 100) / 100}`}
+                    </Td>
+                  </Tr>
+                ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
+      )}
       {filteredRecords?.length === 0 && (
         <Box mt={10}>
           <Text textAlign="center" fontSize="xl">
