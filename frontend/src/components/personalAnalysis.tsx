@@ -250,6 +250,13 @@ export default function PersonalAnalysis({
           </Text>
         </Box>
       )}
+      {endTime === undefined && (
+        <Box mt={10}>
+          <Text textAlign="center" fontSize="xl">
+            Invalid date range.
+          </Text>
+        </Box>
+      )}
       {isLoading && <Loading />}
     </Container>
   );
