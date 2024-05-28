@@ -1,17 +1,22 @@
 "use client";
 
 import serverLogout from "@/actions/logout";
+import useOnClickOutside from "@/hooks/useOnClickOutside";
 import {
   Avatar,
-  Box,
   Button,
+  Box as ChakraBox,
   Flex,
   Hide,
   Image,
   Link,
   Text,
+  forwardRef,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useCookies } from "react-cookie";
+
+const Box = forwardRef((props, ref) => <ChakraBox ref={ref} {...props} />);
 
 interface HeaderProps {
   loggedIn: boolean;
@@ -20,15 +25,13 @@ interface HeaderProps {
 
 export default function Header({ loggedIn, isGroup }: HeaderProps) {
   const [userName, setUserName] = useState("");
+  const [cookies] = useCookies(["username"]);
+  const ref = useRef();
+  useOnClickOutside(ref, () => setShowLogoutButton(false));
+
   useEffect(() => {
-    const getUserNameFromCookie = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("username="))
-      ?.split("=")[1];
-    if (getUserNameFromCookie) {
-      setUserName(getUserNameFromCookie);
-    }
-  }, []);
+    setUserName(cookies.username || "");
+  }, [cookies]);
   const avatarUrl = `https://api.dicebear.com/8.x/open-peeps/svg?seed=${userName}`;
 
   const [showLogoutButton, setShowLogoutButton] = useState(false);
@@ -107,7 +110,7 @@ export default function Header({ loggedIn, isGroup }: HeaderProps) {
               </Button>
             </Link>
           </Box>
-          <Box ml="auto" mr={2} position="relative">
+          <Box ml="auto" mr={2} position="relative" ref={ref}>
             <Avatar
               name={userName}
               src={avatarUrl}

@@ -173,12 +173,19 @@ export default function GroupForm({
               <Box flex="1">
                 <SimpleGrid minChildWidth="190px" spacing="10px">
                   {imagePaths.map((path, index) => (
-                    <ImageCard
+                    <Box
                       key={index}
-                      path={`/${path}`}
-                      isSelected={selectedTheme === path}
-                      onClick={() => setSelectedTheme(path)}
-                    />
+                      _hover={{
+                        cursor: "pointer",
+                      }}
+                      w="190px"
+                    >
+                      <ImageCard
+                        path={`/${path}`}
+                        isSelected={selectedTheme === path}
+                        onClick={() => setSelectedTheme(path)}
+                      />
+                    </Box>
                   ))}
                 </SimpleGrid>
               </Box>

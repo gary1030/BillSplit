@@ -58,14 +58,21 @@ export default function GroupCard({
         borderRadius="lg"
       >
         <CardBody padding={0} w="216px">
-          <Skeleton isLoaded={!isLoading}>
-            <Image
-              src={`../${theme}`}
-              alt="Theme"
-              w="full"
-              borderTopLeftRadius="md"
-              borderTopRightRadius="md"
-            />
+          <Skeleton
+            isLoaded={!isLoading}
+            borderTopLeftRadius="md"
+            borderTopRightRadius="md"
+          >
+            <Box h="145px">
+              <Image
+                src={`../${theme}`}
+                alt="Theme"
+                w="full"
+                minH="145px"
+                borderTopLeftRadius="md"
+                borderTopRightRadius="md"
+              />
+            </Box>
           </Skeleton>
           <Divider
             orientation="horizontal"
@@ -86,7 +93,7 @@ export default function GroupCard({
             {name}
           </Text>
           <Flex justifyContent="space-between" ml="15px" mr="15px">
-            <Skeleton isLoaded={!isLoading}>
+            <Skeleton isLoaded={!isLoading} borderRadius="lg">
               <Box
                 h="55px"
                 w="85px"
@@ -104,7 +111,7 @@ export default function GroupCard({
                 </Center>
               </Box>
             </Skeleton>
-            <Skeleton isLoaded={!isLoading}>
+            <Skeleton isLoaded={!isLoading} borderRadius="lg">
               <Box
                 h="55px"
                 w="85px"

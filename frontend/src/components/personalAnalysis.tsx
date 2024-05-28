@@ -8,7 +8,6 @@ import fetchPersonalAnalysis from "@/actions/user/fetchPersonalAnalysis";
 import {
   Box,
   Container,
-  Heading,
   Hide,
   Table,
   TableContainer,
@@ -118,18 +117,18 @@ export default function PersonalAnalysis({
 
   return (
     <Container mt={5} mb={5} ml={0} mr={0} p={0} maxW="100%">
-      <Heading size={{ base: "md", md: "lg" }} mb="10px">
+      {/* <Heading size={{ base: "md", md: "lg" }} mb="10px">
         Personal Analysis
-      </Heading>
+      </Heading> */}
       {endTime === undefined && (
-        <Box mt={10}>
+        <Box mt="20px">
           <Text textAlign="center" fontSize="xl">
             Invalid date range.
           </Text>
         </Box>
       )}
       {startTime !== undefined && endTime !== undefined && (
-        <Container>
+        <Container mt="30px">
           {pieChartData.length > 1 && (
             <Chart
               chartType="PieChart"

@@ -248,7 +248,7 @@ export default function PersonalRecord({
     <>
       <Container mt={5} mb={5} ml={0} mr={0} p={0} maxW="100%">
         <Heading size={{ base: "md", md: "lg" }} mb="10px">
-          Personal Record
+          Records
         </Heading>
         {endTime === undefined && (
           <Box mt={10}>
