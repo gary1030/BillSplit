@@ -8,6 +8,7 @@ import {
   Divider,
   Flex,
   Image,
+  Skeleton,
   Text,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
@@ -18,6 +19,7 @@ interface GroupCardProps {
   theme: string;
   share: number;
   balance: number;
+  isLoading: boolean;
 }
 
 export default function GroupCard({
@@ -26,6 +28,7 @@ export default function GroupCard({
   theme,
   share,
   balance,
+  isLoading,
 }: GroupCardProps) {
   const router = useRouter();
   let status = "Payable";
@@ -55,13 +58,15 @@ export default function GroupCard({
         borderRadius="lg"
       >
         <CardBody padding={0} w="216px">
-          <Image
-            src={`../${theme}`}
-            alt="Theme"
-            w="full"
-            borderTopLeftRadius="md"
-            borderTopRightRadius="md"
-          />
+          <Skeleton isLoaded={!isLoading}>
+            <Image
+              src={`../${theme}`}
+              alt="Theme"
+              w="full"
+              borderTopLeftRadius="md"
+              borderTopRightRadius="md"
+            />
+          </Skeleton>
           <Divider
             orientation="horizontal"
             borderColor="black"
@@ -81,30 +86,46 @@ export default function GroupCard({
             {name}
           </Text>
           <Flex justifyContent="space-between" ml="15px" mr="15px">
-            <Box h="55px" w="85px" bgColor="gray.200" borderRadius="lg" p="5px">
-              <Center>
-                <Text fontSize="sm">Your Share</Text>
-              </Center>
-              <Center>
-                <Text fontSize="sm" as="b">
-                  {`-$${Math.round(share)}`}
-                </Text>
-              </Center>
-            </Box>
-            <Box h="55px" w="85px" bgColor={bgColor} borderRadius="lg" p="5px">
-              <Center>
-                <Text fontSize="sm">{status}</Text>
-              </Center>
-              <Center>
-                <Text fontSize="sm" as="b">
-                  {balance === 0
-                    ? `$0`
-                    : balance < 0
-                    ? `+$${-Math.round(balance)}`
-                    : `-$${Math.round(balance)}`}
-                </Text>
-              </Center>
-            </Box>
+            <Skeleton isLoaded={!isLoading}>
+              <Box
+                h="55px"
+                w="85px"
+                bgColor="gray.200"
+                borderRadius="lg"
+                p="5px"
+              >
+                <Center>
+                  <Text fontSize="sm">Your Share</Text>
+                </Center>
+                <Center>
+                  <Text fontSize="sm" as="b">
+                    {`-$${Math.round(share)}`}
+                  </Text>
+                </Center>
+              </Box>
+            </Skeleton>
+            <Skeleton isLoaded={!isLoading}>
+              <Box
+                h="55px"
+                w="85px"
+                bgColor={bgColor}
+                borderRadius="lg"
+                p="5px"
+              >
+                <Center>
+                  <Text fontSize="sm">{status}</Text>
+                </Center>
+                <Center>
+                  <Text fontSize="sm" as="b">
+                    {balance === 0
+                      ? `$0`
+                      : balance < 0
+                      ? `+$${-Math.round(balance)}`
+                      : `-$${Math.round(balance)}`}
+                  </Text>
+                </Center>
+              </Box>
+            </Skeleton>
           </Flex>
         </CardBody>
       </Card>

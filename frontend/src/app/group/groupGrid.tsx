@@ -64,6 +64,7 @@ export default function GroupGrid() {
                 theme={group.theme}
                 share={personalStat?.share || 0}
                 balance={personalStat?.balance || 0}
+                isLoading={personalStat === undefined}
               />
             </Center>
           </Box>
