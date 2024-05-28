@@ -13,7 +13,7 @@ export default function Footer() {
       alignItems="center"
       pos="absolute"
       bottom="-95"
-      h={45}
+      h="40px"
       mt={50}
     >
       <Text fontSize="sm" ml={5} mr={5}>

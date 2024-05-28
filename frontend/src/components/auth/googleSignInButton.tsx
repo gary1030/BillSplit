@@ -22,6 +22,13 @@ const GoogleSignInButton = () => {
       width={"300px"}
       height={"50px"}
       marginTop={"30px"}
+      border={"2px solid"}
+      borderRadius={"full"}
+      _hover={{
+        bg: "gray.100",
+        transform: "scale(1.03)",
+        transition: "all 0.1s",
+      }}
     >
       <Center>
         <Text>Continue with Google</Text>
