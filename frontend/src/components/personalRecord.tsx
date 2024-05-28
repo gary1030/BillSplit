@@ -119,6 +119,7 @@ export default function PersonalRecord({
     queryKey: ["personalTransactions", cookies.userId, startTime, endTime],
     queryFn: () =>
       fetchPersonalTransactions(cookies.userId, startTime, endTime),
+    enabled: endTime !== undefined,
   });
 
   const { data: userGroups, isLoading } = useQuery({
@@ -144,7 +145,7 @@ export default function PersonalRecord({
       groups?.map((group: Group) => ({
         queryKey: ["groupTransactions", group.id, startTime, endTime],
         queryFn: () => fetchTransactionsForGroup(group),
-        enabled: groups !== undefined,
+        enabled: groups !== undefined && endTime !== undefined,
       })) || [],
   });
 
