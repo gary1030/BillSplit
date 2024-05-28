@@ -19,8 +19,8 @@ export default async function login(code: string, redirect_uri: string) {
     cookies().set("username", data.username, { maxAge: expiration });
     cookies().set("email", data.email, { maxAge: expiration });
     cookies().set("userId", data.id, { maxAge: expiration });
+    redirect(redirect_uri || "/user");
   } catch (error) {
     console.error("Failed to login:", error);
   }
-  redirect(redirect_uri || "/group");
 }

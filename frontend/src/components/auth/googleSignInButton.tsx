@@ -11,7 +11,7 @@ interface GoogleSignInButtonProps {
 const GoogleSignInButton = () => {
   const params = useParams<{ redirect_uri: string }>();
   const redirect_uri = params.redirect_uri;
-  const { login } = useAuth(redirect_uri || "/group");
+  const { login } = useAuth(redirect_uri || "/user");
   return (
     <Button
       w={"full"}
