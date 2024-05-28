@@ -326,7 +326,7 @@ export default function AddGroupRepaymentForm({
                 <Text minW="64px">{receiverName}</Text>
               </Container>
             </Flex>
-            <Box mt="15px" w="full" marginLeft={["0", "0", "25%"]}>
+            <Flex justifyContent="center" alignItems="center" w="full" mt="8px">
               <Text
                 fontSize="sm"
                 as="b"
@@ -340,7 +340,7 @@ export default function AddGroupRepaymentForm({
                   ? "Input amount is larger than the amount payable."
                   : ""}
               </Text>
-            </Box>
+            </Flex>
           </ModalBody>
         </ModalContent>
       </Modal>
