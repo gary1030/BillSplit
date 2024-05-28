@@ -449,6 +449,7 @@ export default function ReadGroupTransactionForm({
         isOpen={isOpenDelete}
         onClose={onCloseDelete}
         leastDestructiveRef={cancelRef}
+        isCentered
       >
         <AlertDialogOverlay>
           <AlertDialogContent>

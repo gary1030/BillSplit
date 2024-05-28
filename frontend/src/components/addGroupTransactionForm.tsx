@@ -23,7 +23,7 @@ import {
 } from "@chakra-ui/react";
 
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useCookies } from "react-cookie";
 
 import { GoNote } from "react-icons/go";
@@ -184,15 +184,11 @@ export default function AddGroupTransactionForm({
 
   /* Group Name */
   const groupName = group.name;
-  const members = membersData?.users || [];
+  const members = useMemo(() => membersData?.users || [], [membersData]);
 
   /* Categories */
   // fetch categories
-  const {
-    data: categoryData,
-    error,
-    isLoading,
-  } = useQuery({
+  const { data: categoryData } = useQuery({
     queryKey: ["categories"],
     queryFn: () => fetchCategories(),
     staleTime: Infinity,
@@ -213,18 +209,40 @@ export default function AddGroupTransactionForm({
     label: category.name,
   }));
 
-  // initialize category in edit mode
+  // initialize category, amount, and custom switches
   useEffect(() => {
     if (mode === "edit" && groupTransaction !== undefined) {
       setCategory(groupTransaction.categoryId);
-    }
-  }, [mode, groupTransaction]);
-
-  /* Amount */
-  useEffect(() => {
-    if (mode === "edit" && groupTransaction !== undefined) {
       setAmount(groupTransaction.totalAmount);
       setAmountString(groupTransaction.totalAmount.toString());
+
+      // initialize payer custom switch
+      if (
+        groupTransaction.payerDetails.length > 1 &&
+        new Set(
+          groupTransaction.payerDetails
+            .filter((payer: Payer) => payer.amount > 0)
+            .map((payer: Payer) => payer.amount)
+        ).size > 1
+      ) {
+        setPayerCustomizeSwitchOn(true);
+      } else {
+        setPayerCustomizeSwitchOn(false);
+      }
+
+      // initialize sharer custom switch
+      if (
+        groupTransaction.splitDetails.length > 1 &&
+        new Set(
+          groupTransaction.splitDetails
+            .filter((sharer: Sharer) => sharer.amount > 0)
+            .map((sharer: Sharer) => sharer.amount)
+        ).size > 1
+      ) {
+        setSharerCustomizeSwitchOn(true);
+      } else {
+        setSharerCustomizeSwitchOn(false);
+      }
     }
   }, [mode, groupTransaction]);
 
@@ -304,7 +322,7 @@ export default function AddGroupTransactionForm({
         }
       });
     }
-  }, [mode, groupTransaction]);
+  }, [mode, groupTransaction, members, cookies]);
   // }, [members, mode, groupTransaction]);
 
   // Handle amount changes
@@ -409,7 +427,7 @@ export default function AddGroupTransactionForm({
       );
       setTotalPayerAmount(newTotalPayerAmount);
     }
-  }, [amount, payerCheckBoxStates, payerCustomizeSwitchOn]);
+  }, [amount, payerCheckBoxStates, payerCustomizeSwitchOn, members]);
   // }, [amount, payerCheckBoxStates, payerCustomizeSwitchOn, members]);
 
   /* Sharer */
@@ -459,7 +477,7 @@ export default function AddGroupTransactionForm({
         }
       });
     }
-  }, [mode, groupTransaction]);
+  }, [mode, groupTransaction, members]);
   // }, [members, mode, groupTransaction]);
 
   // Handle amount changes when the customize switch is on
@@ -566,6 +584,34 @@ export default function AddGroupTransactionForm({
   }, [amount, sharerCheckBoxStates, sharerCustomizeSwitchOn]);
   // }, [amount, sharerCheckBoxStates, sharerCustomizeSwitchOn, members]);
 
+  const setInitialStatus = () => {
+    setTitle("");
+    setDate(new Date());
+    setCategory("");
+    setAmountString("0");
+    setAmount(0);
+    setPayerCustomizeSwitchOn(false);
+    const initialPayerStates: PayerCheckBoxStates = {};
+    members.forEach((member) => {
+      initialPayerStates[member.id] = false;
+    });
+    initialPayerStates[(cookies as any).userId] = true;
+    setPayerCheckBoxStates(initialPayerStates);
+    setPayerAmountStrings({});
+    setPayerAmounts({});
+    setTotalPayerAmount(0);
+    setSharerCustomizeSwitchOn(false);
+    const initialSharerStates: SharerCheckBoxStates = {};
+    members.forEach((member) => {
+      initialSharerStates[member.id] = true;
+    });
+    setSharerCheckBoxStates(initialSharerStates);
+    setSharerAmountStrings({});
+    setSharerAmounts({});
+    setTotalSharerAmount(0);
+    setNote("");
+  };
+
   const { mutate: createGroupTransactionMutation, isPending } = useMutation({
     mutationFn: () =>
       createGroupTransaction(
@@ -591,31 +637,14 @@ export default function AddGroupTransactionForm({
       queryClient.invalidateQueries({
         queryKey: ["groupBalance", groupId],
       });
-      setTitle("");
-      setDate(new Date());
-      setCategory("");
-      setAmountString("0");
-      setAmount(0);
-      setPayerCustomizeSwitchOn(false);
-      const initialPayerStates: PayerCheckBoxStates = {};
-      members.forEach((member) => {
-        initialPayerStates[member.id] = false;
+      queryClient.invalidateQueries({
+        queryKey: ["groupPersonalAnalysis", groupId],
       });
-      initialPayerStates[(cookies as any).userId] = true;
-      setPayerCheckBoxStates(initialPayerStates);
-      setPayerAmountStrings({});
-      setPayerAmounts({});
-      setTotalPayerAmount(0);
-      setSharerCustomizeSwitchOn(false);
-      const initialSharerStates: SharerCheckBoxStates = {};
-      members.forEach((member) => {
-        initialSharerStates[member.id] = true;
+      queryClient.invalidateQueries({
+        queryKey: ["groupAnalysis", groupId],
       });
-      setSharerCheckBoxStates(initialSharerStates);
-      setSharerAmountStrings({});
-      setSharerAmounts({});
-      setTotalSharerAmount(0);
-      setNote("");
+
+      setInitialStatus();
       toast({
         title: "Transaction created successfully",
         status: "success",
@@ -670,33 +699,15 @@ export default function AddGroupTransactionForm({
           queryClient.invalidateQueries({
             queryKey: ["groupBalance", groupId],
           });
+          queryClient.invalidateQueries({
+            queryKey: ["groupPersonalAnalysis", groupId],
+          });
+          queryClient.invalidateQueries({
+            queryKey: ["groupAnalysis", groupId],
+          });
         }
 
-        setTitle("");
-        setDate(new Date());
-        setCategory("");
-        setAmountString("0");
-        setAmount(0);
-        setPayerCustomizeSwitchOn(false);
-        const initialPayerStates: PayerCheckBoxStates = {};
-        members.forEach((member) => {
-          initialPayerStates[member.id] = false;
-        });
-        initialPayerStates[(cookies as any).userId] = true;
-        setPayerCheckBoxStates(initialPayerStates);
-        setPayerAmountStrings({});
-        setPayerAmounts({});
-        setTotalPayerAmount(0);
-        setSharerCustomizeSwitchOn(false);
-        const initialSharerStates: SharerCheckBoxStates = {};
-        members.forEach((member) => {
-          initialSharerStates[member.id] = true;
-        });
-        setSharerCheckBoxStates(initialSharerStates);
-        setSharerAmountStrings({});
-        setSharerAmounts({});
-        setTotalSharerAmount(0);
-        setNote("");
+        setInitialStatus();
         toast({
           title: "Transaction edited successfully",
           status: "success",
@@ -717,31 +728,7 @@ export default function AddGroupTransactionForm({
 
   const onModelClose = () => {
     if (mode === "create") {
-      setTitle("");
-      setDate(new Date());
-      setCategory("");
-      setAmountString("0");
-      setAmount(0);
-      setPayerCustomizeSwitchOn(false);
-      const initialPayerStates: PayerCheckBoxStates = {};
-      members.forEach((member) => {
-        initialPayerStates[member.id] = false;
-      });
-      initialPayerStates[(cookies as any).userId] = true;
-      setPayerCheckBoxStates(initialPayerStates);
-      setPayerAmountStrings({});
-      setPayerAmounts({});
-      setTotalPayerAmount(0);
-      setSharerCustomizeSwitchOn(false);
-      const initialSharerStates: SharerCheckBoxStates = {};
-      members.forEach((member) => {
-        initialSharerStates[member.id] = true;
-      });
-      setSharerCheckBoxStates(initialSharerStates);
-      setSharerAmountStrings({});
-      setSharerAmounts({});
-      setTotalSharerAmount(0);
-      setNote("");
+      setInitialStatus();
     }
     onClose();
   };
@@ -836,7 +823,7 @@ export default function AddGroupTransactionForm({
         <ModalOverlay />
         <ModalContent w="90%" maxW="700px" mt="65px">
           <FormHeader
-            title={mode === "create" ? "Add an expense" : "Expense"}
+            title={mode === "create" ? "Add an expense" : "Edit an Expense"}
             onClose={onModelClose}
             onSave={handleAdd}
           />

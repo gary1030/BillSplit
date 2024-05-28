@@ -168,15 +168,13 @@ export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
           {showCategory(record.categoryId || "Repayment")}
           <Box w="10px" />
         </Hide>
-        <Text textOverflow="ellipsis" whiteSpace="nowrap" overflow="hidden">
-          {record.title ? (
-            title
-          ) : (
-            <SkeletonText isLoaded={!isMemberLoading} noOfLines={1}>
-              {title}
-            </SkeletonText>
-          )}
-        </Text>
+        {!record.title && isMemberLoading ? (
+          <SkeletonText>...</SkeletonText>
+        ) : (
+          <Text textOverflow="ellipsis" whiteSpace="nowrap" overflow="hidden">
+            {title}
+          </Text>
+        )}
       </Box>
     );
   };

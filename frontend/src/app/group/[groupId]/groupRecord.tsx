@@ -1,7 +1,6 @@
 "use client";
 
 import fetchGroup from "@/actions/group/fetchGroup";
-import fetchUserBatch from "@/actions/user/fetchUserBatch";
 import AddRecordButton from "@/components/addGroupRecordButton";
 import GroupRecordTable from "@/components/groupRecordTable";
 import GroupTitle from "@/components/groupTitle";
@@ -17,11 +16,6 @@ export default function GroupRecord({ groupId }: GroupRecordProps) {
   const { data, error, isLoading } = useQuery({
     queryKey: ["group", groupId],
     queryFn: () => fetchGroup(groupId),
-  });
-
-  const { data: membersData, error: memberError } = useQuery({
-    queryKey: ["groupMembers", data?.memberIds || []],
-    queryFn: () => fetchUserBatch(data.memberIds || []),
   });
 
   if (isLoading) {

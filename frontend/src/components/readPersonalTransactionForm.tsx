@@ -259,6 +259,7 @@ export default function ReadPersonalTransactionForm({
         isOpen={isOpenDelete}
         onClose={onCloseDelete}
         leastDestructiveRef={cancelRef}
+        isCentered
       >
         <AlertDialogOverlay>
           <AlertDialogContent>

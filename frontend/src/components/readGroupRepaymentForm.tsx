@@ -226,6 +226,7 @@ export default function ReadGroupRepaymentForm({
         isOpen={isOpenDelete}
         onClose={onCloseDelete}
         leastDestructiveRef={cancelRef}
+        isCentered
       >
         <AlertDialogOverlay>
           <AlertDialogContent>
