@@ -158,7 +158,8 @@ export default function PersonalRecord({
       return true;
     }
     return record.splitDetails?.some(
-      (splitDetail) => splitDetail.sharerId === cookies.userId
+      (splitDetail) =>
+        splitDetail.sharerId === cookies.userId && splitDetail.amount > 0
     );
   });
 
