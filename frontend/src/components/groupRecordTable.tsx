@@ -7,9 +7,12 @@ import fetchGroup from "@/actions/group/fetchGroup";
 import fetchGroupRepayments from "@/actions/group/fetchGroupRepayments";
 import fetchGroupTransactions from "@/actions/group/fetchGroupTransactions";
 import fetchUserBatch from "@/actions/user/fetchUserBatch";
+import Loading from "@/components/loading";
+import useCategory from "@/hooks/useCategory";
 import {
   Box,
   Hide,
+  SkeletonText,
   Table,
   TableContainer,
   Tbody,
@@ -22,12 +25,10 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { useCookies } from "react-cookie";
 import { MdOutlineRefresh } from "react-icons/md";
 import { PiMoneyLight } from "react-icons/pi";
-
-import useCategory from "@/hooks/useCategory";
-import { useState } from "react";
 import ReadGroupRepaymentForm from "./readGroupRepaymentForm";
 import ReadGroupTransactionForm from "./readGroupTransactionForm";
 
@@ -110,17 +111,32 @@ export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
     onOpen();
   };
 
+  const { data: group } = useQuery({
+    queryKey: ["group", groupId],
+    queryFn: () => fetchGroup(groupId),
+  });
+
+  const { data: membersData, isLoading: isMemberLoading } =
+    useQuery<MembersData>({
+      queryKey: ["groupMembers", group?.memberIds || []],
+      queryFn: () => fetchUserBatch(group.memberIds || []),
+    });
+
   const { data: categoryData } = useQuery<Category[]>({
     queryKey: ["categories"],
     queryFn: () => fetchCategories(),
   });
 
-  const { data: records } = useQuery<Transaction[]>({
+  const { data: records, isLoading: isTransactionLoading } = useQuery<
+    Transaction[]
+  >({
     queryKey: ["groupTransactions", groupId],
     queryFn: () => fetchGroupTransactions(groupId),
   });
 
-  const { data: repayments } = useQuery<Repayment[]>({
+  const { data: repayments, isLoading: isRepaymentLoading } = useQuery<
+    Repayment[]
+  >({
     queryKey: ["groupRepayments", groupId],
     queryFn: () => fetchGroupRepayments(groupId),
   });
@@ -133,16 +149,6 @@ export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
     ...(records || []),
     ...(repaymentsWithDate || []),
   ];
-
-  const { data: group } = useQuery({
-    queryKey: ["group", groupId],
-    queryFn: () => fetchGroup(groupId),
-  });
-
-  const { data: membersData } = useQuery<MembersData>({
-    queryKey: ["groupMembers", group?.memberIds || []],
-    queryFn: () => fetchUserBatch(group.memberIds || []),
-  });
 
   const showTitle = (record: any) => {
     let title = record.title || "";
@@ -163,7 +169,13 @@ export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
           <Box w="10px" />
         </Hide>
         <Text textOverflow="ellipsis" whiteSpace="nowrap" overflow="hidden">
-          {title}
+          {record.title ? (
+            title
+          ) : (
+            <SkeletonText isLoaded={!isMemberLoading} noOfLines={1}>
+              {title}
+            </SkeletonText>
+          )}
         </Text>
       </Box>
     );
@@ -373,6 +385,7 @@ export default function GroupRecordTable({ groupId }: GroupRecordTableProps) {
           </Text>
         </Box>
       )}
+      {(isTransactionLoading || isRepaymentLoading) && <Loading />}
     </>
   );
 }

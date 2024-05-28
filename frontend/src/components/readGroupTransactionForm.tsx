@@ -12,6 +12,7 @@ import {
   Button,
   Container,
   Flex,
+  Link,
   Modal,
   ModalBody,
   ModalContent,
@@ -280,7 +281,7 @@ export default function ReadGroupTransactionForm({
               </Box>
               <Box>
                 <Text fontSize="md" noOfLines={1} pl="10px" pr="5px">
-                  {groupName}
+                  <Link href={`/group/${groupId}`}>{groupName}</Link>
                 </Text>
               </Box>
             </Flex>
