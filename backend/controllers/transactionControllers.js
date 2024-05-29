@@ -516,10 +516,13 @@ class TransactionControllers {
       let debtors = [];
       let creditors = [];
       for (let userId in balanceAndDebts) {
-        if (balanceForCalculation[userId] > 0.01) {
+        if (balanceForCalculation[userId] >= 0.01) {
           debtors.push(userId);
-        } else if (balanceForCalculation[userId] < -0.01) {
+        } else if (balanceForCalculation[userId] <= -0.01) {
           creditors.push(userId);
+        }
+        else {
+          balanceAndDebts[userId].balance = 0;
         }
       }
 
