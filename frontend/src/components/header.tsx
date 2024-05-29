@@ -117,6 +117,7 @@ export default function Header({ loggedIn, isGroup }: HeaderProps) {
               onClick={handleAvatarClick}
               style={{ cursor: "pointer" }}
               border="2px"
+              color="black"
             />
             {loggedIn && showLogoutButton && (
               <Button
