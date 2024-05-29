@@ -159,6 +159,7 @@ router.get("/:id/transactions", async function (req, res, next) {
     if (startTime === undefined || endTime === undefined) {
       startTime = new Date(0); // January 1, 1970
       endTime = new Date();
+      endTime.setFullYear(endTime.getFullYear() + 1);
     } else if (isNaN(Date.parse(startTime)) || isNaN(Date.parse(endTime))) {
       res.status(400).json({ message: "Start time and end time are illegal!" });
       return;
