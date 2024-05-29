@@ -52,24 +52,26 @@ export default function GroupGrid() {
 
   return (
     <SimpleGrid minChildWidth="220px" spacing="30px" columnGap="30px">
-      {groupsData?.data?.map((group: any) => {
-        const personalStat = combinedStats[group.id];
+      {groupsData?.data
+        ?.sort((a: any, b: any) => b.createdAt.localeCompare(a.createdAt))
+        .map((group: any) => {
+          const personalStat = combinedStats[group.id];
 
-        return (
-          <Box key={group.id}>
-            <Center>
-              <GroupCard
-                groupId={group.id}
-                name={group.name}
-                theme={group.theme}
-                share={personalStat?.share || 0}
-                balance={personalStat?.balance || 0}
-                isLoading={personalStat === undefined}
-              />
-            </Center>
-          </Box>
-        );
-      })}
+          return (
+            <Box key={group.id}>
+              <Center>
+                <GroupCard
+                  groupId={group.id}
+                  name={group.name}
+                  theme={group.theme}
+                  share={personalStat?.share || 0}
+                  balance={personalStat?.balance || 0}
+                  isLoading={personalStat === undefined}
+                />
+              </Center>
+            </Box>
+          );
+        })}
       <Box>
         <Center>
           <AddGroupCard />

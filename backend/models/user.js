@@ -66,6 +66,7 @@ class User {
             id: true,
             name: true,
             theme: true,
+            createdAt: true,
           },
         },
       },
