@@ -18,7 +18,7 @@ interface GroupInvitationProps {
 }
 
 export default function GroupInvitation({ groupId }: GroupInvitationProps) {
-  const inviteLink = `${window.location.origin}/invite/${groupId}`;
+  const inviteLink = `${window.location.origin}/invite/${groupId}?openExternalBrowser=1`;
 
   const onCopy = () => {
     navigator.clipboard.writeText(inviteLink);
