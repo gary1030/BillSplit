@@ -11,14 +11,18 @@ interface GoogleSignInButtonProps {
 const GoogleSignInButton = () => {
   const params = useParams<{ redirect_uri: string }>();
   const redirect_uri = params.redirect_uri;
-  const { login } = useAuth(redirect_uri || "/user");
+  const { login, isLoading, setIsLoading } = useAuth(redirect_uri || "/user");
+
   return (
     <Button
       w={"full"}
       maxW={"md"}
       variant={"outline"}
       leftIcon={<FcGoogle />}
-      onClick={() => login()}
+      onClick={() => {
+        setIsLoading(true);
+        login();
+      }}
       width={"300px"}
       height={"50px"}
       marginTop={"30px"}
@@ -29,6 +33,8 @@ const GoogleSignInButton = () => {
         transform: "scale(1.03)",
         transition: "all 0.1s",
       }}
+      isLoading={isLoading}
+      loadingText="Continue with Google"
     >
       <Center>
         <Text>Continue with Google</Text>
