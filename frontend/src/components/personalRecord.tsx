@@ -4,7 +4,7 @@ import { Category, Transaction } from "@/types";
 
 import fetchCategories from "@/actions/fetchCategories";
 import fetchUserGroups from "@/actions/fetchUserGroups";
-import fetchGroupTransactions from "@/actions/group/fetchGroupTransactions";
+import fetchAllGroupTransactions from "@/actions/group/fetchAllGroupTransactions";
 import fetchPersonalTransactions from "@/actions/user/fetchPersonalTransactions";
 import Loading from "@/components/loading";
 
@@ -25,7 +25,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 
-import { useQueries, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useCookies } from "react-cookie";
 import { PiMoneyLight } from "react-icons/pi";
 
@@ -129,29 +129,14 @@ export default function PersonalRecord({
 
   const groups = userGroups?.data;
 
-  function fetchTransactionsForGroup(group: Group) {
-    return fetchGroupTransactions(group.id, startTime, endTime).then(
-      (transactions) =>
-        transactions.map((transaction: Transaction) => ({
-          ...transaction,
-          groupId: group.id,
-          groupName: group.name,
-        }))
-    );
-  }
-
-  const transactionQueries = useQueries<UnifiedRecord[]>({
-    queries:
-      groups?.map((group: Group) => ({
-        queryKey: ["groupTransactions", group.id, startTime, endTime],
-        queryFn: () => fetchTransactionsForGroup(group),
-        enabled: groups !== undefined && endTime !== undefined,
-      })) || [],
-  });
-
-  const groupTransactions: UnifiedRecord[] = transactionQueries
-    .filter((query) => query.isSuccess && query.data)
-    .flatMap((query) => query.data as UnifiedRecord[]);
+  const groupIds = groups?.map((group: any) => group.id) || [];
+  const { data: groupTransactions, isLoading: isGroupTransactionLoading } =
+    useQuery({
+      queryKey: ["allGroupTransactions", groupIds, startTime, endTime],
+      queryFn: () => fetchAllGroupTransactions(groups, startTime, endTime),
+      enabled: !!groupIds.length,
+      staleTime: 1000 * 60,
+    });
 
   const allRecords: UnifiedRecord[] = [
     ...(personalTransactions || []),
@@ -336,6 +321,7 @@ export default function PersonalRecord({
         )}
         {startTime !== undefined &&
           endTime !== undefined &&
+          !isGroupTransactionLoading &&
           filteredRecords?.length === 0 && (
             <Box mt={10}>
               <Text textAlign="center" fontSize="xl">
@@ -363,7 +349,7 @@ export default function PersonalRecord({
       </Container>
       {(isPersonalTransactionLoading ||
         isLoading ||
-        transactionQueries.some((query) => query.isLoading)) && <Loading />}
+        isGroupTransactionLoading) && <Loading />}
     </>
   );
 }

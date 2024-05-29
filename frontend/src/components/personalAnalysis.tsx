@@ -245,6 +245,7 @@ export default function PersonalAnalysis({
       )}
       {startTime !== undefined &&
         endTime !== undefined &&
+        !isLoading &&
         (!analysisData || analysisData?.total === 0) && (
           <Box mt={10}>
             <Text textAlign="center" fontSize="xl">

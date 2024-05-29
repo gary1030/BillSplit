@@ -1,11 +1,11 @@
 "use client";
 import fetchUserGroups from "@/actions/fetchUserGroups";
-import fetchGroupPersonalStat from "@/actions/group/fetchGroupPersonalStat";
+import fetchAllGroupPersonalStats from "@/actions/group/fetchAllGroupPersonalStat";
 import AddGroupCard from "@/components/addGroupCard";
 import GroupCard from "@/components/groupCard";
 import Loading from "@/components/loading";
 import { Box, Center, SimpleGrid } from "@chakra-ui/react";
-import { useQueries, useQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 
 interface GroupPersonalStat {
   group_id: string;
@@ -23,26 +23,18 @@ export default function GroupGrid() {
     queryFn: () => fetchUserGroups(),
   });
 
-  const groupStatsQueries = useQueries({
-    queries:
-      groupsData?.data?.map((group: any) => ({
-        queryKey: ["groupPersonalStat", group.id],
-        queryFn: () => fetchGroupPersonalStat(group.id),
-        enabled: !!groupsData, // Only run these queries if groupsData is available
-        staleTime: 1000 * 60,
-      })) || [],
+  const groupIds = groupsData?.data?.map((group: any) => group.id) || [];
+  const { data: groupStatsQueries } = useQuery({
+    queryKey: ["allGroupPersonalStats", groupIds],
+    queryFn: () => fetchAllGroupPersonalStats(groupIds),
+    enabled: !!groupIds.length,
+    staleTime: 1000 * 60,
   });
 
-  const combinedStats = groupStatsQueries.reduce<{
+  const combinedStats = groupStatsQueries?.reduce<{
     [key: string]: GroupPersonalStat;
   }>((acc, query) => {
-    if (query.isLoading) {
-      return acc;
-    }
-    if (query.data) {
-      const data = query.data as GroupPersonalStat;
-      acc[data.group_id] = data;
-    }
+    acc[query.group_id] = query;
     return acc;
   }, {});
 
@@ -55,7 +47,9 @@ export default function GroupGrid() {
       {groupsData?.data
         ?.sort((a: any, b: any) => b.createdAt.localeCompare(a.createdAt))
         .map((group: any) => {
-          const personalStat = combinedStats[group.id];
+          const personalStat = combinedStats
+            ? combinedStats[group.id]
+            : undefined;
 
           return (
             <Box key={group.id}>
