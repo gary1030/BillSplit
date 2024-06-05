@@ -29,11 +29,12 @@ docker-compose up -d
 
 ### Backend
 
-1. Prepare `.env` under `frontend`
+1. Prepare `.env` under `backend`
 
 ```txt
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
+GOOGLE_REDIRECT_URI=http://localhost:3000
 
 DATABASE_URL=mongodb://root:prisma@localhost:27017/BillSplit?authSource=admin&directconnection=true
 
